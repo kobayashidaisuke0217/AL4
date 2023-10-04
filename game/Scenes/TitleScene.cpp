@@ -22,7 +22,13 @@ void TitleScene::Update()
 		sceneNum = GAME_SCENE;
 		count++;
 	}
-	
+	XINPUT_STATE joyState;
+	if (!input->GetJoystickState(0, joyState)) {
+		return;
+	}
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+		sceneNum = GAME_SCENE;
+	}
 	if (sceneNum < 0) {
 		sceneNum = 0;
 		
