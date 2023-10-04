@@ -14,7 +14,7 @@ public:
 	static Input* GetInstance();
 	void Initialize(WinApp* winApp);
 	void Update();
-	
+	const int DEDZONE = 1000;
 	/// 押した時
 	bool PushKey(uint8_t keyNumber)const;
 	/// 押している間
