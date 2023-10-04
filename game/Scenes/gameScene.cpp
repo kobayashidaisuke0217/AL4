@@ -13,7 +13,7 @@ void GameScene::Initialize()
 	directXCommon_ = DirectXCommon::GetInstance();
 
 	textureManager_ = Texturemanager::GetInstance();
-	input_->GetInstance();
+	input_ = Input::GetInstance();
 
 	viewProjection_.Initialize();
 	viewProjection_.translation_ = { 0.0f,0.0f,-5.0f };

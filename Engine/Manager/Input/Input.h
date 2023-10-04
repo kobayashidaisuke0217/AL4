@@ -14,7 +14,7 @@ public:
 	static Input* GetInstance();
 	void Initialize(WinApp* winApp);
 	void Update();
-	const int DEDZONE = 1000;
+	const int DEADZONE = 7849;
 	/// 押した時
 	bool PushKey(uint8_t keyNumber)const;
 	/// 押している間
@@ -23,7 +23,8 @@ public:
 	bool IsReleseKey(uint8_t keyNumber)const;
 	//joystateがつながっているかどうか
 	bool GetJoystickState(int32_t stickNo, XINPUT_STATE& out) const;
-
+	//デッドゾーンの設定
+	void SetJoyStickDeadZone(int32_t stickNo, XINPUT_STATE& out)const;
 private:
 	/*Input() = default;
 	~Input() = default;*/
