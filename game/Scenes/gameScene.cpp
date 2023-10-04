@@ -13,6 +13,7 @@ void GameScene::Initialize()
 	directXCommon_ = DirectXCommon::GetInstance();
 
 	textureManager_ = Texturemanager::GetInstance();
+	input_->GetInstance();
 
 	viewProjection_.Initialize();
 	viewProjection_.translation_ = { 0.0f,0.0f,-5.0f };
@@ -32,7 +33,11 @@ void GameScene::Update()
 	
 	directionalLight_.direction = Normalise(directionalLight_.direction);
 	
-	
+	XINPUT_STATE joystate;
+	if (input_->GetJoystickState(0, joystate)) {
+		viewProjection_.rotation_.x+= (float)joystate.Gamepad.sThumbRX / SHRT_MAX * 5.0f;
+		viewProjection_.rotation_.y -= (float)joystate.Gamepad.sThumbRY / SHRT_MAX * 5.0f;
+	}
 
 	viewProjection_.UpdateMatrix();
 	viewProjection_.TransferMatrix();
@@ -40,6 +45,7 @@ void GameScene::Update()
 	ImGui::Begin("Scene");
 	
 	ImGui::InputInt("blendCount", &blendCount_);
+	ImGui::InputFloat3("rotate", &viewProjection_.rotation_.x);
 	ImGui::InputInt("SceneNum", &sceneNum);
 	if (sceneNum > 1) {
 		sceneNum = 1;

@@ -66,4 +66,16 @@ bool Input::IsReleseKey(uint8_t keyNumber)const
 	}
 }
 
+bool Input::GetJoystickState(int32_t stickNo, XINPUT_STATE& out) const
+{
+	DWORD result;
+	result = XInputGetState(stickNo, &out);
+	if (result == ERROR_SUCCESS) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 Input* Input::input_ = nullptr;

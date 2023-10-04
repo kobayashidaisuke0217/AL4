@@ -1,5 +1,6 @@
 #pragma once
 #include "BlueMoon.h"
+#include "Input.h"
 #include "MyMath.h"
 #include "triangle.h"
 #include "Iscene.h"
@@ -25,6 +26,8 @@ private:
 	DirectXCommon* directXCommon_;
 	Sprite* sprite_;
 	Texturemanager* textureManager_;
+	Input* input_;
+	
 	ViewProjection viewProjection_;
 
 	//Light

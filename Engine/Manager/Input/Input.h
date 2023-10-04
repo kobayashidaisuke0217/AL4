@@ -1,11 +1,13 @@
 #pragma once
 #define DIRECTINPUT_VERSION 0x0800//DirectInputのバージョン指定
 #include <dinput.h>
+#include <Xinput.h>
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 #include <array>
 #include <wrl.h>
 #include "WinApp.h"
+
 class Input
 {
 public:
@@ -19,8 +21,8 @@ public:
 	bool PressKey(uint8_t keyNumber)const;
 	/// 離した時
 	bool IsReleseKey(uint8_t keyNumber)const;
-
-	
+	//joystateがつながっているかどうか
+	bool GetJoystickState(int32_t stickNo, XINPUT_STATE& out) const;
 
 private:
 	/*Input() = default;
@@ -31,5 +33,6 @@ private:
 	std::array<BYTE, 256> keys;
 	std::array<BYTE, 256> preKeys;
 	int count;
+	
 };
 
