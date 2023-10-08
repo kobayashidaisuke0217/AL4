@@ -8,11 +8,12 @@
 #include "worldTransform.h"
 #include "ViewProjection.h"
 #include "Texturemanager.h"
+#include"DirectionalLight.h"
 class Model
 {
 public:
 	void Initialize( const std::string& directoryPath, const std::string& filename);
-	void Draw(const WorldTransform& transform, const ViewProjection& viewProjection, const DirectionalLight& light);
+	void Draw(const WorldTransform& transform, const ViewProjection& viewProjection);
 	void Finalize();
 
 	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
@@ -34,14 +35,14 @@ private:
 	uint32_t texture_;
 	
 	DirectionalLight* directionalLight_;
-	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_;
+	
 	
 	
 private:
 	void CreateVartexData();
 	void SetColor();
 	void TransformMatrix();
-	void CreateDictionalLight();
+
 
 };
 

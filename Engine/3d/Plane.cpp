@@ -7,9 +7,11 @@ void Plane::Initialize()
 	direct_ = DirectXCommon::GetInstance();
 
 	textureManager_ = Texturemanager::GetInstance();
+
+	directionalLight_ = DirectionalLight::GetInstance();
 	SettingVertex();
 	SetColor();
-	CreateDictionalLight();
+	
 }
 void Plane::TransformMatrix()
 {
@@ -26,7 +28,7 @@ void Plane::SetColor() {
 
 }
 
-void Plane::Draw(const WorldTransform& transform, const ViewProjection& viewProjection, const Vector4& material, const DirectionalLight& light, uint32_t index)
+void Plane::Draw(const WorldTransform& transform, const ViewProjection& viewProjection, const Vector4& material, uint32_t index)
 {
 	Transform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 
@@ -38,7 +40,7 @@ void Plane::Draw(const WorldTransform& transform, const ViewProjection& viewProj
 
 	*materialData_ = { material,false };
 	materialData_->uvTransform = uvtransformMtrix;
-	*directionalLight_ = light;
+	
 	direct_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
 	//形状を設定。PS0にせっていしているものとはまた別。同じものを設定すると考えておけばいい
 	direct_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -49,7 +51,7 @@ void Plane::Draw(const WorldTransform& transform, const ViewProjection& viewProj
 
 	direct_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	//Light
-	direct_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+	direct_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLight_->GetResource()->GetGPUVirtualAddress());
 
 	//texture
 	direct_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(index));
@@ -63,12 +65,7 @@ void Plane::Finalize()
 {
 	
 }
-void Plane::CreateDictionalLight()
-{
-	directionalLightResource_ = DirectXCommon::CreateBufferResource(direct_->GetDevice().Get(), sizeof(DirectionalLight));
-	directionalLightResource_->Map(0, NULL, reinterpret_cast<void**>(&directionalLight_));
 
-}
 void Plane::SettingVertex() {
 
 	vertexResource_ = DirectXCommon::CreateBufferResource(direct_->GetDevice().Get(), sizeof(VertexData) * 6);

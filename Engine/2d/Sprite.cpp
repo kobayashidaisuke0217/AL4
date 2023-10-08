@@ -1,6 +1,6 @@
 #include "Sprite.h"
 
-void Sprite::Initialize( const Vector4& a, const Vector4& b, const DirectionalLight& light)
+void Sprite::Initialize( const Vector4& a, const Vector4& b)
 {
 	dxCommon_ = DirectXCommon::GetInstance();
 	engine_ = BlueMoon::GetInstance();

@@ -46,26 +46,26 @@
     <Filter Include="ソース ファイル\math">
       <UniqueIdentifier>{41fe63a7-28b5-4705-acb7-a9f6f2bef0f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Object">
-      <UniqueIdentifier>{72d1f758-0125-4486-8d19-41834779423d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Object\2d">
-      <UniqueIdentifier>{2f8d9060-1d52-4ee0-b919-0eb41b3bc5d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Object\3d">
-      <UniqueIdentifier>{d240ce5b-34da-4c87-9b1b-74dfb7b9f12c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Object">
-      <UniqueIdentifier>{5735e579-7de8-4e45-aad1-45177cff715b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Object\3d">
-      <UniqueIdentifier>{eb8860ad-af2f-49f5-865e-93a3da41262f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Object\2d">
-      <UniqueIdentifier>{bbf892c2-50ce-42cf-9ff2-f21ac949b439}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Scenes">
       <UniqueIdentifier>{fc2d7f0b-9f9e-4c1a-ae63-0c7391e4e232}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\Object">
+      <UniqueIdentifier>{72d1f758-0125-4486-8d19-41834779423d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\Object\2d">
+      <UniqueIdentifier>{2f8d9060-1d52-4ee0-b919-0eb41b3bc5d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base\Object\3d">
+      <UniqueIdentifier>{d240ce5b-34da-4c87-9b1b-74dfb7b9f12c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\Object">
+      <UniqueIdentifier>{5735e579-7de8-4e45-aad1-45177cff715b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\Object\3d">
+      <UniqueIdentifier>{eb8860ad-af2f-49f5-865e-93a3da41262f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base\Object\2d">
+      <UniqueIdentifier>{bbf892c2-50ce-42cf-9ff2-f21ac949b439}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -106,16 +106,16 @@
       <Filter>ソース ファイル\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Model.cpp">
-      <Filter>ソース ファイル\Object\3d</Filter>
+      <Filter>ソース ファイル\base\Object\3d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Sphere.cpp">
-      <Filter>ソース ファイル\Object\3d</Filter>
+      <Filter>ソース ファイル\base\Object\3d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\2d\Sprite.cpp">
-      <Filter>ソース ファイル\Object\2d</Filter>
+      <Filter>ソース ファイル\base\Object\2d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\2d\Triangle.cpp">
-      <Filter>ソース ファイル\Object\2d</Filter>
+      <Filter>ソース ファイル\base\Object\2d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\base\BlueMoon.cpp">
       <Filter>ソース ファイル\base</Filter>
@@ -130,10 +130,10 @@
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\ViewProjection.cpp">
-      <Filter>ソース ファイル\Object\3d</Filter>
+      <Filter>ソース ファイル\base\Object\3d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\worldTransform.cpp">
-      <Filter>ソース ファイル\Object\3d</Filter>
+      <Filter>ソース ファイル\base\Object\3d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\MyUtility\combert.cpp">
       <Filter>ソース ファイル\Utility</Filter>
@@ -142,7 +142,7 @@
       <Filter>ソース ファイル\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Plane.cpp">
-      <Filter>ソース ファイル\Object\3d</Filter>
+      <Filter>ソース ファイル\base\Object\3d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Manager\Audio\Audio.cpp">
       <Filter>ソース ファイル\Manager</Filter>
@@ -158,6 +158,12 @@
     </ClCompile>
     <ClCompile Include="Engine\Math\Mymath.cpp">
       <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="game\Objects\SkyDome\SkyDome.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Manager\Lights\DirectionalLight.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -198,13 +204,13 @@
       <Filter>ヘッダー ファイル\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2d\Sprite.h">
-      <Filter>ヘッダー ファイル\Object\2d</Filter>
+      <Filter>ヘッダー ファイル\base\Object\2d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2d\Triangle.h">
-      <Filter>ヘッダー ファイル\Object\2d</Filter>
+      <Filter>ヘッダー ファイル\base\Object\2d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Sphere.h">
-      <Filter>ヘッダー ファイル\Object\3d</Filter>
+      <Filter>ヘッダー ファイル\base\Object\3d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\base\WinApp.h">
       <Filter>ヘッダー ファイル\base</Filter>
@@ -219,10 +225,10 @@
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\ViewProjection.h">
-      <Filter>ヘッダー ファイル\Object\3d</Filter>
+      <Filter>ヘッダー ファイル\base\Object\3d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\worldTransform.h">
-      <Filter>ヘッダー ファイル\Object\3d</Filter>
+      <Filter>ヘッダー ファイル\base\Object\3d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\MyUtility\combert.h">
       <Filter>ヘッダー ファイル\Utility</Filter>
@@ -243,19 +249,25 @@
       <Filter>ヘッダー ファイル\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Model.h">
-      <Filter>ヘッダー ファイル\Object\3d</Filter>
+      <Filter>ヘッダー ファイル\base\Object\3d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Manager\Collision\CollisionManager.h">
       <Filter>ヘッダー ファイル\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Plane.h">
-      <Filter>ヘッダー ファイル\Object\2d</Filter>
+      <Filter>ヘッダー ファイル\base\Object\2d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Manager\GlobalVariables\GlobalVariables.h">
       <Filter>ヘッダー ファイル\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Math\MyMath.h">
       <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="game\Objects\SkyDome\SkyDome.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Manager\Lights\DirectionalLight.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

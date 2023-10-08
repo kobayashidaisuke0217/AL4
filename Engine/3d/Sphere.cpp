@@ -5,17 +5,18 @@ void Sphere::Initialize()
 	dxCommon_ =DirectXCommon::GetInstance();
 	engine_ = BlueMoon::GetInstance();
 	textureManager_ = Texturemanager::GetInstance();
+	directionalLight_=DirectionalLight::GetInstance();
 	kSubDivision = 32;
 	vertexCount = kSubDivision*kSubDivision*6;
 	CreateVartexData();
 	
 	SetColor();
-	CreateDictionalLight();
+	
 }
 
 
 
-void Sphere::Draw(const Vector4& material, const WorldTransform& transform, uint32_t texIndex, const ViewProjection& viewProjection, const DirectionalLight& light)
+void Sphere::Draw(const Vector4& material, const WorldTransform& transform, uint32_t texIndex, const ViewProjection& viewProjection)
 {
 
 	
@@ -30,7 +31,7 @@ void Sphere::Draw(const Vector4& material, const WorldTransform& transform, uint
 		*materialData_ = { material,true };
 		materialData_->uvTransform = uvtransformMtrix;
 		
-		*directionalLight_ = light;
+		
 		dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 		//形状を設定。PS0にせっていしているものとはまた別。同じものを設定すると考えておけばいい
 		dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -41,7 +42,7 @@ void Sphere::Draw(const Vector4& material, const WorldTransform& transform, uint
 		//viewProjection
 		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 		//Light
-		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLight_->GetResource()->GetGPUVirtualAddress());
 		//texture
 		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texIndex));
 		//Draw
@@ -133,12 +134,7 @@ void Sphere::TransformMatrix()
 	wvpResource_->Map(0, NULL, reinterpret_cast<void**>(&wvpData_));
 	wvpData_->WVP = MakeIdentity4x4();
 }
-void Sphere::CreateDictionalLight( )
-{
-	directionalLightResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(DirectionalLight));
-	directionalLightResource_->Map(0, NULL, reinterpret_cast<void**>(&directionalLight_));
-	
-}
+
 void Sphere::SetColor() {
 	materialResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(Material));
 	

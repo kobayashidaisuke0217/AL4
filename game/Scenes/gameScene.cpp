@@ -14,10 +14,10 @@ void GameScene::Initialize()
 
 	textureManager_ = Texturemanager::GetInstance();
 	input_ = Input::GetInstance();
-
+	int a= textureManager_->Load("Resource/tex.png");
 	viewProjection_.Initialize();
 	viewProjection_.translation_ = { 0.0f,0.0f,-5.0f };
-	directionalLight_ = { {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},1.0f };
+
 	GlovalVariables* globalVariables{};
 	globalVariables = GlovalVariables::GetInstance();
 	blendCount_ = 0;
@@ -31,7 +31,7 @@ void GameScene::Initialize()
 void GameScene::Update()
 {
 	
-	directionalLight_.direction = Normalise(directionalLight_.direction);
+
 	
 	XINPUT_STATE joystate;
 	if (input_->GetJoystickState(0, joystate)) {
@@ -41,7 +41,7 @@ void GameScene::Update()
 
 	viewProjection_.UpdateMatrix();
 	viewProjection_.TransferMatrix();
-
+	
 	ImGui::Begin("Scene");
 	
 	ImGui::InputInt("blendCount", &blendCount_);
@@ -67,8 +67,7 @@ void GameScene::Draw()
 
 void GameScene::Draw3D()
 {
-	
-	
+
 	
 }
 

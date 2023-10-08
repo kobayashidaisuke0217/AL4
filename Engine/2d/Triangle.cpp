@@ -2,14 +2,15 @@
 #include <assert.h>
 #include "BlueMoon.h"
 
-void Triangle::Initialize( const DirectionalLight& light)
+void Triangle::Initialize( )
 {
 	direct_ = DirectXCommon::GetInstance();
 	Engine = BlueMoon::GetInstance();
 	textureManager_ = Texturemanager::GetInstance();
+	directionalLight_ = DirectionalLight::GetInstance();
 	SettingVertex( );
 	SetColor();
-	CreateDictionalLight(light);
+
 }
 void Triangle::TransformMatrix()
 {
@@ -49,7 +50,7 @@ void Triangle::Draw(const WorldTransform& transform, const ViewProjection& viewP
 	
 	direct_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	//Light
-	direct_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+	direct_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLight_->GetResource()->GetGPUVirtualAddress());
 	
 	//texture
 	direct_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(0));
@@ -63,12 +64,7 @@ void Triangle::Finalize()
 {
 	
 }
-void Triangle::CreateDictionalLight(const DirectionalLight& light)
-{
-	directionalLightResource_ = DirectXCommon::CreateBufferResource(direct_->GetDevice().Get(), sizeof(DirectionalLight));
-	directionalLightResource_->Map(0, NULL, reinterpret_cast<void**>(&directionalLight_));
-	*directionalLight_ = light;
-}
+
 void Triangle::SettingVertex() {
 
 	vertexResource_ = DirectXCommon::CreateBufferResource(direct_->GetDevice().Get(), sizeof(VertexData) * 3);

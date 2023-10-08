@@ -23,7 +23,7 @@ void SceneManager::Run() {
 		imguiManager_->Begin();
         input->Update();
 		glovalVariables_->Update();
-		
+		directionallight_->Update();
 		blueMoon_->BeginFrame();
 		
 		preSceneNum_ = sceneNum_;
@@ -68,6 +68,8 @@ void SceneManager::Initialize()
 	imguiManager_->Initialize(winApp_, blueMoon_->GetDirectXCommon());
 	glovalVariables_ = GlovalVariables::GetInstance();
 	glovalVariables_->LoadFiles();
+	directionallight_ = DirectionalLight::GetInstance();
+	directionallight_->Initialize();
 	sceneArr_[TITLE_SCENE] = std::make_unique <TitleScene>();
 	sceneArr_[GAME_SCENE] = std::make_unique <GameScene>();
 	sceneNum_ = TITLE_SCENE;
