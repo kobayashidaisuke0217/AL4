@@ -40,6 +40,9 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
+	ImGui::Begin("TITLE");
+	ImGui::Text("PushA:Start");
+	ImGui::End();
 }
 
 void TitleScene::Finalize()

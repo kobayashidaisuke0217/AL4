@@ -49,7 +49,7 @@ struct Transformmatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
 };
-struct DirectionalLight {
+struct DirectionalLightData {
 	Vector4 color;//ライトの色
 	Vector3 direction;//ライトの向き
 	float intensity;//輝度

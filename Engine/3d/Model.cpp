@@ -8,13 +8,13 @@ void Model::Initialize( const std::string& directoryPath, const std::string& fil
     textureManager_ = Texturemanager::GetInstance();
     modelData_ = LoadObjFile(directoryPath, filename);
     texture_ = textureManager_->Load(modelData_.material.textureFilePath);
-  
+  directionalLight_ = DirectionalLight::GetInstance();
 	CreateVartexData();
 	SetColor();
-	CreateDictionalLight();
+    
 }
 
-void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProjection, const DirectionalLight& light)
+void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProjection)
 {
     Transform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
 
@@ -22,7 +22,7 @@ void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProj
     uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.z));
     uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
 
-    *directionalLight_ = light;
+   
     *material_ = { {1.0f,1.0f,1.0f,1.0f},true };
     material_->uvTransform = uvtransformMtrix;
   
@@ -36,7 +36,7 @@ void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProj
     //viewProjection
     dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
     //Light
-    dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+    dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLight_->GetResource()->GetGPUVirtualAddress());
     //texture
     dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texture_));
     //Draw
@@ -184,9 +184,4 @@ void Model::TransformMatrix()
 	wvpData_->WVP = MakeIdentity4x4();
 }
 
-void Model::CreateDictionalLight()
-{
-	directionalLightResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(DirectionalLight));
-	directionalLightResource_->Map(0, NULL, reinterpret_cast<void**>(&directionalLight_));
-   
-}
+

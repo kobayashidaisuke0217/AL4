@@ -45,10 +45,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)/;$(ProjectDir)/Engine/3d;$(ProjectDir)/Engine/base;$(ProjectDir)/Engine/2d;$(ProjectDir)/Engine/MyUtility;$(ProjectDir)/Engine/Manager/Texture;$(ProjectDir)/Engine/Manager/Input;$(ProjectDir)/Engine/Manager/Audio;$(ProjectDir)/Engine/Manager/Collision;$(ProjectDir)/externals/nlohmann;$(ProjectDir)/Engine/Manager/GlobalVariables;$(ProjectDir)/Engine/Math</IncludePath>
+    <IncludePath>$(SolutionDir)/;$(ProjectDir)/Engine/3d;$(ProjectDir)/Engine/base;$(ProjectDir)/Engine/2d;$(ProjectDir)/Engine/MyUtility;$(ProjectDir)/Engine/Manager/Texture;$(ProjectDir)/Engine/Manager/Input;$(ProjectDir)/Engine/Manager/Audio;$(ProjectDir)/Engine/Manager/Collision;$(ProjectDir)/externals/nlohmann;$(ProjectDir)/Engine/Manager/GlobalVariables;$(ProjectDir)/Engine/Math;$(ProjectDir)/Engine/Manager/Lights</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)/;$(ProjectDir)/Engine/3d;$(ProjectDir)/Engine/base;$(ProjectDir)/Engine/2d;$(ProjectDir)/Engine/MyUtility;$(ProjectDir)/Engine/Manager/Texture;$(ProjectDir)/Engine/Manager/Input;$(ProjectDir)/Engine/Manager/Audio;$(ProjectDir)/Engine/Manager/Collision;$(ProjectDir)/externals/nlohmann;$(ProjectDir)/Engine/Manager/GlobalVariables;$(ProjectDir)/Engine/Math</IncludePath>
+    <IncludePath>$(SolutionDir)/;$(ProjectDir)/Engine/3d;$(ProjectDir)/Engine/base;$(ProjectDir)/Engine/2d;$(ProjectDir)/Engine/MyUtility;$(ProjectDir)/Engine/Manager/Texture;$(ProjectDir)/Engine/Manager/Input;$(ProjectDir)/Engine/Manager/Audio;$(ProjectDir)/Engine/Manager/Collision;$(ProjectDir)/externals/nlohmann;$(ProjectDir)/Engine/Manager/GlobalVariables;$(ProjectDir)/Engine/Math;$(ProjectDir)/Engine/Manager/Lights</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -114,6 +114,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Manager\Collision\CollisionManager.cpp" />
     <ClCompile Include="Engine\Manager\GlobalVariables\GlobalVariables.cpp" />
     <ClCompile Include="Engine\Manager\Input\Input.cpp" />
+    <ClCompile Include="Engine\Manager\Lights\DirectionalLight.cpp" />
     <ClCompile Include="Engine\Manager\Texture\Texturemanager.cpp" />
     <ClCompile Include="Engine\Math\Mymath.cpp" />
     <ClCompile Include="Engine\MyUtility\combert.cpp" />
@@ -146,6 +147,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Disabled</Optimization>
     </ClCompile>
     <ClCompile Include="game\Manager\SceneManager.cpp" />
+    <ClCompile Include="game\Objects\SkyDome\SkyDome.cpp" />
     <ClCompile Include="game\Scenes\gameScene.cpp" />
     <ClCompile Include="game\Scenes\Iscene.cpp" />
     <ClCompile Include="game\Scenes\TitleScene.cpp" />
@@ -169,6 +171,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Manager\Collision\CollisionManager.h" />
     <ClInclude Include="Engine\Manager\GlobalVariables\GlobalVariables.h" />
     <ClInclude Include="Engine\Manager\Input\Input.h" />
+    <ClInclude Include="Engine\Manager\Lights\DirectionalLight.h" />
     <ClInclude Include="Engine\Manager\Texture\Texturemanager.h" />
     <ClInclude Include="Engine\Math\MyMath.h" />
     <ClInclude Include="Engine\MyUtility\combert.h" />
@@ -181,6 +184,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="game\Manager\SceneManager.h" />
+    <ClInclude Include="game\Objects\SkyDome\SkyDome.h" />
     <ClInclude Include="game\Scenes\gameScene.h" />
     <ClInclude Include="game\Scenes\Iscene.h" />
     <ClInclude Include="game\Scenes\TitleScene.h" />

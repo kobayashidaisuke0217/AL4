@@ -29,7 +29,7 @@ private:
 	Input* input_;
 	
 	ViewProjection viewProjection_;
-
+	
 	//Light
 	DirectionalLight directionalLight_;
 	int blendCount_;

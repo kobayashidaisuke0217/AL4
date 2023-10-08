@@ -6,6 +6,7 @@
 #include "Audio.h"
 #include "GlobalVariables.h"
 #include "ImGuiManger.h"
+#include"DirectionalLight.h"
 #pragma endregion
 #pragma region シーン
 #include <game/Scenes/Iscene.h>
@@ -34,6 +35,7 @@ private:
 	std::unique_ptr<Iscene> sceneArr_[2];
 	GlovalVariables* glovalVariables_;
 	ImGuiManger* imguiManager_;
+	DirectionalLight* directionallight_;
 	int sceneNum_;
 	int preSceneNum_;
 
