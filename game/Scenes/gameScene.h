@@ -11,6 +11,10 @@
 #include "ViewProjection.h"
 #include "Texturemanager.h"
 #include "GlobalVariables.h"
+#include "SkyDome.h"
+#include "player.h"
+#include"FollowCamera.h"
+using namespace std;
 class GameScene:public Iscene
 {
 public:
@@ -21,20 +25,25 @@ public:
 	void Draw()override;
 	void Finalize()override;
 private:
-
+#pragma region 基本機能
 	BlueMoon* blueMoon_;
 	DirectXCommon* directXCommon_;
 	Sprite* sprite_;
 	Texturemanager* textureManager_;
 	Input* input_;
-	
 	ViewProjection viewProjection_;
-	
-	//Light
-	DirectionalLight directionalLight_;
 	int blendCount_;
 	void Draw2D();
 	void Draw3D();
 	void ApplyGlobalVariables();
+#pragma endregion
+#pragma region ゲームの機能
+	
+	unique_ptr<SkyDome> skyDome_=nullptr;
+	unique_ptr<Model> skyDomeModel_ = nullptr;
+	unique_ptr<Model> playerModel_ = nullptr;
+	unique_ptr<Player> player_;
+	unique_ptr<FollowCamera> followCamera_;
+#pragma endregion
 };
 
