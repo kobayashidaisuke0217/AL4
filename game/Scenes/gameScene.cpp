@@ -27,7 +27,8 @@ void GameScene::Initialize()
 	skyDomeModel_ .reset( Model::CreateModelFromObj("Resource","skyDome.obj"));
 	skyDome_ = make_unique<SkyDome>();
 	skyDome_->Initialize(skyDomeModel_.get());
-
+	groundmanager_ = make_unique<groundManager>();
+	groundmanager_->Initialize();
 
 	GlovalVariables* globalVariables{};
 	globalVariables = GlovalVariables::GetInstance();
@@ -42,10 +43,17 @@ void GameScene::Initialize()
 void GameScene::Update()
 {
 	player_->Update();
-
+	if (player_->isGameover() == true) {
+		Initialize();
+	}
+	player_->isHit_ = false;
+	groundmanager_->Update();
+	for (int i = 0; i < 2; i++) {
+		if (IsCollision(groundmanager_->GetOBB(i), player_->GetStructSphere())) {
+			player_->isHit_ = true;
+		}
+	}
 	
-	
-
 	viewProjection_.UpdateMatrix();
 	followCamera_->Update();
 	viewProjection_.matView = followCamera_->GetViewProjection().matView;
@@ -79,6 +87,7 @@ void GameScene::Draw3D()
 {
 	skyDome_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
+	groundmanager_->Draw(viewProjection_);
 }
 
 void GameScene::ApplyGlobalVariables()
