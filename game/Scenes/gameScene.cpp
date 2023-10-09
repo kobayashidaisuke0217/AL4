@@ -17,6 +17,17 @@ void GameScene::Initialize()
 	int a= textureManager_->Load("Resource/tex.png");
 	viewProjection_.Initialize();
 	viewProjection_.translation_ = { 0.0f,0.0f,-5.0f };
+	playerModel_.reset(Model::CreateModelFromObj("Resource", "Cube.obj"));
+	player_ = make_unique<Player>();
+	player_->Initialize(playerModel_.get());
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();
+	followCamera_->SetTarget(&player_->GetWorldTransform());
+	player_->SetViewProjection(&followCamera_->GetViewProjection());
+	skyDomeModel_ .reset( Model::CreateModelFromObj("Resource","skyDome.obj"));
+	skyDome_ = make_unique<SkyDome>();
+	skyDome_->Initialize(skyDomeModel_.get());
+
 
 	GlovalVariables* globalVariables{};
 	globalVariables = GlovalVariables::GetInstance();
@@ -30,16 +41,15 @@ void GameScene::Initialize()
 
 void GameScene::Update()
 {
-	
+	player_->Update();
 
 	
-	XINPUT_STATE joystate;
-	if (input_->GetJoystickState(0, joystate)) {
-		viewProjection_.rotation_.x+= (float)joystate.Gamepad.sThumbRX / SHRT_MAX * 5.0f;
-		viewProjection_.rotation_.y -= (float)joystate.Gamepad.sThumbRY / SHRT_MAX * 5.0f;
-	}
+	
 
 	viewProjection_.UpdateMatrix();
+	followCamera_->Update();
+	viewProjection_.matView = followCamera_->GetViewProjection().matView;
+	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 	viewProjection_.TransferMatrix();
 	
 	ImGui::Begin("Scene");
@@ -67,8 +77,8 @@ void GameScene::Draw()
 
 void GameScene::Draw3D()
 {
-
-	
+	skyDome_->Draw(viewProjection_);
+	player_->Draw(viewProjection_);
 }
 
 void GameScene::ApplyGlobalVariables()
