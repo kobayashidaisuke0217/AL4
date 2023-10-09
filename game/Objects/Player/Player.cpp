@@ -5,10 +5,24 @@ void Player::Initialize( Model* model)
 	worldTransform_.Initialize();
 	input_ = Input::GetInstance();
 	model_ = model;
+	isHit_ = false;
 }
 
 void Player::Update()
 {
+	if (worldTransform_.translation_.y < -10.0f) {
+		gameOver = true;
+	}
+	if (!isHit_||worldTransform_.translation_.y<-0.1f) {
+		IsFall();
+	}
+	ImGui::Begin("Plane");
+	ImGui::DragFloat3("scale", &worldTransform_.scale_.x);
+	ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x);
+	ImGui::DragFloat3("translate", &worldTransform_.translation_.x);
+	ImGui::End();
+	structSphere_.center = worldTransform_.GetWorldPos();
+	structSphere_.radius = 1.5f;
 	Move();
 	worldTransform_.UpdateMatrix();
 }
@@ -16,6 +30,11 @@ void Player::Update()
 void Player::Draw(const ViewProjection& view)
 {
 	model_->Draw(worldTransform_, view);
+}
+
+void Player::IsFall()
+{
+	worldTransform_.translation_.y -= 0.1f;
 }
 
 void Player::Move()

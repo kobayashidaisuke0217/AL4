@@ -38,4 +38,6 @@ struct WorldTransform {
 	void TransferMatrix();
 
 	void UpdateMatrix();
+
+	Vector3 GetWorldPos();
 };

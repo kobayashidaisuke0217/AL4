@@ -14,6 +14,7 @@
 #include "SkyDome.h"
 #include "player.h"
 #include"FollowCamera.h"
+#include "groundManager.h"
 using namespace std;
 class GameScene:public Iscene
 {
@@ -44,6 +45,8 @@ private:
 	unique_ptr<Model> playerModel_ = nullptr;
 	unique_ptr<Player> player_;
 	unique_ptr<FollowCamera> followCamera_;
+	//unique_ptr<ground> ground_;
+	unique_ptr<groundManager> groundmanager_;
 #pragma endregion
 };
 
