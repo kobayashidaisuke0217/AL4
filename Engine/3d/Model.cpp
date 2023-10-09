@@ -23,7 +23,7 @@ void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProj
     uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
 
    
-    *material_ = { {1.0f,1.0f,1.0f,1.0f},true };
+    *material_ = { color,true };
     material_->uvTransform = uvtransformMtrix;
   
     dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView); 

@@ -20,6 +20,7 @@ public:
 	ModelData modelData_;
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
 	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath,const std::string&filename);
+	void SetColor(Vector4 col) { color = col; }
 private:
 	Texturemanager* textureManager_;
 	DirectXCommon* dxCommon_;
@@ -33,7 +34,7 @@ private:
 	Material* material_;
 	BlueMoon* engine_;
 	uint32_t texture_;
-	
+	Vector4 color = { 1.0f,1.0f,1.0f,1.0f };
 	DirectionalLight* directionalLight_;
 	
 	
