@@ -9,12 +9,15 @@
 #include "model.h"
 #include "worldTransform.h"
 #include "ViewProjection.h"
+#include "CollisionManager.h"
 #include "Texturemanager.h"
 #include "GlobalVariables.h"
 #include "SkyDome.h"
 #include "player.h"
 #include"FollowCamera.h"
 #include "groundManager.h"
+#include "Goal.h"
+#include "Enemy.h"
 using namespace std;
 class GameScene:public Iscene
 {
@@ -39,7 +42,7 @@ private:
 	void ApplyGlobalVariables();
 #pragma endregion
 #pragma region ゲームの機能
-	
+	int count_;
 	unique_ptr<SkyDome> skyDome_=nullptr;
 	unique_ptr<Model> skyDomeModel_ = nullptr;
 	unique_ptr<Model> playerModel_ = nullptr;
@@ -47,6 +50,13 @@ private:
 	unique_ptr<FollowCamera> followCamera_;
 	//unique_ptr<ground> ground_;
 	unique_ptr<groundManager> groundmanager_;
+	unique_ptr<CollisionManager> collisionManager_;
+	unique_ptr<Goal> goal_;
+	unique_ptr<Enemy>enemy_;
+	std::unique_ptr<Model> enemyHeadModel = nullptr;
+	std::unique_ptr<Model> enemyBodyModel = nullptr;
+	std::unique_ptr<Model> enemyL_armModel = nullptr;
+	std::unique_ptr<Model> enemyR_armModel = nullptr;
 #pragma endregion
 };
 
