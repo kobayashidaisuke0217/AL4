@@ -8,7 +8,7 @@ void ground::Initialize(Model*model,Vector3 translation, Vector3 Scale)
 	worldTtansform_.scale_ = Scale;
 	texhandle_ = texturemanager_->Load("Resource/wi.png");
 	groundModel_ = model;
-	groundModel_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+	groundModel_->SetColor({ 0.4f,1.0f,0.0f,1.0f });
 }
 void ground::Update()
 {
