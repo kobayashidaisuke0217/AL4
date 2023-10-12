@@ -20,24 +20,7 @@ void Player::Update()
 	if (!isHit_ || worldTransform_.translation_.y < -0.1f) {
 		IsFall();
 	}
-	if (input_->PushKey(DIK_W)) {
-		worldTransform_.rotation_.y += 1.58f;
-	}
-	if (input_->PushKey(DIK_S)) {
-		worldTransform_.rotation_.y -= 1.58f;
-	}
-	if (input_->PushKey(DIK_A)) {
-		worldTransform_.rotation_.z += 1.58f;
-	}
-	if (input_->PushKey(DIK_D)) {
-		worldTransform_.rotation_.z -= 1.58f;
-	}
-	if (worldTransform_.rotation_.y >= 6.0f || worldTransform_.rotation_.y <= -6.0f) {
-		worldTransform_.rotation_.y = 0.0f;
-	}
-	if (worldTransform_.rotation_.z >= 6.0f || worldTransform_.rotation_.z <= -6.0f) {
-		worldTransform_.rotation_.z = 0.0f;
-	}
+	
 	model_->SetColor(color);
 	structSphere_.center = worldTransform_.GetWorldPos();
 	structSphere_.radius = 1.5f;
@@ -87,7 +70,7 @@ void Player::IsCollision(const WorldTransform& worldtransform)
 
 void Player::Move()
 {
-	XINPUT_STATE joystate;
+	/*XINPUT_STATE joystate;
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kCharctorSpeed = 0.3f;
 		Vector3 move = {
@@ -98,5 +81,5 @@ void Player::Move()
 		move = TransformNormal(move, rotateMatrix);
 		worldTransform_.translation_ = Add(move, worldTransform_.translation_);
 		worldTransform_.rotation_.y = std::atan2(move.x, move.z);
-	}
+	}*/
 }
