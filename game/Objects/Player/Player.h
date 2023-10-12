@@ -19,8 +19,11 @@ public:
 	bool isHit_;
 	bool isGameover() { return gameOver; }
 	void OnCollision() override;
+	void Setparent(const WorldTransform* parent);
+	void IsCollision(const WorldTransform& worldtransform );
+	void DeleteParent() { worldTransform_.parent_ = nullptr; worldTransform_.translation_ = worldTransform_.GetWorldPos(); }
 private:
-	
+	Vector4 color;
 	Input* input_ = nullptr;
 	const ViewProjection* viewProjection_ = nullptr;
 	Model* model_;

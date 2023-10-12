@@ -18,7 +18,7 @@ void GameScene::Initialize()
 	int a= textureManager_->Load("Resource/tex.png");
 	viewProjection_.Initialize();
 	viewProjection_.translation_ = { 0.0f,0.0f,-5.0f };
-	playerModel_.reset(Model::CreateModelFromObj("Resource", "Cube.obj"));
+	playerModel_.reset(Model::CreateModelFromObj("Resource", "saikoro.obj"));
 	player_ = make_unique<Player>();
 	player_->Initialize(playerModel_.get());
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -52,19 +52,33 @@ void GameScene::Initialize()
 void GameScene::Update()
 {
 	count_++;
+	groundmanager_->Update();
 	player_->Update();
 	enemy_->Update();
 	if (player_->isGameover() == true) {
 		Initialize();
 	}
 	player_->isHit_ = false;
-	groundmanager_->Update();
+	
 	goal_->Update();
-	for (int i = 0; i < 3; i++) {
-		if (IsCollision(groundmanager_->GetOBB(i), player_->GetStructSphere())) {
-			player_->isHit_ = true;
+	
+		for (int i = 0; i < 2; i++) {
+			if (IsCollision(groundmanager_->GetOBB(i), player_->GetStructSphere())) {
+				player_->isHit_ = true;
+
+			
+			}
 		}
-	}
+		if (count_ >= 5) {
+			if (IsCollision(groundmanager_->GetOBB(2), player_->GetStructSphere())) {
+				player_->isHit_ = true;
+				player_->IsCollision(groundmanager_->GetGround()->GetWorldTransform());
+			}
+			else {
+				player_->DeleteParent();
+			}
+		}
+	
 
 	viewProjection_.UpdateMatrix();
 	followCamera_->Update();

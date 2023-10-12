@@ -13,6 +13,7 @@ public:
 	void Update();
 	void Draw(const ViewProjection& view);
 	OBB GetOBB(int num) { return Obb_[num]; }
+    MoveGround* GetGround() { return moveGround_.get(); }
 private:
 	list<ground*> groundList_;
 	unique_ptr<ground>ground_[2];
