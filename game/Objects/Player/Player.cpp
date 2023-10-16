@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "ImguiManger.h"
+#include "mymath.h"
 void Player::Initialize( Model* model)
 {
 	worldTransform_.Initialize();
@@ -9,7 +10,9 @@ void Player::Initialize( Model* model)
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributePlayer);
 	SetCollisionMask(~CollisionConfig::kCollisionAttributePlayer);
 	color={ 1.0f,1.0f,1.0f,1.0f };
-	
+	moveSpeed = 0.0f;
+	goalRotate_ = { 0.0f,0.0f,0.0f };
+	startRotate_ = { 0.0f,0.0f,0.0f };
 }
 
 void Player::Update()
@@ -70,16 +73,76 @@ void Player::IsCollision(const WorldTransform& worldtransform)
 
 void Player::Move()
 {
-	/*XINPUT_STATE joystate;
-	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-		const float kCharctorSpeed = 0.3f;
-		Vector3 move = {
-			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
-			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
-		move = Multiply(kCharctorSpeed, Normalise(move));
-		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-		move = TransformNormal(move, rotateMatrix);
-		worldTransform_.translation_ = Add(move, worldTransform_.translation_);
-		worldTransform_.rotation_.y = std::atan2(move.x, move.z);
+	
+	if (input_->PushKey(DIK_W)&&MoveFlag==false) {
+		quaternion_ = createQuaternion(rad, { 1.0f,0.0f,0.0f });
+		Matrix4x4 quaternionMat = quaternionToMatrix(quaternion_);
+		Matrix4x4 goalmatrix = Multiply(worldTransform_.matWorld_, quaternionMat);
+
+		Vector3 Rotate = matrixToEulerAngles(goalmatrix);//quaternionToEulerAngles(quaternion_);
+		goalRotate_ = worldTransform_.rotation_+Rotate;
+		startRotate_ = worldTransform_.rotation_;
+		MoveFlag = true;
+	}
+	if (input_->PushKey(DIK_S) && MoveFlag == false) {
+		quaternion_ = createQuaternion(rad, { -1.0f,0.0f,0.0f });
+		Matrix4x4 quaternionMat = quaternionToMatrix(quaternion_);
+		Matrix4x4 goalmatrix = Multiply(worldTransform_.matWorld_, quaternionMat);
+
+		Vector3 Rotate = matrixToEulerAngles(goalmatrix);//quaternionToEulerAngles(quaternion_);
+		goalRotate_ = worldTransform_.rotation_ + Rotate;
+		startRotate_ = worldTransform_.rotation_;
+		MoveFlag = true;
+	}
+	if (input_->PushKey(DIK_A) && MoveFlag == false) {
+		quaternion_ = createQuaternion(rad, { 0.0f,0.0f,1.0f });
+		Matrix4x4 quaternionMat = quaternionToMatrix(quaternion_);
+		Matrix4x4 goalmatrix = Multiply(worldTransform_.matWorld_, quaternionMat);
+
+		Vector3 Rotate = matrixToEulerAngles(goalmatrix);//quaternionToEulerAngles(quaternion_);
+		goalRotate_ = worldTransform_.rotation_ + Rotate;
+		startRotate_ = worldTransform_.rotation_;
+		MoveFlag = true;
+	}
+	if (input_->PushKey(DIK_D) && MoveFlag == false) {
+	
+		quaternion_ = createQuaternion(rad, { 0.0f,0.0f,-1.0f });
+		Matrix4x4 quaternionMat = quaternionToMatrix(quaternion_);
+		Matrix4x4 goalmatrix = Multiply(worldTransform_.matWorld_, quaternionMat);
+
+		Vector3 Rotate = matrixToEulerAngles(goalmatrix);//quaternionToEulerAngles(quaternion_);
+		goalRotate_ = worldTransform_.rotation_ + Rotate;
+		startRotate_ = worldTransform_.rotation_;
+		MoveFlag = true;
+	}
+	if (input_->PushKey(DIK_SPACE)) {
+		worldTransform_.rotation_.x += 1.58f;
+	}
+	if (input_->PushKey(DIK_RETURN)) {
+		worldTransform_.rotation_.x -= 1.58f;
+	}
+	/*if (worldTransform_.rotation_.y >= 6.0f || worldTransform_.rotation_.y <= -6.0f) {
+		worldTransform_.rotation_.y = 0.0f;
+	}
+	if (worldTransform_.rotation_.z >= 6.0f || worldTransform_.rotation_.z <= -6.0f) {
+		worldTransform_.rotation_.z = 0.0f;
+	}
+	if (worldTransform_.rotation_.x >= 6.0f || worldTransform_.rotation_.x <= -6.0f) {
+		worldTransform_.rotation_.x = 0.0f;
 	}*/
+
+	
+	if (MoveFlag == true) {
+		if (moveSpeed <= 1.0f) {
+			moveSpeed += 0.05f;
+		}else
+		 {
+			moveSpeed = 1.0f;
+		}
+		worldTransform_.rotation_ = Lerp(moveSpeed, startRotate_, goalRotate_);
+		if (moveSpeed >= 1.0f) {
+			MoveFlag = false;
+			moveSpeed = 0.0f;
+		}
+	}
 }

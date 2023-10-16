@@ -524,3 +524,34 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2) {
 	result.z = (v1.x * v2.y - v1.y * v2.x);
 	return result;
 }
+
+Quaternion createQuaternion(float Radian, Vector3 axis)
+{
+	Quaternion quat;
+	float halfAngle = Radian * 0.5f;
+	float sinHalfAngle = sin(halfAngle);
+
+	quat.w = cos(halfAngle);
+	quat.x = axis.x * sinHalfAngle;
+	quat.y = axis.y * sinHalfAngle;
+	quat.z = axis.z * sinHalfAngle;
+
+	return quat;
+}
+
+Vector3 quaternionToEulerAngles(const Quaternion& quat)
+{
+	Vector3 euler;
+	// ロール (X軸周りの回転)
+	euler.x = atan2(2 * (quat.y * quat.z + quat.w * quat.x), quat.w * quat.w - quat.x * quat.x - quat.y * quat.y + quat.z * quat.z);
+
+	// ピッチ (Y軸周りの回転)
+	euler.y = asin(2 * (quat.x * quat.z - quat.w * quat.y));
+
+	// ヨー (Z軸周りの回転)
+	euler.z = atan2(2 * (quat.x * quat.y + quat.w * quat.z), quat.w * quat.w + quat.x * quat.x - quat.y * quat.y - quat.z * quat.z);
+
+	return euler;
+}
+
+

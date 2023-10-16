@@ -30,6 +30,13 @@ private:
 	StructSphere structSphere_;
 	bool gameOver = false;
 	WorldTransform worldTransform_;
+	Vector3 goalRotate_;
+	Vector3 startRotate_;
+	bool MoveFlag = false;
+	float moveSpeed;
+	//!< 回転角度(90度の回転）
+	float rad = 90 * 3.14f / 180;
+	Quaternion quaternion_;
 private:
 	void Move();
 

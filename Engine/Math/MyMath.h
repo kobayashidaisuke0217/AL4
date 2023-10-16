@@ -7,6 +7,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 #include <algorithm>
+const float PI = 3.1415926535f;
 struct Vector4 {
 	float x;
 	float y;
@@ -76,6 +77,11 @@ struct StructSphere {
 	Vector3 center;
 	float radius;
 };
+
+struct Quaternion {
+	float w, x, y, z;
+};
+
 inline Vector3 operator-(const Vector3& v) {
 	return { -v.x, -v.y, -v.z };
 }
@@ -207,4 +213,96 @@ inline Vector3 Reflect(const Vector3& input, const Vector3& normal) {
 	r = input - 2 * Dot(input, normal) * normal;
 	r = r * 0.8f;
 	return r;
+}
+inline Vector4 MakeQuaternion(Vector3 axis, float radian) {
+	Vector4 quaternion;
+	float halfSin, halfCos;      //動かす角度の半分のsin,cos
+	float normal;
+
+	quaternion = { 0,0,0,0 };
+	// 回転軸の長さを求める
+	//λ2x+λ2y+λ2z=1方向が重要だからノルムを１に統一
+	normal = axis.x * axis.x + axis.y * axis.y + axis.z * axis.z;
+	if (normal <= 0.0f) return quaternion;
+
+	// 方向ベクトルへ（単位ベクトル：長さは1）
+	//ノルムは１という決まり事
+	//sqrtfは平方根
+	normal = 1.0f / sqrtf(normal);
+	axis.x = axis.x * normal;
+	axis.y = axis.y * normal;
+	axis.z = axis.z * normal;
+
+	//四次元ベクトル (λ.x*sinθ/2,λ.y*sinθ/2,λ.z*sinθ/2,cosθ/2)
+	halfSin = sinf(radian * 0.5f);
+	halfCos = cosf(radian * 0.5f);
+
+	quaternion.w = halfCos;
+	quaternion.x = axis.x * halfSin;
+	quaternion.y = axis.y * halfSin;
+	quaternion.z = axis.z * halfSin;
+
+	return quaternion;
+}
+Quaternion createQuaternion(float Radian, Vector3 axis);
+
+// クォータニオンからオイラー角への変換
+Vector3 quaternionToEulerAngles(const Quaternion& quat);
+
+inline Matrix4x4 quaternionToMatrix(const Quaternion& quat) {
+	Matrix4x4 result;
+	float xx = quat.x * quat.x;
+	float xy = quat.x * quat.y;
+	float xz = quat.x * quat.z;
+	float xw = quat.x * quat.w;
+
+	float yy = quat.y * quat.y;
+	float yz = quat.y * quat.z;
+	float yw = quat.y * quat.w;
+
+	float zz = quat.z * quat.z;
+	float zw = quat.z * quat.w;
+
+	result.m[0][0] = 1.0f - 2.0f * (yy + zz);
+	result.m[0][1] = 2.0f * (xy - zw);
+	result.m[0][2] = 2.0f * (xz + yw);
+	result.m[0][3] = 0.0f;
+	
+	result.m[1][0] = 2.0f * (xy + zw);
+	result.m[1][1] = 1.0f - 2.0f * (xx + zz);
+	result.m[1][2] = 2.0f * (yz - xw);
+	result.m[1][3] = 0.0f;
+	
+	result.m[2][0] = 2.0f * (xz - yw);
+	result.m[2][1] = 2.0f * (yz + xw);
+	result.m[2][2] = 1.0f - 2.0f * (xx + yy);
+	result.m[2][3] = 0.0f;
+	
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
+	return result;
+}
+inline Vector3 matrixToEulerAngles(const Matrix4x4 mat) {
+	float pitch;
+	float yaw;
+	float roll;
+	pitch = asin(-mat.m[2][0]); // ピッチ
+
+	if (cos(pitch) != 0.0f) {
+		roll = atan2(mat.m[2][1] / cos(pitch), mat.m[2][2] / cos(pitch)); // ロール
+		yaw = atan2(mat.m[1][0] / cos(pitch), mat.m[0][0] / cos(pitch));   // ヨー
+	}
+	else {
+		// ジンバルロックの場合
+		yaw = 0.0f;
+		roll = atan2(-mat.m[0][1], mat.m[1][1]);
+	}
+
+	//// ラジアンから度に変換
+	//yaw = yaw * 180.0f / PI;
+	//pitch = pitch * 180.0f / PI;
+	//roll = roll * 180.0f / PI;
+	return{ yaw,pitch,roll };
 }
