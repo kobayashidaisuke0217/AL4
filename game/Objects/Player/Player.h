@@ -30,8 +30,9 @@ private:
 	StructSphere structSphere_;
 	bool gameOver = false;
 	WorldTransform worldTransform_;
-	Vector3 goalRotate_;
-	Vector3 startRotate_;
+	Matrix4x4 goal_;
+	Matrix4x4 start_;
+	Vector3 Translation_;
 	bool MoveFlag = false;
 	float moveSpeed;
 	//!< 回転角度(90度の回転）

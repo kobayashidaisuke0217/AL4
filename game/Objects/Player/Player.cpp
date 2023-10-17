@@ -11,8 +11,9 @@ void Player::Initialize( Model* model)
 	SetCollisionMask(~CollisionConfig::kCollisionAttributePlayer);
 	color={ 1.0f,1.0f,1.0f,1.0f };
 	moveSpeed = 0.0f;
-	goalRotate_ = { 0.0f,0.0f,0.0f };
-	startRotate_ = { 0.0f,0.0f,0.0f };
+	goal_= worldTransform_.matWorld_;
+	start_ = worldTransform_.matWorld_;
+	Translation_ = worldTransform_.translation_;
 }
 
 void Player::Update()
@@ -29,11 +30,11 @@ void Player::Update()
 	structSphere_.radius = 1.5f;
 	Move();
 	ImGui::Begin("player");
-	ImGui::DragFloat4("translation", &worldTransform_.rotation_.x,0.01f);
+	ImGui::DragFloat4("translation", &Translation_.x,0.01f);
 	ImGui::End();
+	//worldTransform_.UpdateMatrix();
+
 	
-	worldTransform_.UpdateMatrix();
-	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 }
 
 void Player::Draw(const ViewProjection& view)
@@ -75,61 +76,55 @@ void Player::Move()
 {
 	
 	if (input_->PushKey(DIK_W)&&MoveFlag==false) {
-		quaternion_ = createQuaternion(rad, { 1.0f,0.0f,0.0f });
+	    Translation_.z += 1.0f;
+		quaternion_ = createQuaternion(rad, { -1.0f,0.0f,0.0f });
+		quaternion_ = Normalize(quaternion_);
 		Matrix4x4 quaternionMat = quaternionToMatrix(quaternion_);
 		Matrix4x4 goalmatrix = Multiply(worldTransform_.matWorld_, quaternionMat);
-
-		Vector3 Rotate = matrixToEulerAngles(goalmatrix);//quaternionToEulerAngles(quaternion_);
-		goalRotate_ = worldTransform_.rotation_+Rotate;
-		startRotate_ = worldTransform_.rotation_;
+		//goalmatrix = Multiply(goalmatrix, MakeTranslateMatrix(Translation_));
+		
+		goal_ = goalmatrix;
+		start_ = worldTransform_.matWorld_;
 		MoveFlag = true;
+		
 	}
 	if (input_->PushKey(DIK_S) && MoveFlag == false) {
-		quaternion_ = createQuaternion(rad, { -1.0f,0.0f,0.0f });
+		worldTransform_.translation_.z -= 1.0f;
+		quaternion_ = createQuaternion(rad, { 1.0f,0.0f,0.0f });
+		quaternion_ = Normalize(quaternion_);
 		Matrix4x4 quaternionMat = quaternionToMatrix(quaternion_);
 		Matrix4x4 goalmatrix = Multiply(worldTransform_.matWorld_, quaternionMat);
 
-		Vector3 Rotate = matrixToEulerAngles(goalmatrix);//quaternionToEulerAngles(quaternion_);
-		goalRotate_ = worldTransform_.rotation_ + Rotate;
-		startRotate_ = worldTransform_.rotation_;
+		goal_ = goalmatrix;
+		start_ = worldTransform_.matWorld_;
 		MoveFlag = true;
 	}
 	if (input_->PushKey(DIK_A) && MoveFlag == false) {
-		quaternion_ = createQuaternion(rad, { 0.0f,0.0f,1.0f });
+		worldTransform_.translation_.x -= 1.0f;
+		worldTransform_.translation_.y = 1.0f;
+		quaternion_ = createQuaternion(rad, { 0.0f,0.0f,-1.0f });
+		quaternion_ = Normalize(quaternion_);
 		Matrix4x4 quaternionMat = quaternionToMatrix(quaternion_);
 		Matrix4x4 goalmatrix = Multiply(worldTransform_.matWorld_, quaternionMat);
-
-		Vector3 Rotate = matrixToEulerAngles(goalmatrix);//quaternionToEulerAngles(quaternion_);
-		goalRotate_ = worldTransform_.rotation_ + Rotate;
-		startRotate_ = worldTransform_.rotation_;
+		
+		goal_ = goalmatrix;
+		start_ = worldTransform_.matWorld_;
 		MoveFlag = true;
 	}
 	if (input_->PushKey(DIK_D) && MoveFlag == false) {
-	
-		quaternion_ = createQuaternion(rad, { 0.0f,0.0f,-1.0f });
+		worldTransform_.translation_.x += 1.0f;
+		worldTransform_.translation_.y = 1.0f;
+		quaternion_ = createQuaternion(rad, { 0.0f,0.0f,1.0f });
+		quaternion_ = Normalize(quaternion_);
 		Matrix4x4 quaternionMat = quaternionToMatrix(quaternion_);
 		Matrix4x4 goalmatrix = Multiply(worldTransform_.matWorld_, quaternionMat);
-
-		Vector3 Rotate = matrixToEulerAngles(goalmatrix);//quaternionToEulerAngles(quaternion_);
-		goalRotate_ = worldTransform_.rotation_ + Rotate;
-		startRotate_ = worldTransform_.rotation_;
+		
+	
+		goal_ = goalmatrix;
+		start_ = worldTransform_.matWorld_;
 		MoveFlag = true;
 	}
-	if (input_->PushKey(DIK_SPACE)) {
-		worldTransform_.rotation_.x += 1.58f;
-	}
-	if (input_->PushKey(DIK_RETURN)) {
-		worldTransform_.rotation_.x -= 1.58f;
-	}
-	/*if (worldTransform_.rotation_.y >= 6.0f || worldTransform_.rotation_.y <= -6.0f) {
-		worldTransform_.rotation_.y = 0.0f;
-	}
-	if (worldTransform_.rotation_.z >= 6.0f || worldTransform_.rotation_.z <= -6.0f) {
-		worldTransform_.rotation_.z = 0.0f;
-	}
-	if (worldTransform_.rotation_.x >= 6.0f || worldTransform_.rotation_.x <= -6.0f) {
-		worldTransform_.rotation_.x = 0.0f;
-	}*/
+	
 
 	
 	if (MoveFlag == true) {
@@ -139,10 +134,14 @@ void Player::Move()
 		 {
 			moveSpeed = 1.0f;
 		}
-		worldTransform_.rotation_ = Lerp(moveSpeed, startRotate_, goalRotate_);
-		if (moveSpeed >= 1.0f) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				worldTransform_.matWorld_.m[i][j] = Lerp(moveSpeed, start_.m[i][j], goal_.m[i][j]);
+			}
+		}if (moveSpeed >= 1.0f) {
 			MoveFlag = false;
 			moveSpeed = 0.0f;
 		}
+		worldTransform_.TransferMatrix();
 	}
 }

@@ -115,6 +115,7 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 
 Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
+Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate);
 //1　行列の加法
 Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
 //２　行列の減法
@@ -146,6 +147,7 @@ float Length(const Vector3& v);
 Vector3 vectorTransform(const Vector3& vector, const Matrix4x4& matrix);
 Vector3 Slerp(float t, const Vector3& s, const Vector3& e);
 Vector3 Lerp(float t, const Vector3& s, const Vector3& e);
+float Lerp(float t, const float& s, const float& e);
 Vector3 Distance(const Vector3& v1, const Vector3& v2);
 Matrix4x4 MakeRotateMatrix(Vector3 theta);
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
@@ -305,4 +307,46 @@ inline Vector3 matrixToEulerAngles(const Matrix4x4 mat) {
 	//pitch = pitch * 180.0f / PI;
 	//roll = roll * 180.0f / PI;
 	return{ yaw,pitch,roll };
+}
+inline float LengthQuaternion(const Quaternion& q) {
+	return std::sqrtf(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
+}
+inline Quaternion Normalize(const Quaternion& q) {
+	float len = LengthQuaternion(q);
+	Quaternion result;
+	if (len != 0.0f) {
+		result.w = q.w / len;
+		result.x = q.x / len;
+		result.y = q.y / len;
+		result.z = q.z / len;
+		return result;
+	}
+	else {
+		return q;
+	}
+}
+inline Vector3 extractEulerAnglesFromRotationMatrix(const Matrix4x4& rotationMatrix) {
+	Vector3 eulerAngle;
+
+	// 回転行列の各要素を抽出
+	float m00 = rotationMatrix.m[0][0];
+	float m01 = rotationMatrix.m[0][1];
+	float m02 = rotationMatrix.m[0][2];
+	float m10 = rotationMatrix.m[1][0];
+	float m11 = rotationMatrix.m[1][1];
+	float m12 = rotationMatrix.m[1][2];
+	float m20 = rotationMatrix.m[2][0];
+	float m21 = rotationMatrix.m[2][1];
+	float m22 = rotationMatrix.m[2][2];
+
+	// Yaw（ヨー）角度の計算
+	eulerAngle.x = atan2(m01, m00);
+
+	// Pitch（ピッチ）角度の計算
+	eulerAngle.y = atan2(-m02, sqrt(m12 * m12 + m22 * m22));
+
+	// Roll（ロール）角度の計算
+	eulerAngle.z = atan2(m12, m22);
+
+	return eulerAngle;
 }

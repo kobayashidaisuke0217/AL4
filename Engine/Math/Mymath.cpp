@@ -87,7 +87,27 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	result.m[3][3] = 1;
 	return result;
 }
-
+Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate) {
+	Matrix4x4 result;
+	
+	result.m[0][0] = scale.x * rotate.m[0][0];
+	result.m[0][1] = scale.x * rotate.m[0][1];
+	result.m[0][2] = scale.x * rotate.m[0][2];
+	result.m[0][3] = 0;
+	result.m[1][0] = scale.y * rotate.m[1][0];
+	result.m[1][1] = scale.y * rotate.m[1][1];
+	result.m[1][2] = scale.y * rotate.m[1][2];
+	result.m[1][3] = 0;
+	result.m[2][0] = scale.z * rotate.m[2][0];
+	result.m[2][1] = scale.z * rotate.m[2][1];
+	result.m[2][2] = scale.z * rotate.m[2][2];
+	result.m[2][3] = 0;
+	result.m[3][0] = translate.x;
+	result.m[3][1] = translate.y;
+	result.m[3][2] = translate.z;
+	result.m[3][3] = 1;
+	return result;
+}
 Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 	Matrix4x4 result;
 	result.m[0][0] = scale.x;
@@ -492,6 +512,10 @@ Vector3 Lerp(float t, const Vector3& s, const Vector3& e) {
 	Vector3 es = Subtract(e, s);
 	result = Add(s, Multiply(t, es));
 	return result;
+}
+float Lerp(float t, const float& s, const float& e)
+{
+	return (1.0f - t) * s + t * e;
 }
 Vector3 Distance(const Vector3& v1, const Vector3& v2)
 {
