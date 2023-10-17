@@ -59,18 +59,22 @@ void Player::Setparent(const WorldTransform* parent)
 void Player::IsCollision(const WorldTransform& worldtransform)
 {
 	if (!worldTransform_.parent_) {
-		worldTransform_.translation_.y = worldtransform.translation_.y;
-		worldTransform_.matWorld_.m[3][0] -= worldtransform.matWorld_.m[3][0];
-		worldTransform_.matWorld_.m[3][1] -= worldtransform.matWorld_.m[3][1];
-		worldTransform_.matWorld_.m[3][2] -= worldtransform.matWorld_.m[3][2];
-
 		Setparent(&worldTransform_);
+		
+		Vector3 worldPos = worldTransform_.GetWorldPos();
+		Vector3 objectWorldPos = { worldtransform.matWorld_.m[3][0],worldtransform.matWorld_.m[3][1],worldtransform.matWorld_.m[3][2] };
+		Vector3 Position = worldPos - objectWorldPos;
+
+		Matrix4x4 rotatematrix = MakeRotateXYZMatrix({ -worldtransform.rotation_.x ,-worldtransform.rotation_.y ,-worldtransform.rotation_.z });
+		Position = TransformNormal(Position, rotatematrix);
+		worldTransform_.translation_ = Position;
+		
 	}
 }
 
 void Player::Move()
 {
-	/*XINPUT_STATE joystate;
+	XINPUT_STATE joystate;
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kCharctorSpeed = 0.3f;
 		Vector3 move = {
@@ -81,5 +85,5 @@ void Player::Move()
 		move = TransformNormal(move, rotateMatrix);
 		worldTransform_.translation_ = Add(move, worldTransform_.translation_);
 		worldTransform_.rotation_.y = std::atan2(move.x, move.z);
-	}*/
+	}
 }

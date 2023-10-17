@@ -13,15 +13,15 @@ public:
 	void Update();
 	void Draw(const ViewProjection& view);
 	WorldTransform& GetWorldTransform() { return worldTransform_; }
-	WorldTransform& GetWorldTransformBase_() { return worldTransformBase_; }
+
 private:
-	WorldTransform worldTransformBase_;
+	
 	Texturemanager* texturemanager_;
 	WorldTransform worldTransform_;
 	Model* groundModel_;
 	Vector3 move_;
 private:
-	void SetParent(const WorldTransform* parent);
+	
 	void Move();
 };
 
