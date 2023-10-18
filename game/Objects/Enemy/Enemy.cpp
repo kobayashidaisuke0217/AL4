@@ -13,7 +13,7 @@ void Enemy::Initialize(const std::vector<Model*>& models)
 	InitializeFloatGimmick();
 
 	worldTransform_.translation_.y = 5.0f;
-	worldTransformBody_.translation_ = { 0.0f,2.0f,55.0f };
+	worldTransformBody_.translation_ = { 0.0f,2.0f,50.0f };
 	worldTransformHead_.translation_ = { 0.0f, 1.0f, 0.0f };
 	worldTransformLarm_.translation_ = { -0.2f, 1.0f, 0.0f };
 	worldTransformRarm_.translation_ = { 0.2f, 1.0f, 0.0f };

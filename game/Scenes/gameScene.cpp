@@ -31,7 +31,7 @@ void GameScene::Initialize()
 	groundmanager_ = make_unique<groundManager>();
 	groundmanager_->Initialize();
 	goal_ = make_unique<Goal>();
-	goal_->Initialize({0.0f,0.0f,62.0f},{1.0f,1.0f,1.0f});
+	goal_->Initialize({0.0f,2.0f,62.0f},{1.0f,1.0f,1.0f});
 	enemy_ = make_unique<Enemy>();
 	enemyBodyModel.reset(Model::CreateModelFromObj("Resource", "float_Body.obj"));
 	enemyHeadModel.reset(Model::CreateModelFromObj("Resource", "float_head.obj"));
