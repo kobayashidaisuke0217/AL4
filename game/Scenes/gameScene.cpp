@@ -65,14 +65,13 @@ void GameScene::Update()
 		for (int i = 0; i < 2; i++) {
 			if (IsCollision(groundmanager_->GetOBB(i), player_->GetStructSphere())) {
 				player_->isHit_ = true;
-
-			
+				player_->SetObjectPos(groundmanager_->GetGround(i)->GetWorldTransform());
 			}
 		}
 		if (count_ >= 5) {
 			if (IsCollision(groundmanager_->GetOBB(2), player_->GetStructSphere())) {
 				player_->isHit_ = true;
-				player_->IsCollision(groundmanager_->GetGround()->GetWorldTransform());
+				player_->IsCollision(groundmanager_->GetMoveGround()->GetWorldTransform());
 			}
 			else {
 				player_->DeleteParent();

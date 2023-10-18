@@ -1,5 +1,5 @@
 #include "Enemy.h"
-
+#include "ImguiManger.h"
 void Enemy::Initialize(const std::vector<Model*>& models)
 {
 	ICharactor::Initialize(models);
@@ -11,11 +11,13 @@ void Enemy::Initialize(const std::vector<Model*>& models)
 	
 	//worldTransform_.Initialize();
 	InitializeFloatGimmick();
-	worldTransformBody_.translation_ = { 0.0f,1.0f,55.0f };
+
+	worldTransform_.translation_.y = 5.0f;
+	worldTransformBody_.translation_ = { 0.0f,2.0f,55.0f };
 	worldTransformHead_.translation_ = { 0.0f, 1.0f, 0.0f };
 	worldTransformLarm_.translation_ = { -0.2f, 1.0f, 0.0f };
 	worldTransformRarm_.translation_ = { 0.2f, 1.0f, 0.0f };
-	worldTransform_.Initialize();
+		worldTransform_.Initialize();
 	worldTransformBase_.Initialize();
 	worldTransformBody_.Initialize();
 	worldTransformHead_.Initialize();
@@ -28,13 +30,22 @@ void Enemy::Initialize(const std::vector<Model*>& models)
 	models_[kModelRarm] = models[kModelRarm];
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributeEnemy);
 	SetCollisionMask(~CollisionConfig::kCollisionAttributeEnemy);
+	move_ = { 0.3f,0.0f,0.0f };
 }
 
 void Enemy::Update()
 {
 	UpdateFloatGimmick();
+	Move();
 	ModelUpdateMatrix();
+	ImGui::Begin("Enemy");
+	ImGui::DragFloat3("body", &worldTransformBody_.translation_.x, 0.1f);
+	ImGui::End();
 }
+
+
+
+
 
 void Enemy::Draw(const ViewProjection& view)
 {
@@ -51,6 +62,10 @@ void Enemy::OnCollision()
 
 void Enemy::Move()
 {
+	worldTransformBody_.translation_ = Add(worldTransformBody_.translation_, move_);
+	if (worldTransformBody_.translation_.x >= 9.5f || worldTransformBody_.translation_.x <= -9.5) {
+		move_ = Multiply(-1.0f, move_);
+	}
 }
 
 void Enemy::SetParent(const WorldTransform* parent)
@@ -89,7 +104,7 @@ void Enemy::UpdateFloatGimmick()
 
 
 
-	worldTransformBody_.translation_.y = std::sin(floatingParametor_) * floatingAmplitude + 0.2f;
+	worldTransformBody_.translation_.y = std::sin(floatingParametor_) * floatingAmplitude + 1.0f;
 
 	worldTransformLarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;
 	worldTransformRarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;

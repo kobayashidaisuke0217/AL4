@@ -21,7 +21,8 @@ public:
 	void OnCollision() override;
 	void Setparent(const WorldTransform* parent);
 	void IsCollision(const WorldTransform& worldtransform );
-	void DeleteParent() { worldTransform_.parent_ = nullptr;  }
+	void DeleteParent();
+	void SetObjectPos(const WorldTransform& worldtransform) { objectPos_ = worldtransform; }
 private:
 	Vector4 color;
 	Input* input_ = nullptr;
@@ -30,6 +31,7 @@ private:
 	StructSphere structSphere_;
 	bool gameOver = false;
 	WorldTransform worldTransform_;
+	WorldTransform objectPos_;
 private:
 	void Move();
 

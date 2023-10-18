@@ -9,7 +9,7 @@ void Player::Initialize( Model* model)
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributePlayer);
 	SetCollisionMask(~CollisionConfig::kCollisionAttributePlayer);
 	color={ 1.0f,1.0f,1.0f,1.0f };
-	
+	worldTransform_.translation_ = { 1.0f,2.5f,1.0f };
 }
 
 void Player::Update()
@@ -17,20 +17,24 @@ void Player::Update()
 	if (worldTransform_.translation_.y < -10.0f) {
 		gameOver = true;
 	}
-	if (!isHit_ || worldTransform_.translation_.y < -0.1f) {
+	if (!isHit_||worldTransform_.GetWorldPos().y < 1.0f) {
 		IsFall();
+	}
+	else {
+		worldTransform_.translation_.y = objectPos_.translation_.y + objectPos_.scale_.y + worldTransform_.scale_.y;
 	}
 	
 	model_->SetColor(color);
 	structSphere_.center = worldTransform_.GetWorldPos();
 	structSphere_.radius = 1.5f;
 	Move();
+	Vector3 a = worldTransform_.GetWorldPos();
 	ImGui::Begin("player");
-	ImGui::DragFloat4("translation", &worldTransform_.rotation_.x,0.01f);
+	ImGui::DragFloat3("translation", &a.x, 0.01f);
 	ImGui::End();
 	
 	worldTransform_.UpdateMatrix();
-	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
+	
 }
 
 void Player::Draw(const ViewProjection& view)
@@ -52,23 +56,33 @@ void Player::Setparent(const WorldTransform* parent)
 {
 	
 		worldTransform_.parent_ = parent;
-	
+		
 	
 }
 
 void Player::IsCollision(const WorldTransform& worldtransform)
 {
 	if (!worldTransform_.parent_) {
-		Setparent(&worldTransform_);
 		
+		worldTransform_.translation_.y = worldtransform.translation_.y+worldtransform.scale_.y+worldTransform_.scale_.y;
 		Vector3 worldPos = worldTransform_.GetWorldPos();
 		Vector3 objectWorldPos = { worldtransform.matWorld_.m[3][0],worldtransform.matWorld_.m[3][1],worldtransform.matWorld_.m[3][2] };
 		Vector3 Position = worldPos - objectWorldPos;
-
+	
 		Matrix4x4 rotatematrix = MakeRotateXYZMatrix({ -worldtransform.rotation_.x ,-worldtransform.rotation_.y ,-worldtransform.rotation_.z });
 		Position = TransformNormal(Position, rotatematrix);
-		worldTransform_.translation_ = Position;
 		
+		worldTransform_.translation_ = Position;
+		Setparent(&worldtransform);
+		gameOver = false;
+	}
+}
+
+void Player::DeleteParent()
+{
+	if (worldTransform_.parent_) {
+		worldTransform_.translation_ = worldTransform_.GetWorldPos();
+		worldTransform_.parent_ = nullptr;
 	}
 }
 

@@ -28,6 +28,7 @@ private:
 	const ViewProjection* viewProjection_ = nullptr;
 	float floatingParametor_ = 0.0f;
 	int animationFrame;
+	Vector3 move_;
 private:
 	void Move();
 	void SetParent(const WorldTransform* parent);

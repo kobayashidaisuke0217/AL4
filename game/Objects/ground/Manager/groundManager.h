@@ -13,9 +13,10 @@ public:
 	void Update();
 	void Draw(const ViewProjection& view);
 	OBB GetOBB(int num) { return Obb_[num]; }
-    MoveGround* GetGround() { return moveGround_.get(); }
+    MoveGround* GetMoveGround() { return moveGround_.get(); }
+	ground* GetGround(int num) { return ground_->get(); }
 private:
-	list<ground*> groundList_;
+	
 	unique_ptr<ground>ground_[2];
 	unique_ptr<MoveGround> moveGround_;
 	unique_ptr<Model> model_;

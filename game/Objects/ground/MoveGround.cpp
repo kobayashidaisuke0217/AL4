@@ -14,7 +14,7 @@ void MoveGround::Initialize(Model* model, Vector3 translation, Vector3 Scale)
 void MoveGround::Update()
 {
 	Move();
-	if (worldTransform_.translation_.z >= 35.0f || worldTransform_.translation_.z <= 13.0f) {
+	if (worldTransform_.translation_.z >= 37.0f || worldTransform_.translation_.z <= 11.0f) {
 		move_ = Multiply(-1.0f, move_);
 	}
 	
