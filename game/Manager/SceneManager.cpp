@@ -44,7 +44,7 @@ void SceneManager::Run() {
 
 		
 		imguiManager_->End();
-#ifdef DEBUG
+#ifdef _DEBUG
 imguiManager_->Draw();
 #endif // DEBUG
 
