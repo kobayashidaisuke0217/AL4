@@ -44,8 +44,11 @@ void SceneManager::Run() {
 
 		
 		imguiManager_->End();
-	
-		imguiManager_->Draw();
+#ifdef DEBUG
+imguiManager_->Draw();
+#endif // DEBUG
+
+		
 		blueMoon_->EndFrame();
 	}
 	CoUninitialize();
