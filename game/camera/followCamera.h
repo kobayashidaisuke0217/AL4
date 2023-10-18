@@ -9,7 +9,7 @@ public:
 	void Update();
 	void SetTarget(const WorldTransform* target);
 	const ViewProjection& GetViewProjection() { return viewprojection_; }
-
+	Vector3 GettargetWordPos();
 private:
 	ViewProjection viewprojection_;
 	const WorldTransform* target_ = nullptr;

@@ -19,6 +19,15 @@ void FollowCamera::SetTarget(const WorldTransform* target) {
 	target_ = target;
 }
 
+Vector3 FollowCamera::GettargetWordPos()
+{
+	Vector3 result;
+	result.x = target_->matWorld_.m[3][0];
+	result.y = target_->matWorld_.m[3][1];
+	result.z = target_->matWorld_.m[3][2];
+	return result;
+}
+
 void FollowCamera::Move() {
 	if (target_) {
 
@@ -27,7 +36,7 @@ void FollowCamera::Move() {
 		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewprojection_.rotation_);
 
 		offset = TransformNormal(offset, rotateMatrix);
-		viewprojection_.translation_ = Add(target_->translation_, offset);
+		viewprojection_.translation_ = Add(GettargetWordPos(), offset);
 	}
 	ImGui::Begin("camera");
 	ImGui::DragFloat3("trans", &viewprojection_.translation_.x, 0.1f);
