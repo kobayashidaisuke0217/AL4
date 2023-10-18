@@ -1,5 +1,6 @@
 #pragma once
 #include "MyMath.h"
+#include"WorldTransform.h"
 class Collider {
 private:
 	float radius_ = 1.0f;
@@ -11,9 +12,9 @@ public:
 	void SetRadius(float rad) { radius_ = rad; }
 	virtual ~Collider() {}
 	virtual void OnCollision() = 0;
-	virtual Vector3 GetWorldPos() = 0;
 	uint32_t GetCollisionAttribute() const { return collisionAttribute_; }
 	void SetCollisionAttribute(uint32_t attribute) { collisionAttribute_ = attribute; }
 	uint32_t GetCollisionMask() const { return CollisionMask_; }
 	void SetCollisionMask(uint32_t mask) { CollisionMask_ = mask; }
+	virtual  WorldTransform GetWorldTransform()=0;
 };
