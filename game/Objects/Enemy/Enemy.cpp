@@ -31,16 +31,21 @@ void Enemy::Initialize(const std::vector<Model*>& models)
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributeEnemy);
 	SetCollisionMask(~CollisionConfig::kCollisionAttributeEnemy);
 	move_ = { 0.3f,0.0f,0.0f };
+	isAlive_ = true;
 }
 
 void Enemy::Update()
 {
-	UpdateFloatGimmick();
-	Move();
-	ModelUpdateMatrix();
-	ImGui::Begin("Enemy");
-	ImGui::DragFloat3("body", &worldTransformBody_.translation_.x, 0.1f);
-	ImGui::End();
+	if (isAlive_ == true) {
+		structSphere_.center = worldTransformBody_.GetWorldPos();
+		structSphere_.radius = 1.5f;
+		UpdateFloatGimmick();
+		Move();
+		ModelUpdateMatrix();
+		ImGui::Begin("Enemy");
+		ImGui::DragFloat3("body", &worldTransformBody_.translation_.x, 0.1f);
+		ImGui::End();
+	}
 }
 
 
@@ -49,15 +54,22 @@ void Enemy::Update()
 
 void Enemy::Draw(const ViewProjection& view)
 {
-	models_[kModelBody]->Draw(worldTransformBody_, view);
-	models_[kModelHead]->Draw(worldTransformHead_, view);
-	models_[kModelLarm]->Draw(worldTransformLarm_, view);
-	models_[kModelRarm]->Draw(worldTransformRarm_, view);
-	
+	if (isAlive_ == true) {
+		models_[kModelBody]->Draw(worldTransformBody_, view);
+		models_[kModelHead]->Draw(worldTransformHead_, view);
+		models_[kModelLarm]->Draw(worldTransformLarm_, view);
+		models_[kModelRarm]->Draw(worldTransformRarm_, view);
+	}
 }
 
 void Enemy::OnCollision()
 {
+	
+}
+
+void Enemy::IsDead()
+{
+	isAlive_ = false;
 }
 
 void Enemy::Move()

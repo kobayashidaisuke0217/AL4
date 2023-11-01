@@ -13,11 +13,12 @@ public:
 
 
 	void Update()override;
-
+	StructSphere GetStructSphere() { return structSphere_; }
 	void Draw(const ViewProjection& view)override;
 	void OnCollision() override;
 	const WorldTransform& GetWorldTransformBody() { return worldTransformBody_; }
  WorldTransform GetWorldTransform()override { return worldTransformBase_; }
+ void IsDead();
 private:
 	WorldTransform worldTransformBase_;
 	WorldTransform worldTransformHead_;
@@ -29,6 +30,8 @@ private:
 	float floatingParametor_ = 0.0f;
 	int animationFrame;
 	Vector3 move_;
+	StructSphere structSphere_;
+	bool isAlive_;
 private:
 	void Move();
 	void SetParent(const WorldTransform* parent);

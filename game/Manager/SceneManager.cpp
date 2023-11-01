@@ -44,9 +44,9 @@ void SceneManager::Run() {
 
 		
 		imguiManager_->End();
-#ifdef _DEBUG
+//#ifdef _DEBUG
 imguiManager_->Draw();
-#endif // DEBUG
+//#endif // DEBUG
 
 		
 		blueMoon_->EndFrame();

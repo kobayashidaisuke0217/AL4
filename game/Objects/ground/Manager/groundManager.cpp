@@ -25,11 +25,7 @@ void groundManager::Update()
 	Obb_[2].center = moveGround_->GetWorldTransform().GetWorldPos();
 	GetOrientations(MakeRotateXYZMatrix(moveGround_->GetWorldTransform().rotation_), Obb_[2].orientation);
 	Obb_[2].size = moveGround_->GetWorldTransform().scale_;
-	ImGui::Begin("ground");
-	ImGui::DragFloat3("scale", &moveGround_->GetWorldTransform().scale_.x);
-	ImGui::DragFloat3("rotate", &moveGround_->GetWorldTransform().rotation_.x);
-	ImGui::DragFloat3("translate", &moveGround_->GetWorldTransform().translation_.x);
-	ImGui::End();
+	
 	for (int i = 0; i < 2; i++) {
 		ground_[i]->Update();
 
