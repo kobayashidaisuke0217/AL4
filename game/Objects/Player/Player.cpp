@@ -23,16 +23,18 @@ void Player::Initialize(const std::vector<Model*>& models)
 	isHit_ = false;
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributePlayer);
 	SetCollisionMask(~CollisionConfig::kCollisionAttributePlayer);
-	color={ 1.0f,1.0f,1.0f,1.0f };
+	color = { 1.0f,1.0f,1.0f,1.0f };
 	worldTransform_.translation_ = { 1.0f,2.5f,1.0f };
 	GlovalVariables* globalVariables{};
 	globalVariables = GlovalVariables::GetInstance();
-
+	quaternion_ = createQuaternion(0.0f, { 0.0f,0.0f,0.0f });
+	quaternion_ = Normalize(quaternion_);
 	const char* groupName = "Player";
 	GlovalVariables::GetInstance()->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "HammerScale", worldTransformHammer_.scale_);
 	globalVariables->AddItem(groupName, "HammerPos", worldTransformHammer_.translation_);
 	ApplyGlobalVariables();
+
 }
 
 void Player::Update()
@@ -40,7 +42,7 @@ void Player::Update()
 	ApplyGlobalVariables();
 	XINPUT_STATE joyState;
 	collisionObb_.center = worldTransformHammer_.GetWorldPos();
-	//collisionObb_.center.y += 0.7f;
+	//collisionObb_.center.y += 1.0f;
 	GetOrientations(MakeRotateXYZMatrix(worldTransformHammer_.rotation_), collisionObb_.orientation);
 	collisionObb_.size = { 1.0f,3.0f,1.0f };
 	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
@@ -49,12 +51,12 @@ void Player::Update()
 	if (worldTransform_.GetWorldPos().y < -10.0f) {
 		gameOver = true;
 	}
-	
-	
+
+
 
 	structSphere_.center = worldTransformBody_.GetWorldPos();
 	structSphere_.radius = 1.5f;
-	
+
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
 		behaviorRequest_ = Behavior::kAtack;
 	}
@@ -78,12 +80,12 @@ void Player::Update()
 		BehaviorRootUpdate();
 		break;
 	case Behavior::kAtack:
-		
-			BehaviorAtackUpdate();
-		
+
+		BehaviorAtackUpdate();
+
 		break;
 	}
-	
+
 	Vector3 a = worldTransformBody_.GetWorldPos();
 	Vector3 b = worldTransform_.GetWorldPos();
 	ImGui::Begin("player");
@@ -91,8 +93,8 @@ void Player::Update()
 	ImGui::DragFloat3("translation", &b.x, 0.01f);
 	ImGui::End();
 	ModelUpdateMatrix();
-	
-	
+
+
 }
 
 void Player::Draw(const ViewProjection& view)
@@ -117,24 +119,24 @@ void Player::OnCollision()
 
 void Player::Setparent(const WorldTransform* parent)
 {
-	
-		worldTransform_.parent_ = parent;
-		worldTransformBody_.parent_ = parent;
-	
+
+	worldTransform_.parent_ = parent;
+	worldTransformBody_.parent_ = parent;
+
 }
 
 void Player::IsCollision(const WorldTransform& worldtransform)
 {
 	if (!worldTransform_.parent_) {
-		
-		worldTransform_.translation_.y = worldtransform.translation_.y+worldtransform.scale_.y+worldTransform_.scale_.y;
+
+		worldTransform_.translation_.y = worldtransform.translation_.y + worldtransform.scale_.y + worldTransform_.scale_.y;
 		Vector3 worldPos = worldTransformBody_.GetWorldPos();
 		Vector3 objectWorldPos = { worldtransform.matWorld_.m[3][0],worldtransform.matWorld_.m[3][1],worldtransform.matWorld_.m[3][2] };
 		Vector3 Position = worldPos - objectWorldPos;
-	
+
 		Matrix4x4 rotatematrix = MakeRotateXYZMatrix({ -worldtransform.rotation_.x ,-worldtransform.rotation_.y ,-worldtransform.rotation_.z });
 		Position = TransformNormal(Position, rotatematrix);
-		
+
 		worldTransform_.translation_ = Position;
 		worldTransformBody_.translation_ = worldTransform_.translation_;
 		Setparent(&worldtransform);
@@ -165,9 +167,18 @@ void Player::Move()
 		move = TransformNormal(move, rotateMatrix);
 		worldTransform_.translation_ = Add(move, worldTransform_.translation_);
 		worldTransformBody_.translation_ = worldTransform_.translation_;
+		Vector3 newPos = Subtract(Add(worldTransformBody_.translation_, move), worldTransformBody_.translation_);
+		Vector3 newDirection = Normalise(newPos);
+		Vector3 Direction;
 
-		worldTransform_.rotation_.y = std::atan2(-move.x, -move.z);
-		worldTransformBody_.rotation_ = worldTransform_.rotation_;
+		Direction = TransformNormal({ 1.0f,0.0f,0.0f },quaternionToMatrix(quaternion_));
+		float cosin = Dot(Direction, newPos);
+		Quaternion	newquaternion_ = createQuaternion(cosin*3.141592f/2.0f, { 0.0f,1.0f,0.0f });
+		//newquaternion_ = Normalize(newquaternion_);
+		quaternion_ =Multiply(quaternion_,newquaternion_);
+		/*worldTransform_.rotation_.y+=std::cosf(Cross(Rotate,newRotate).y);*/
+		//worldTransform_.rotation_.y = std::atan2(-move.x, -move.z);
+		//worldTransformBody_.rotation_ = worldTransform_.rotation_;
 	}
 }
 
@@ -182,8 +193,8 @@ void Player::SetParentModel(const WorldTransform* parent)
 
 void Player::ModelUpdateMatrix()
 {
-	worldTransform_.UpdateMatrix();
-	worldTransformBody_.UpdateMatrix();
+	worldTransform_.UpdateRotateMatrix(Direction_);
+	worldTransformBody_.UpdateQuaternionMatrix(quaternion_);
 	worldTransformHead_.UpdateMatrix();
 	worldTransformRarm_.UpdateMatrix();
 	worldTransformLarm_.UpdateMatrix();
@@ -212,7 +223,7 @@ void Player::UpdateFloatGimmick()
 
 	else {
 		worldTransform_.translation_.y = objectPos_.translation_.y + objectPos_.scale_.y + worldTransform_.scale_.y;
-			worldTransformBody_.translation_.y = std::sin(floatingParametor_) * floatingAmplitude + 1.0f;
+		worldTransformBody_.translation_.y = std::sin(floatingParametor_) * floatingAmplitude + 1.0f;
 	}
 	worldTransformLarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;
 	worldTransformRarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;
@@ -270,7 +281,7 @@ void Player::ApplyGlobalVariables()
 
 	const char* groupName = "Player";
 
-	worldTransformHammer_.scale_= globalVariables->GetVector3Value(groupName, "HammerScale");
+	worldTransformHammer_.scale_ = globalVariables->GetVector3Value(groupName, "HammerScale");
 	worldTransformHammer_.translation_ = globalVariables->GetVector3Value(groupName, "HammerPos");
 }
 

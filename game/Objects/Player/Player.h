@@ -54,6 +54,8 @@ private:
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
 	OBB collisionObb_;
+	Matrix4x4 Direction_;
+	Quaternion quaternion_;
 private:
 	void Move();
 	void SetParentModel(const WorldTransform* parent);

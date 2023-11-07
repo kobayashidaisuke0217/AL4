@@ -52,7 +52,7 @@ void GameScene::Update()
 {
 	count_++;
 	groundmanager_->Update();
-	player_->Update();
+	
 	enemy_->Update();
 	if (player_->isGameover() == true) {
 		Initialize();
@@ -82,6 +82,7 @@ void GameScene::Update()
 			enemy_->IsDead();
 		}
 	}
+	player_->Update();
 	viewProjection_.UpdateMatrix();
 	followCamera_->Update();
 	viewProjection_.matView = followCamera_->GetViewProjection().matView;
@@ -101,9 +102,9 @@ void GameScene::Update()
 	collisionManager_->ClearColliders();
 	collisionManager_->AddCollider(player_.get());
 	collisionManager_->AddCollider(goal_.get());
-	/*if (enemy_) {
+	if (enemy_) {
 		collisionManager_->AddCollider(enemy_.get());
-	}*/
+	}
 	if (count_ >= 20) {
 		collisionManager_->CheckAllCollision();
 	}

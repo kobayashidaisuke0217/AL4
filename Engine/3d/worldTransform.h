@@ -39,5 +39,7 @@ struct WorldTransform {
 
 	void UpdateMatrix();
 
+	void UpdateRotateMatrix(const Matrix4x4& rotateMat);
+	void  UpdateQuaternionMatrix(Quaternion quart);
 	Vector3 GetWorldPos();
 };

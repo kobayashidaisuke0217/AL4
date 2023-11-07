@@ -87,6 +87,27 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	result.m[3][3] = 1;
 	return result;
 }
+Matrix4x4 MakeRotateAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate) {
+	Matrix4x4 result;
+	
+	result.m[0][0] = scale.x * rotate.m[0][0];
+	result.m[0][1] = scale.x * rotate.m[0][1];
+	result.m[0][2] = scale.x * rotate.m[0][2];
+	result.m[0][3] = 0;
+	result.m[1][0] = scale.y * rotate.m[1][0];
+	result.m[1][1] = scale.y * rotate.m[1][1];
+	result.m[1][2] = scale.y * rotate.m[1][2];
+	result.m[1][3] = 0;
+	result.m[2][0] = scale.z * rotate.m[2][0];
+	result.m[2][1] = scale.z * rotate.m[2][1];
+	result.m[2][2] = scale.z * rotate.m[2][2];
+	result.m[2][3] = 0;
+	result.m[3][0] = translate.x;
+	result.m[3][1] = translate.y;
+	result.m[3][2] = translate.z;
+	result.m[3][3] = 1;
+	return result;
+}
 
 Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 	Matrix4x4 result;
@@ -450,6 +471,17 @@ Vector3 Normalise(const Vector3& v) {
 	}
 	return v;
 }
+float Length(const Vector2& a) {
+	return sqrtf(a.x * a.x + a.y * a.y);
+}
+Vector2 Vec2Normalise(const Vector2& v)
+{
+	float len = Length(v);
+	if (len != 0) {
+		return { v.x / len,v.y / len };
+	}
+	return v;
+}
 Vector3 Add(const Vector3& a, const Vector3& b) {
 	return{ a.x + b.x,a.y + b.y,a.z + b.z };
 }
@@ -522,5 +554,86 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2) {
 	result.x = (v1.y * v2.z - v1.z * v2.y);
 	result.y = (v1.z * v2.x - v1.x * v2.z);
 	result.z = (v1.x * v2.y - v1.y * v2.x);
+	return result;
+}
+
+Matrix4x4 DirectiontoDirection(const Vector3& to, const Vector3& from)
+{
+	
+	float cosin_ = Dot(to, from);
+	float sin_ = Length(Cross(to, from));
+	Vector3 Direction = Normalise(to*from);
+	Matrix4x4 result;
+	if (to.x != 0 || to.y != 0) {
+		Direction = { to.y,-to.x,0.0f };
+	}
+	result.m[0][0] = (Direction.x *Direction.x)* (1 - cosin_) + cosin_;
+	result.m[0][1] = Direction.x * Direction.y * (1 - cosin_) + Direction.z * sin_;
+	result.m[0][2] = Direction.x * Direction.z * (1 - cosin_) - Direction.y * sin_;
+	result.m[0][3] = 0;
+
+	result.m[1][0] = Direction.x * Direction.y * (1 - cosin_) - Direction.z * sin_;
+	result.m[1][1] = (Direction.y * Direction.y) * (1 - cosin_) + cosin_;
+	result.m[1][2] = Direction.y * Direction.z * (1 - cosin_) + Direction.z * sin_;
+	result.m[1][3] = 0;
+
+	result.m[2][0] = Direction.x * Direction.z * (1 - cosin_) + Direction.y *sin_;
+	result.m[2][1] = Direction.y * Direction.z * (1 - cosin_) - Direction.x * sin_;
+	result.m[2][2] = (Direction.z * Direction.z) * (1 - cosin_) *cosin_;
+	result.m[2][3] = 0;
+
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
+	return result;
+}
+Quaternion createQuaternion(float Radian, Vector3 axis)
+{
+	Quaternion quat;
+	float halfAngle = Radian * 0.5f;
+	float sinHalfAngle = sin(halfAngle);
+
+	quat.w = cos(halfAngle);
+	quat.x = axis.x * sinHalfAngle;
+	quat.y = axis.y * sinHalfAngle;
+	quat.z = axis.z * sinHalfAngle;
+
+	return quat;
+}
+
+Vector3 quaternionToEulerAngles(const Quaternion& quat)
+{
+	Vector3 euler;
+	// ロール (X軸周りの回転)
+	euler.x = atan2(2 * (quat.y * quat.z + quat.w * quat.x), quat.w * quat.w - quat.x * quat.x - quat.y * quat.y + quat.z * quat.z);
+
+	// ピッチ (Y軸周りの回転)
+	euler.y = asin(2 * (quat.x * quat.z - quat.w * quat.y));
+
+	// ヨー (Z軸周りの回転)
+	euler.z = atan2(2 * (quat.x * quat.y + quat.w * quat.z), quat.w * quat.w + quat.x * quat.x - quat.y * quat.y - quat.z * quat.z);
+
+	return euler;
+}
+Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate) {
+	Matrix4x4 result;
+
+	result.m[0][0] = scale.x * rotate.m[0][0];
+	result.m[0][1] = scale.x * rotate.m[0][1];
+	result.m[0][2] = scale.x * rotate.m[0][2];
+	result.m[0][3] = 0;
+	result.m[1][0] = scale.y * rotate.m[1][0];
+	result.m[1][1] = scale.y * rotate.m[1][1];
+	result.m[1][2] = scale.y * rotate.m[1][2];
+	result.m[1][3] = 0;
+	result.m[2][0] = scale.z * rotate.m[2][0];
+	result.m[2][1] = scale.z * rotate.m[2][1];
+	result.m[2][2] = scale.z * rotate.m[2][2];
+	result.m[2][3] = 0;
+	result.m[3][0] = translate.x;
+	result.m[3][1] = translate.y;
+	result.m[3][2] = translate.z;
+	result.m[3][3] = 1;
 	return result;
 }
