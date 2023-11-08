@@ -77,9 +77,10 @@ void GameScene::Update()
 		}
 
 
-
-		if (IsCollision(player_->getcollsionObb(), enemy_->GetStructSphere())) {
-			enemy_->IsDead();
+		if (player_->GetIsAtack()) {
+			if (IsCollision(player_->getcollsionObb(), enemy_->GetStructSphere())) {
+				enemy_->IsDead();
+			}
 		}
 	}
 	player_->Update();
@@ -103,7 +104,9 @@ void GameScene::Update()
 	collisionManager_->AddCollider(player_.get());
 	collisionManager_->AddCollider(goal_.get());
 	if (enemy_) {
-		collisionManager_->AddCollider(enemy_.get());
+		if (enemy_->GetisAlive()) {
+			collisionManager_->AddCollider(enemy_.get());
+		}
 	}
 	if (count_ >= 20) {
 		collisionManager_->CheckAllCollision();

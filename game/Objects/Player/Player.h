@@ -29,11 +29,19 @@ public:
 	void SetObjectPos(const WorldTransform& worldtransform) { objectPos_ = worldtransform; }
 	const WorldTransform& GetWorldTransformBody() { return worldTransformBody_; }
 	OBB getcollsionObb() { return collisionObb_; }
+	bool GetIsAtack() { return isAtack; }
 private:
 	enum class Behavior {
 		kRoot,
 		kAtack,
+		kDash,
 	};
+	struct WorkDash {
+		uint32_t dashParameter_ = 0;
+		Vector3 move_;
+		uint32_t cooltime_;
+	};
+	WorkDash workDash_;
 	Vector4 color;
 	Input* input_ = nullptr;
 	const ViewProjection* viewProjection_ = nullptr;
@@ -52,10 +60,14 @@ private:
 	
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
-
+	float cosin;
 	OBB collisionObb_;
 	Matrix4x4 Direction_;
 	Quaternion quaternion_;
+	Vector3 preMove_;
+	Quaternion preQuaternion_;
+	bool isDash_;
+	bool isAtack;
 private:
 	void Move();
 	void SetParentModel(const WorldTransform* parent);
@@ -69,6 +81,10 @@ private:
 	void BehaviorAtackInitialize();
 
 	void ApplyGlobalVariables();
+
+	void BehaviorDashInitialize();
+
+	void BehaviorDashUpdate();
 };
 
 

@@ -105,6 +105,9 @@ inline Vector3 operator*(const Vector3& v, const Matrix4x4& m) {
 		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + m.m[3][1],
 		v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + m.m[3][2] };
 }
+inline Quaternion operator+(const Quaternion& q1, const Quaternion& q2) {
+	return { q1.w+q2.w,q1.x + q2.x, q1.y + q2.y, q1.z + q2.z };
+}
 Matrix4x4 MakeRotateXMatrix(float theta);
 Matrix4x4 MakeRotateYMatrix(float theta);
 
@@ -429,4 +432,22 @@ inline Quaternion Multiply(const Quaternion& q1, const Quaternion& q2) {
 	result.y = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
 	result.z = q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w;
 	return result;
+}
+inline bool CompereQuaternion(const Quaternion& q1, const Quaternion& q2) {
+	if (q1.x == q2.x && q1.y == q2.y && q1.z == q2.z && q1.w == q2.w) {
+		return true;
+	}
+	else {
+		return false;
+	}
+
+}
+inline bool CompereVector3(const Vector3& q1, const Vector3& q2) {
+	if (q1.x == q2.x && q1.y == q2.y && q1.z == q2.z ) {
+		return true;
+	}
+	else {
+		return false;
+	}
+
 }

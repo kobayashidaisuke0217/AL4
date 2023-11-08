@@ -19,6 +19,7 @@ public:
 	const WorldTransform& GetWorldTransformBody() { return worldTransformBody_; }
  WorldTransform GetWorldTransform()override { return worldTransformBase_; }
  void IsDead();
+ bool GetisAlive() { return isAlive_; }
 private:
 	WorldTransform worldTransformBase_;
 	WorldTransform worldTransformHead_;

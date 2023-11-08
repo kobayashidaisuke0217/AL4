@@ -36,7 +36,9 @@ void FollowCamera::Move() {
 		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewprojection_.rotation_);
 
 		offset = TransformNormal(offset, rotateMatrix);
-		viewprojection_.translation_ = Add(GettargetWordPos(), offset);
+		Vector3 worldTranslate= { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
+		interTarget_ = Lerp(0.1f, worldTranslate, interTarget_);
+		viewprojection_.translation_ = interTarget_ + offset;
 	}
 	ImGui::Begin("camera");
 	ImGui::DragFloat3("trans", &viewprojection_.translation_.x, 0.1f);
@@ -51,4 +53,13 @@ void FollowCamera::Rotate() {
 		const float kRotateSpeed = 0.02f;
 		viewprojection_.rotation_.y += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
 	}
+}
+void FollowCamera::Reset() {
+	if (target_) {
+		Vector3 worldTranslate = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
+		interTarget_ = worldTranslate;
+		viewprojection_.rotation_.y = target_->rotation_.y;
+	}
+	destinationAngleY_ = viewprojection_.rotation_.y;
+
 }
