@@ -543,15 +543,31 @@ Vector3 Slerp(float t, const Vector3& s, const Vector3& e) {
 
 	return Add(Multiply(t1, s), Multiply(t2, e));
 }
-Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e) {
+Quaternion Lerp(float t, const Quaternion& s, const Quaternion& e) {
 	Quaternion result;
-	float dot = s.x * e.x + s.y * e.y + s.z * e.z + s.w * e.w;
+	Quaternion es = e - s;
+	result = s+ t *es;
+	return result;
+}
+Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e) {
+	
+	Quaternion ns = Normalize(s);
+	Quaternion ne = Normalize(e);
+	float dot = ns.x * ne.x + ns.y * ne.y + ns.z * ne.z + ns.w * ne.w;
+	if (std::abs(dot) > 0.999f) {
+		return Lerp(t, ns, ne);
+	}
+	if(dot<0.0f){
+		ns = -1 * ns;
+		dot *= -1.0f;
+	}
+	
 	float theta = std::acos(dot);
 	float sinTheta = std::sin(theta);
 	float t1 = std::sin((1.0f - t) * theta) / sinTheta;
 	float t2 = std::sin(t * theta) / sinTheta;
-	//result = Multiply(t1, s) + Multiply(t2, e);
-	return result;
+	
+	return ( t1 * ns + t2 * ne);
 }
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	return {

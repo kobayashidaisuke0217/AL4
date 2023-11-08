@@ -33,8 +33,12 @@ void Player::Initialize(const std::vector<Model*>& models)
 	GlovalVariables::GetInstance()->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "HammerScale", worldTransformHammer_.scale_);
 	globalVariables->AddItem(groupName, "HammerPos", worldTransformHammer_.translation_);
+	globalVariables->AddItem(groupName, "DashSpeed", workDash_.velocity_);
+	globalVariables->AddItem(groupName, "DashCoolTime",(float) workDash_.cooltime_);
+	worldTransformHammer_.scale_ = globalVariables->GetVector3Value(groupName, "HammerScale");
+	worldTransformHammer_.translation_ = globalVariables->GetVector3Value(groupName, "HammerPos");
 	ApplyGlobalVariables();
-
+	moveSpeed_ = 0.1f;
 }
 
 void Player::Update()
@@ -61,14 +65,14 @@ void Player::Update()
 		behaviorRequest_ = Behavior::kAtack;
 	}
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
-		if (workDash_.cooltime_ >= 60) {
+		if (workDash_.cooltime_ <= workDash_.currentcooltime_) {
 			behaviorRequest_ = Behavior::kDash;
 			
 		}
 
 	}
 	if (!isDash_) {
-		workDash_.cooltime_++;
+		workDash_.currentcooltime_++;
 	}
 	if (behaviorRequest_) {
 		behavior_ = behaviorRequest_.value();
@@ -103,10 +107,7 @@ void Player::Update()
 
 	Vector3 a = worldTransformBody_.GetWorldPos();
 	Vector3 b = worldTransform_.GetWorldPos();
-	ImGui::Begin("player");
-	ImGui::DragFloat3("translation", &worldTransformHammer_.scale_.x, 0.01f);
-	ImGui::DragFloat3("translation", &b.x, 0.01f);
-	ImGui::End();
+	
 	ModelUpdateMatrix();
 
 
@@ -181,50 +182,56 @@ void Player::Move()
 		Vector3 move = {
 			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
 			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
-		
-		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-		move = TransformNormal(move, rotateMatrix);
-		move = Multiply(kCharctorSpeed, Normalise(move));
-		worldTransform_.translation_ = Add(move, worldTransform_.translation_);
-		
-		preQuaternion_ = quaternion_;
-		worldTransformBody_.translation_ = worldTransform_.translation_;
-		//プレイヤーの行きたい方向
-		Vector3 newPos = Subtract(Add(worldTransformBody_.translation_, move), worldTransformBody_.translation_);
-		Vector3 Direction;
-		//プレイヤーの現在の向き
-		Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
-		
-		Direction = Normalise(Direction);
-		Vector3 newDirection = Normalise(newPos);
-		float cosin = Dot(Direction, newDirection) ; 
-		
-		//行きたい方向のQuaternionの作成
-		Quaternion newquaternion_;
-		
-		newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+		if (CompereVector3(move, { 0.0f,0.0f,0.0f })) {
+			isMove_ = false;
+		}
+		else {
+			isMove_ = true;
+		}
+		if (isMove_ == true) {
+			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+			move = TransformNormal(move, rotateMatrix);
+			move = Multiply(kCharctorSpeed, Normalise(move));
+			worldTransform_.translation_ = Add(move, worldTransform_.translation_);
 
-		//quaternionの合成
-		quaternion_ = Normalize(quaternion_);
-		newquaternion_ = Normalize(newquaternion_);
-		
-		quaternion_ = Multiply(quaternion_, newquaternion_);
-			if (CompereQuaternion(quaternion_, preQuaternion_)&&!CompereVector3(move,preMove_)) {
-				cosin = 180.0f * 3.14159265f / 2.0f;
+			preQuaternion_ = quaternion_;
+			worldTransformBody_.translation_ = worldTransform_.translation_;
+			//プレイヤーの行きたい方向
+			Vector3 newPos = Subtract(Add(worldTransformBody_.translation_, move), worldTransformBody_.translation_);
+			Vector3 Direction;
+			//プレイヤーの現在の向き
+			Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+			Direction = Normalise(Direction);
+			Vector3 newDirection = Normalise(newPos);
+			float cosin = Dot(Direction, newDirection);
+
+			//行きたい方向のQuaternionの作成
+			Quaternion newquaternion_;
+
+			newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+			//quaternionの合成
+			quaternion_ = Normalize(quaternion_);
+			newquaternion_ = Normalize(newquaternion_);
+
+			quaternion_ = Multiply(quaternion_, newquaternion_);
+			if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(move, preMove_)) {
+				cosin = -1.0f;
 				quaternion_ = Multiply(quaternion_, createQuaternion(cosin, { 0.0f,1.0f,0.0f }));
-				preQuaternion_ = quaternion_;
+				//preQuaternion_ = quaternion_;
 			}
-		
+
 			preMove_ = move;
-		ImGui::Begin("Move");
-		ImGui::DragFloat("cos", &cosin);
-		ImGui::DragFloat4("quaternion", &quaternion_.x);
-		ImGui::DragFloat4("prequaternion", &preQuaternion_.x);
-		ImGui::DragFloat4("move", &move.x);
-		ImGui::DragFloat4("premove", &preMove_.x);
-		ImGui::End();
+			
+		}
+
+		worldTransformBody_.quaternion_ = Slerp(0.3f,   worldTransformBody_.quaternion_, quaternion_);
+		
+		worldTransform_.quaternion_ = worldTransformBody_.quaternion_;
 	}
-}
+	}
+	
 
 void Player::SetParentModel(const WorldTransform* parent)
 {
@@ -237,8 +244,8 @@ void Player::SetParentModel(const WorldTransform* parent)
 
 void Player::ModelUpdateMatrix()
 {
-	worldTransform_.UpdateQuaternionMatrix(quaternion_);
-	worldTransformBody_.UpdateQuaternionMatrix(quaternion_);
+	worldTransform_.UpdateQuaternionMatrix();
+	worldTransformBody_.UpdateQuaternionMatrix();
 	worldTransformHead_.UpdateMatrix();
 	worldTransformRarm_.UpdateMatrix();
 	worldTransformLarm_.UpdateMatrix();
@@ -312,7 +319,7 @@ void Player::BehaviorRootInitialize() {
 	worldTransformHammer_.Initialize();
 	isAtack = false;
 	isDash_ = false;
-	workDash_.cooltime_ = 0;
+	workDash_.currentcooltime_ = 0;
 }
 
 void Player::BehaviorAtackInitialize() {
@@ -322,7 +329,7 @@ void Player::BehaviorAtackInitialize() {
 	animationFrame = 0;
 	isAtack = true;
 	isDash_ = false;
-	workDash_.cooltime_ = 0;
+	workDash_.currentcooltime_ = 0;
 }
 
 void Player::ApplyGlobalVariables()
@@ -331,8 +338,9 @@ void Player::ApplyGlobalVariables()
 
 	const char* groupName = "Player";
 
-	worldTransformHammer_.scale_ = globalVariables->GetVector3Value(groupName, "HammerScale");
-	worldTransformHammer_.translation_ = globalVariables->GetVector3Value(groupName, "HammerPos");
+	
+	workDash_.velocity_ = globalVariables->GetFloatValue(groupName, "DashSpeed");
+	workDash_.cooltime_= (uint32_t)globalVariables->GetFloatValue(groupName, "DashCoolTime");
 }
 
 void Player::BehaviorDashInitialize()
@@ -347,14 +355,14 @@ void Player::BehaviorDashUpdate()
 	XINPUT_STATE joystate;
 	if (!isDash_) {
 		isDash_ = true;
-		workDash_.cooltime_ = 0;
+		workDash_.currentcooltime_ = 0;
 		if (Input::GetInstance()->GetJoystickState(0, joystate)) {
-			const float kCharctorSpeed = 1.5f;
+			
 			workDash_.move_ = {
 				(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
 				(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
 			
-			workDash_.move_ = Multiply(kCharctorSpeed, Normalise(workDash_.move_));
+			workDash_.move_ = Multiply(workDash_.velocity_  , Normalise(workDash_.move_));
 			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
 			workDash_.move_ = TransformNormal(workDash_.move_, rotateMatrix);
 		}

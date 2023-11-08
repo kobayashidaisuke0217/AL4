@@ -40,6 +40,8 @@ private:
 		uint32_t dashParameter_ = 0;
 		Vector3 move_;
 		uint32_t cooltime_;
+		uint32_t currentcooltime_;
+		float velocity_;
 	};
 	WorkDash workDash_;
 	Vector4 color;
@@ -48,7 +50,7 @@ private:
 	StructSphere structSphere_;
 	bool gameOver = false;
 	WorldTransform worldTransform_;
-
+	
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformLarm_;
 	WorldTransform worldTransformRarm_;
@@ -68,6 +70,8 @@ private:
 	Quaternion preQuaternion_;
 	bool isDash_;
 	bool isAtack;
+	bool isMove_;
+	float moveSpeed_;
 private:
 	void Move();
 	void SetParentModel(const WorldTransform* parent);

@@ -108,6 +108,12 @@ inline Vector3 operator*(const Vector3& v, const Matrix4x4& m) {
 inline Quaternion operator+(const Quaternion& q1, const Quaternion& q2) {
 	return { q1.w+q2.w,q1.x + q2.x, q1.y + q2.y, q1.z + q2.z };
 }
+inline Quaternion operator-(const Quaternion& q1, const Quaternion& q2) {
+	return { q1.w - q2.w,q1.x - q2.x, q1.y - q2.y, q1.z - q2.z };
+}
+inline Quaternion operator*(const float t, const Quaternion& q) {
+	return { q.w * t,q.x * t,q.y * t,q.z * t };
+}
 Matrix4x4 MakeRotateXMatrix(float theta);
 Matrix4x4 MakeRotateYMatrix(float theta);
 
@@ -156,6 +162,8 @@ Vector3 Distance(const Vector3& v1, const Vector3& v2);
 Matrix4x4 MakeRotateMatrix(Vector3 theta);
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
+Quaternion Lerp(float t, const Quaternion& s, const Quaternion& e);
+Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e);
 /// obbの衝突判定
 inline Matrix4x4& SetTranslate(Matrix4x4& m, const Vector3& v) {
 	m.m[3][0] = v.x, m.m[3][1] = v.y, m.m[3][2] = v.z;

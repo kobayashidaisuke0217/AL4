@@ -4,10 +4,17 @@
 void FollowCamera::Initialize() {
 	viewprojection_.Initialize();
 	input_ = Input::GetInstance();
+	GlovalVariables* globalVariables{};
+	globalVariables = GlovalVariables::GetInstance();
+	const char* groupName = "Camera";
+	GlovalVariables::GetInstance()->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "delay", delay_);
+	ApplyGlobalVariables();
+	
 }
 
 void FollowCamera::Update() {
-
+	ApplyGlobalVariables();
 	Move();
 	Rotate();
 	viewprojection_.UpdateViewMatrix();
@@ -37,13 +44,11 @@ void FollowCamera::Move() {
 
 		offset = TransformNormal(offset, rotateMatrix);
 		Vector3 worldTranslate= { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
-		interTarget_ = Lerp(0.1f, worldTranslate, interTarget_);
+		
+		interTarget_ = Lerp(delay_, worldTranslate, interTarget_);
 		viewprojection_.translation_ = interTarget_ + offset;
 	}
-	ImGui::Begin("camera");
-	ImGui::DragFloat3("trans", &viewprojection_.translation_.x, 0.1f);
-	ImGui::DragFloat3("rotate", &viewprojection_.rotation_.x, 0.1f);
-	ImGui::End();
+	
 }
 
 void FollowCamera::Rotate() {
@@ -52,6 +57,19 @@ void FollowCamera::Rotate() {
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kRotateSpeed = 0.02f;
 		viewprojection_.rotation_.y += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
+	}
+}
+void FollowCamera::ApplyGlobalVariables()
+{
+	GlovalVariables* globalVariables = GlovalVariables::GetInstance();
+
+	const char* groupName = "Camera";
+	delay_= globalVariables->GetFloatValue(groupName, "delay");
+	if (delay_ >= 1.0f) {
+		delay_ = 0.9999999f;
+	}
+	if (delay_ <= 0.0f) {
+		delay_ = 0.0f;
 	}
 }
 void FollowCamera::Reset() {

@@ -90,11 +90,7 @@ void GameScene::Update()
 	viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 	viewProjection_.TransferMatrix();
 
-	ImGui::Begin("Scene");
-
-	ImGui::InputInt("blendCount", &blendCount_);
-	ImGui::InputFloat3("rotate", &viewProjection_.rotation_.x);
-	ImGui::InputInt("SceneNum", &sceneNum);
+	
 	if (sceneNum > 1) {
 		sceneNum = 1;
 	}

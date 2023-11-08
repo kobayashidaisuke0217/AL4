@@ -42,9 +42,7 @@ void Enemy::Update()
 		UpdateFloatGimmick();
 		Move();
 		ModelUpdateMatrix();
-		ImGui::Begin("Enemy");
-		ImGui::DragFloat3("body", &worldTransformBody_.translation_.x, 0.1f);
-		ImGui::End();
+		
 	}
 }
 
