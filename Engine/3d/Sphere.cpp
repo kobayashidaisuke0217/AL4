@@ -2,16 +2,16 @@
 #include<cmath>
 void Sphere::Initialize()
 {
-	dxCommon_ =DirectXCommon::GetInstance();
+	dxCommon_ = DirectXCommon::GetInstance();
 	engine_ = BlueMoon::GetInstance();
 	textureManager_ = Texturemanager::GetInstance();
-	directionalLight_=DirectionalLight::GetInstance();
+	directionalLight_ = DirectionalLight::GetInstance();
 	kSubDivision = 32;
-	vertexCount = kSubDivision*kSubDivision*6;
+	vertexCount = kSubDivision * kSubDivision * 6;
 	CreateVartexData();
-	
+
 	SetColor();
-	
+
 }
 
 
@@ -19,36 +19,36 @@ void Sphere::Initialize()
 void Sphere::Draw(const Vector4& material, const WorldTransform& transform, uint32_t texIndex, const ViewProjection& viewProjection)
 {
 
-	
-		Transform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
-	
-		Matrix4x4 uvtransformMtrix = MakeScaleMatrix(uvTransform.scale);
-		uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.z));
-		uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
-	
-		
-		
-		*materialData_ = { material,true };
-		materialData_->uvTransform = uvtransformMtrix;
-		
-		
-		dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-		//形状を設定。PS0にせっていしているものとはまた別。同じものを設定すると考えておけばいい
-		dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		//material
-		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-		//worldTransform
-		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transform.constBuff_->GetGPUVirtualAddress());
-		//viewProjection
-		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
-		//Light
-		dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLight_->GetResource()->GetGPUVirtualAddress());
-		//texture
-		dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texIndex));
-		//Draw
-		dxCommon_->GetCommandList()->DrawInstanced(vertexCount, 1, 0, 0);
-	
-	
+
+	Transform uvTransform = { { 1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f} };
+
+	Matrix4x4 uvtransformMtrix = MakeScaleMatrix(uvTransform.scale);
+	uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.z));
+	uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
+
+
+
+	*materialData_ = { material,true };
+	materialData_->uvTransform = uvtransformMtrix;
+
+
+	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	//形状を設定。PS0にせっていしているものとはまた別。同じものを設定すると考えておけばいい
+	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//material
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	//worldTransform
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transform.constBuff_->GetGPUVirtualAddress());
+	//viewProjection
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
+	//Light
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLight_->GetResource()->GetGPUVirtualAddress());
+	//texture
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(texIndex));
+	//Draw
+	dxCommon_->GetCommandList()->DrawInstanced(vertexCount, 1, 0, 0);
+
+
 }
 
 void Sphere::Finalize()
@@ -58,7 +58,7 @@ void Sphere::Finalize()
 
 void Sphere::CreateVartexData()
 {
-	vertexResource = dxCommon_->CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(VertexData) *vertexCount);
+	vertexResource = dxCommon_->CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(VertexData) * vertexCount);
 
 
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
@@ -69,7 +69,7 @@ void Sphere::CreateVartexData()
 
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
-	
+
 	//経度一つ分の角度
 	const float kLonEvery = pi * 2.0f / float(kSubDivision);
 	//緯度一つ分の角度
@@ -137,7 +137,7 @@ void Sphere::TransformMatrix()
 
 void Sphere::SetColor() {
 	materialResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(Material));
-	
+
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->uvTransform = MakeIdentity4x4();
 }

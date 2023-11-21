@@ -16,5 +16,5 @@ public:
 	void SetCollisionAttribute(uint32_t attribute) { collisionAttribute_ = attribute; }
 	uint32_t GetCollisionMask() const { return CollisionMask_; }
 	void SetCollisionMask(uint32_t mask) { CollisionMask_ = mask; }
-	virtual  WorldTransform GetWorldTransform()=0;
+	virtual WorldTransform GetWorldTransform()=0 ;
 };

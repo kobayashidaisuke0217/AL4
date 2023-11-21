@@ -38,11 +38,14 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldTransformHammer_.scale_ = globalVariables->GetVector3Value(groupName, "HammerScale");
 	worldTransformHammer_.translation_ = globalVariables->GetVector3Value(groupName, "HammerPos");
 	ApplyGlobalVariables();
-	moveSpeed_ = 0.1f;
+	moveSpeed_ = 0.1f; 
 }
 
 void Player::Update()
 {
+	
+	
+	
 	ApplyGlobalVariables();
 	XINPUT_STATE joyState;
 	collisionObb_.center = worldTransformHammer_.GetWorldPos();

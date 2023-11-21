@@ -1,17 +1,17 @@
 #include "Model.h"
 #include<fstream>
 #include<sstream>
-void Model::Initialize( const std::string& directoryPath, const std::string& filename)
+void Model::Initialize(const std::string& directoryPath, const std::string& filename)
 {
     dxCommon_ = DirectXCommon::GetInstance();
-	engine_ = BlueMoon::GetInstance();
+    engine_ = BlueMoon::GetInstance();
     textureManager_ = Texturemanager::GetInstance();
     modelData_ = LoadObjFile(directoryPath, filename);
     texture_ = textureManager_->Load(modelData_.material.textureFilePath);
-  directionalLight_ = DirectionalLight::GetInstance();
-	CreateVartexData();
-	SetColor();
-    
+    directionalLight_ = DirectionalLight::GetInstance();
+    CreateVartexData();
+    SetColor();
+
 }
 
 void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProjection)
@@ -22,11 +22,11 @@ void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProj
     uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.z));
     uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
 
-   
+
     *material_ = { color,true };
     material_->uvTransform = uvtransformMtrix;
-  
-    dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView); 
+
+    dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
     //形状を設定。PS0にせっていしているものとはまた別。同じものを設定すると考えておけばいい
     dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     //material
@@ -46,7 +46,7 @@ void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProj
 }
 void Model::Finalize()
 {
-   
+
 }
 
 Model* Model::CreateModelFromObj(const std::string& directoryPath, const std::string& filename)
@@ -65,7 +65,7 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
 
     std::ifstream file(directoryPath + "/" + filename);
     assert(file.is_open());
-    while (std::getline(file,line))
+    while (std::getline(file, line))
     {
         std::string identifier;
         std::istringstream s(line);
@@ -90,7 +90,8 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
             s >> normal.x >> normal.y >> normal.z;
             normal.z *= -1.0f;
             normals.push_back(normal);
-        }else if (identifier == "f") {
+        }
+        else if (identifier == "f") {
             VertexData triangle[3];
             //面は三角形限定 その他は未対応
             for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
@@ -111,11 +112,11 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
                 VertexData vertex = { position,texcoord,normal };
                 modelData.vertices.push_back(vertex);
                 triangle[faceVertex] = { position,texcoord,normal };
-               
+
             }
             modelData.vertices.push_back(triangle[2]);
-                modelData.vertices.push_back(triangle[1]);
-                modelData.vertices.push_back(triangle[0]);
+            modelData.vertices.push_back(triangle[1]);
+            modelData.vertices.push_back(triangle[0]);
         }
         else if (identifier == "mtllib") {
             //materialTemplateLibraryファイルの名前を取得
@@ -124,8 +125,8 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
             //基本的にobjファイルと同一階層にmtlは存在させるから、ディレクトリ名とファイル名を渡す
             modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilname);
         }
-       
-    } 
+
+    }
     return modelData;
 }
 
@@ -135,7 +136,7 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
     std::string line;
     std::ifstream file(directoryPath + "/" + filename);
     assert(file.is_open());
-    while (std::getline(file,line))
+    while (std::getline(file, line))
     {
         std::string identifier;
         std::istringstream s(line);
@@ -153,35 +154,35 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 
 void Model::CreateVartexData()
 {
-	
-	vertexResource = dxCommon_->CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(VertexData) * modelData_.vertices.size());
+
+    vertexResource = dxCommon_->CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(VertexData) * modelData_.vertices.size());
 
 
-	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+    vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 
-	vertexBufferView.SizeInBytes = sizeof(VertexData) *(UINT) modelData_.vertices.size();
+    vertexBufferView.SizeInBytes = sizeof(VertexData) * (UINT)modelData_.vertices.size();
 
-	vertexBufferView.StrideInBytes = sizeof(VertexData);
+    vertexBufferView.StrideInBytes = sizeof(VertexData);
 
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+    vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
-	std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
+    std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
 }
 
 void Model::SetColor()
 {
-	materialResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(Material));
+    materialResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(Material));
 
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&material_));
-	material_->uvTransform = MakeIdentity4x4();
+    materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&material_));
+    material_->uvTransform = MakeIdentity4x4();
 
 }
 
 void Model::TransformMatrix()
 {
-	wvpResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(Transformmatrix));
-	wvpResource_->Map(0, NULL, reinterpret_cast<void**>(&wvpData_));
-	wvpData_->WVP = MakeIdentity4x4();
+    wvpResource_ = DirectXCommon::CreateBufferResource(dxCommon_->GetDevice().Get(), sizeof(Transformmatrix));
+    wvpResource_->Map(0, NULL, reinterpret_cast<void**>(&wvpData_));
+    wvpData_->WVP = MakeIdentity4x4();
 }
 
 

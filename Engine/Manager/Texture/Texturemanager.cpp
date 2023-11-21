@@ -3,10 +3,11 @@
 void Texturemanager::Initialize()
 {
 	dirctXCommon_ = DirectXCommon::GetInstance();
+	SrvHeap_ = SrvDescriptorHeap::GetInstance();
 	descriptorSizeDSV = dirctXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	descriptorSizeRTV = dirctXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	descriptorSizeSRV = dirctXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureIndex_ = -1;
+	SrvHeap_->Initialize();
+	name_.clear();
 }
 
 Texturemanager* Texturemanager::GetInstance()
@@ -17,15 +18,15 @@ Texturemanager* Texturemanager::GetInstance()
 
 uint32_t Texturemanager::Load(const std::string& filePath)
 {
-	textureIndex_++;
-	LoadTexture(filePath,textureIndex_);
-	return textureIndex_;
+	//LoadTexture(filePath,textureIndex_);
+	//return textureIndex_;
+	return LoadTexture(filePath, SrvHeap_->GetIndex());
 }
 
 
 const D3D12_GPU_DESCRIPTOR_HANDLE Texturemanager::GetGPUHandle(uint32_t textureHandle)
 {
-	D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle =textureSrvHandleGPU_[textureHandle];
+	D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle = SrvHeap_->GetGPUHandle(textureHandle);
 	return GPUHandle;
 }
 
@@ -74,9 +75,17 @@ Microsoft::WRL::ComPtr<ID3D12Resource> Texturemanager::CreateTextureResource(ID3
 }
 
 
-void Texturemanager::LoadTexture(const std::string& filePath, uint32_t index)
+uint32_t Texturemanager::LoadTexture(const std::string& filePath, uint32_t index)
 {
-
+	if (!name_.empty()) {
+		std::vector<std::string>::iterator it = std::find_if(name_.begin(),name_.end(), [&](const auto& name) {
+			return name == filePath;
+		});
+		if (it != name_.end()) {
+			return uint32_t(std::distance(name_.begin(),it))+2;
+		}
+	}
+	name_.push_back(filePath);
 	DirectX::ScratchImage mipImage = LoadTexture(filePath);
 	const DirectX::TexMetadata& metadata = mipImage.GetMetadata();
 	textureResource[index] = CreateTextureResource(dirctXCommon_->GetDevice().Get(), metadata);
@@ -89,28 +98,18 @@ void Texturemanager::LoadTexture(const std::string& filePath, uint32_t index)
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
 	//SRVを作成するDescripterHeapの場所を決める
-	textureSrvHandleGPU_[index] = GettextureSrvHandleGPU(dirctXCommon_->GetSrvHeap().Get(), descriptorSizeSRV, index + 1);//direct_->GetSrvHeap()->GetGPUDescriptorHandleForHeapStart();
-	textureSrvHandleCPU_[index] = GettextureSrvHandleCPU(dirctXCommon_->GetSrvHeap().Get(), descriptorSizeSRV, index + 1);
+	SrvHeap_->SetCPUHandle(dirctXCommon_->GetSrvHeap().Get(), SrvHeap_->GetSizeSRV(), index);//direct_->GetSrvHeap()->GetGPUDescriptorHandleForHeapStart();
+	SrvHeap_->SetGPUHandle(dirctXCommon_->GetSrvHeap().Get(), SrvHeap_->GetSizeSRV(), index);
 	//先頭はIMGUIが使ってるからその次を使う
-	textureSrvHandleCPU_[index].ptr += dirctXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureSrvHandleGPU_[index].ptr += dirctXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	dirctXCommon_->GetDevice()->CreateShaderResourceView(textureResource[index].Get(), &srvDesc, textureSrvHandleCPU_[index]);
+	//textureSrvHandleCPU_[index].ptr += dirctXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//textureSrvHandleGPU_[index].ptr += dirctXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	SrvHeap_->AddPtr(index, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
+	dirctXCommon_->GetDevice()->CreateShaderResourceView(textureResource[index].Get(), &srvDesc, SrvHeap_->GetCPUHandle(index));
+	SrvHeap_->AddIndex();
+	return SrvHeap_->GetIndex() - 1;
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE Texturemanager::GettextureSrvHandleCPU(ID3D12DescriptorHeap* descriptorheap, uint32_t descriptorSize, uint32_t index)
-{
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorheap->GetCPUDescriptorHandleForHeapStart();
-	handleCPU.ptr += (descriptorSize * index);
-	return handleCPU;
-}
-
-D3D12_GPU_DESCRIPTOR_HANDLE Texturemanager::GettextureSrvHandleGPU(ID3D12DescriptorHeap* descriptorheap, uint32_t descriptorSize, uint32_t index)
-{
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorheap->GetGPUDescriptorHandleForHeapStart();
-	handleGPU.ptr += (descriptorSize * index);
-	return handleGPU;
-}
 
 
 

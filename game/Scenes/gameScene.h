@@ -18,14 +18,15 @@
 #include "groundManager.h"
 #include "Goal.h"
 #include "Enemy.h"
+#include <list>
 using namespace std;
-class GameScene:public Iscene
+class GameScene :public Iscene
 {
 public:
 	~GameScene();
 	void Initialize()override;
 	void Update()override;
-	
+
 	void Draw()override;
 	void Finalize()override;
 private:
@@ -43,7 +44,7 @@ private:
 #pragma endregion
 #pragma region ゲームの機能
 	int count_;
-	unique_ptr<SkyDome> skyDome_=nullptr;
+	unique_ptr<SkyDome> skyDome_ = nullptr;
 	unique_ptr<Model> skyDomeModel_ = nullptr;
 	unique_ptr<Model> playerModel_ = nullptr;
 	unique_ptr<Player> player_;
@@ -52,12 +53,13 @@ private:
 	unique_ptr<groundManager> groundmanager_;
 	unique_ptr<CollisionManager> collisionManager_;
 	unique_ptr<Goal> goal_;
+	list<Enemy> enemys_;
 	unique_ptr<Enemy>enemy_;
 	std::unique_ptr<Model> enemyHeadModel = nullptr;
 	std::unique_ptr<Model> enemyBodyModel = nullptr;
 	std::unique_ptr<Model> enemyL_armModel = nullptr;
 	std::unique_ptr<Model> enemyR_armModel = nullptr;
 	std::unique_ptr<Model> player_Hammer_ = nullptr;
+	std::vector<Model*>enemyModels;
 #pragma endregion
 };
-

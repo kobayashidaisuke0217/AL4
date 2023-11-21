@@ -28,6 +28,9 @@ struct Matrix4x4 final {
 struct Matrix3x3 {
 	float m[3][3];
 };
+struct Quaternion {
+	float w, x, y, z;
+};
 struct Transform
 {
 	Vector3 scale;
@@ -58,6 +61,23 @@ struct DirectionalLightData {
 struct MaterialData {
 	std::string textureFilePath;
 };
+
+struct Emitter {
+	Transform transform;
+};
+struct ParticleData {
+	Transform transform;
+	Vector3 velocity;
+	Vector4 color;
+	Emitter emitter;
+	float lifeTime;
+	float currentTime;
+	bool isAlive;
+};
+struct ParticleForGPU {
+	Matrix4x4 World;
+	Vector4 Color;
+};
 struct ModelData {
 	std::vector<VertexData> vertices;
 	MaterialData material;
@@ -76,9 +96,6 @@ struct StructSphere {
 	Vector3 center;
 	float radius;
 };
-struct Quaternion {
-	float w, x, y, z;
-};
 inline Vector3 operator-(const Vector3& v) {
 	return { -v.x, -v.y, -v.z };
 }
@@ -89,16 +106,16 @@ inline Vector3 operator+(const Vector3& v1, const Vector3& v2) {
 inline Vector3 operator-(const Vector3& v1, const Vector3& v2) {
 	return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 }
-inline Vector3 operator*(const Vector3& v1, const Vector3& v2) {
-	return { v1.x * v2.x, v1.y * v2.y, v1.z * v2.z };
-}
+
 inline Vector3 operator*(const Vector3& v, float s) {
 	return { v.x * s, v.y * s, v.z * s };
 }
 inline Vector3 operator*(float s, const Vector3& v) {
 	return { s * v.x, s * v.y, s * v.z };
 }
-
+inline Vector3 operator*(const Vector3& v1, const Vector3& v2) {
+	return { v1.x * v2.x, v1.y * v2.y, v1.z * v2.z };
+}
 inline Vector3 operator*(const Vector3& v, const Matrix4x4& m) {
 	return {
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + m.m[3][0],
@@ -106,7 +123,7 @@ inline Vector3 operator*(const Vector3& v, const Matrix4x4& m) {
 		v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + m.m[3][2] };
 }
 inline Quaternion operator+(const Quaternion& q1, const Quaternion& q2) {
-	return { q1.w+q2.w,q1.x + q2.x, q1.y + q2.y, q1.z + q2.z };
+	return { q1.w + q2.w,q1.x + q2.x, q1.y + q2.y, q1.z + q2.z };
 }
 inline Quaternion operator-(const Quaternion& q1, const Quaternion& q2) {
 	return { q1.w - q2.w,q1.x - q2.x, q1.y - q2.y, q1.z - q2.z };
@@ -120,9 +137,9 @@ Matrix4x4 MakeRotateYMatrix(float theta);
 Matrix4x4 MakeRotateZMatrix(float theta);
 
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
-Matrix4x4 MakeRotateAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate);
 Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate);
 
+Matrix4x4 MakeBillBoardMatrix(const Vector3& scale, Matrix4x4 billboard, const Vector3& translate);
 Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 //1　行列の加法
@@ -146,8 +163,6 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 
 Vector3 Normalise(const Vector3& v);
-Vector2 Vec2Normalise(const Vector2& v);
-float Length(const Vector2& a);
 Vector3 Add(const Vector3& a, const Vector3& b);
 
 

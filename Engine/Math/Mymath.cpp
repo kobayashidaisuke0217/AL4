@@ -87,9 +87,9 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	result.m[3][3] = 1;
 	return result;
 }
-Matrix4x4 MakeRotateAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate) {
+Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate) {
 	Matrix4x4 result;
-	
+
 	result.m[0][0] = scale.x * rotate.m[0][0];
 	result.m[0][1] = scale.x * rotate.m[0][1];
 	result.m[0][2] = scale.x * rotate.m[0][2];
@@ -107,6 +107,14 @@ Matrix4x4 MakeRotateAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, 
 	result.m[3][2] = translate.z;
 	result.m[3][3] = 1;
 	return result;
+}
+Matrix4x4 MakeBillBoardMatrix(const Vector3& scale, Matrix4x4 billboard, const Vector3& translate)
+{
+	
+	Matrix4x4 scaleMat = MakeScaleMatrix(scale);
+	Matrix4x4 transmat = MakeTranslateMatrix(translate);
+
+	return Multiply(scaleMat,Multiply( billboard, transmat));
 }
 
 Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
@@ -471,17 +479,6 @@ Vector3 Normalise(const Vector3& v) {
 	}
 	return v;
 }
-float Length(const Vector2& a) {
-	return sqrtf(a.x * a.x + a.y * a.y);
-}
-Vector2 Vec2Normalise(const Vector2& v)
-{
-	float len = Length(v);
-	if (len != 0) {
-		return { v.x / len,v.y / len };
-	}
-	return v;
-}
 Vector3 Add(const Vector3& a, const Vector3& b) {
 	return{ a.x + b.x,a.y + b.y,a.z + b.z };
 }
@@ -543,32 +540,6 @@ Vector3 Slerp(float t, const Vector3& s, const Vector3& e) {
 
 	return Add(Multiply(t1, s), Multiply(t2, e));
 }
-Quaternion Lerp(float t, const Quaternion& s, const Quaternion& e) {
-	Quaternion result;
-	Quaternion es = e - s;
-	result = s+ t *es;
-	return result;
-}
-Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e) {
-	
-	Quaternion ns = Normalize(s);
-	Quaternion ne = Normalize(e);
-	float dot = ns.x * ne.x + ns.y * ne.y + ns.z * ne.z + ns.w * ne.w;
-	if (std::abs(dot) > 0.999f) {
-		return Lerp(t, ns, ne);
-	}
-	if(dot<0.0f){
-		ns = -1 * ns;
-		dot *= -1.0f;
-	}
-	
-	float theta = std::acos(dot);
-	float sinTheta = std::sin(theta);
-	float t1 = std::sin((1.0f - t) * theta) / sinTheta;
-	float t2 = std::sin(t * theta) / sinTheta;
-	
-	return ( t1 * ns + t2 * ne);
-}
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	return {
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
@@ -582,18 +553,17 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2) {
 	result.z = (v1.x * v2.y - v1.y * v2.x);
 	return result;
 }
-
 Matrix4x4 DirectiontoDirection(const Vector3& to, const Vector3& from)
 {
-	
+
 	float cosin_ = Dot(to, from);
 	float sin_ = Length(Cross(to, from));
-	Vector3 Direction = Normalise(to*from);
+	Vector3 Direction = Normalise(to * from);
 	Matrix4x4 result;
 	if (to.x != 0 || to.y != 0) {
 		Direction = { to.y,-to.x,0.0f };
 	}
-	result.m[0][0] = (Direction.x *Direction.x)* (1 - cosin_) + cosin_;
+	result.m[0][0] = (Direction.x * Direction.x) * (1 - cosin_) + cosin_;
 	result.m[0][1] = Direction.x * Direction.y * (1 - cosin_) + Direction.z * sin_;
 	result.m[0][2] = Direction.x * Direction.z * (1 - cosin_) - Direction.y * sin_;
 	result.m[0][3] = 0;
@@ -603,9 +573,9 @@ Matrix4x4 DirectiontoDirection(const Vector3& to, const Vector3& from)
 	result.m[1][2] = Direction.y * Direction.z * (1 - cosin_) + Direction.z * sin_;
 	result.m[1][3] = 0;
 
-	result.m[2][0] = Direction.x * Direction.z * (1 - cosin_) + Direction.y *sin_;
+	result.m[2][0] = Direction.x * Direction.z * (1 - cosin_) + Direction.y * sin_;
 	result.m[2][1] = Direction.y * Direction.z * (1 - cosin_) - Direction.x * sin_;
-	result.m[2][2] = (Direction.z * Direction.z) * (1 - cosin_) *cosin_;
+	result.m[2][2] = (Direction.z * Direction.z) * (1 - cosin_) * cosin_;
 	result.m[2][3] = 0;
 
 	result.m[3][0] = 0;
@@ -642,24 +612,29 @@ Vector3 quaternionToEulerAngles(const Quaternion& quat)
 
 	return euler;
 }
-Matrix4x4 MakeQuatAffineMatrix(const Vector3& scale, const Matrix4x4& rotate, const Vector3& translate) {
-	Matrix4x4 result;
-
-	result.m[0][0] = scale.x * rotate.m[0][0];
-	result.m[0][1] = scale.x * rotate.m[0][1];
-	result.m[0][2] = scale.x * rotate.m[0][2];
-	result.m[0][3] = 0;
-	result.m[1][0] = scale.y * rotate.m[1][0];
-	result.m[1][1] = scale.y * rotate.m[1][1];
-	result.m[1][2] = scale.y * rotate.m[1][2];
-	result.m[1][3] = 0;
-	result.m[2][0] = scale.z * rotate.m[2][0];
-	result.m[2][1] = scale.z * rotate.m[2][1];
-	result.m[2][2] = scale.z * rotate.m[2][2];
-	result.m[2][3] = 0;
-	result.m[3][0] = translate.x;
-	result.m[3][1] = translate.y;
-	result.m[3][2] = translate.z;
-	result.m[3][3] = 1;
+Quaternion Lerp(float t, const Quaternion& s, const Quaternion& e) {
+	Quaternion result;
+	Quaternion es = e - s;
+	result = s + t * es;
 	return result;
+}
+Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e) {
+
+	Quaternion ns = Normalize(s);
+	Quaternion ne = Normalize(e);
+	float dot = ns.x * ne.x + ns.y * ne.y + ns.z * ne.z + ns.w * ne.w;
+	if (std::abs(dot) > 0.999f) {
+		return Lerp(t, ns, ne);
+	}
+	if (dot < 0.0f) {
+		ns = -1 * ns;
+		dot *= -1.0f;
+	}
+
+	float theta = std::acos(dot);
+	float sinTheta = std::sin(theta);
+	float t1 = std::sin((1.0f - t) * theta) / sinTheta;
+	float t2 = std::sin(t * theta) / sinTheta;
+
+	return (t1 * ns + t2 * ne);
 }

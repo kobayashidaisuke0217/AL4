@@ -11,7 +11,7 @@ public:
 	void Update();
 	ID3D12Resource* GetResource() { return Resource.Get(); }
 private:
-	DirectXCommon* directXCommon_=nullptr;
+	DirectXCommon* directXCommon_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> Resource = nullptr;
 	DirectionalLightData* directionalLightData = nullptr;
 };

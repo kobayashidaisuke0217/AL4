@@ -11,7 +11,7 @@ void Plane::Initialize()
 	directionalLight_ = DirectionalLight::GetInstance();
 	SettingVertex();
 	SetColor();
-	
+
 }
 void Plane::TransformMatrix()
 {
@@ -40,7 +40,7 @@ void Plane::Draw(const WorldTransform& transform, const ViewProjection& viewProj
 
 	*materialData_ = { material,false };
 	materialData_->uvTransform = uvtransformMtrix;
-	
+
 	direct_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
 	//形状を設定。PS0にせっていしているものとはまた別。同じものを設定すると考えておけばいい
 	direct_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -63,7 +63,7 @@ void Plane::Draw(const WorldTransform& transform, const ViewProjection& viewProj
 }
 void Plane::Finalize()
 {
-	
+
 }
 
 void Plane::SettingVertex() {

@@ -16,7 +16,7 @@ private:
 	void SettingVertex();
 	void SetColor();
 	void TransformMatrix();
-	
+
 private:
 	Texturemanager* textureManager_;
 

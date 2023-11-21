@@ -6,7 +6,7 @@
 #include"Input.h"
 #include"ViewProjection.h"
 #include"ICharactor.h"
-class Enemy:public ICharactor,public Collider
+class Enemy :public ICharactor, public Collider
 {
 public:
 	void Initialize(const std::vector<Model*>& models) override;
@@ -17,9 +17,9 @@ public:
 	void Draw(const ViewProjection& view)override;
 	void OnCollision() override;
 	const WorldTransform& GetWorldTransformBody() { return worldTransformBody_; }
- WorldTransform GetWorldTransform()override { return worldTransformBase_; }
- void IsDead();
- bool GetisAlive() { return isAlive_; }
+	WorldTransform GetWorldTransform()override { return worldTransformBase_; }
+	void IsDead();
+	bool GetisAlive() { return isAlive_; }
 private:
 	WorldTransform worldTransformBase_;
 	WorldTransform worldTransformHead_;
@@ -40,4 +40,3 @@ private:
 	void InitializeFloatGimmick();
 	void UpdateFloatGimmick();
 };
-

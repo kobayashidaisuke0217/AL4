@@ -20,6 +20,7 @@ DirectXCommon* DirectXCommon::GetInstance()
 void DirectXCommon::Initialize(WinApp* win, int32_t backBufferWidth, int32_t backBufferHeight)
 {
 	//resourceLeak = new LeakCheck();
+	InitializeFixFPS();
 	winApp_ = win;
 	backBufferWidth_ = backBufferWidth;
 	backBufferHeight_ = backBufferHeight;
@@ -178,7 +179,7 @@ void DirectXCommon::CreateFence() {
 }
 void DirectXCommon::CreateSrvheap()
 {
-	srvDescriptorHeap_ = CreateDescriptionHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	srvDescriptorHeap_ = CreateDescriptionHeap(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, knumDescriptor, true);
 }
 void DirectXCommon::PreDraw()
 {
@@ -232,6 +233,7 @@ void DirectXCommon::PostDraw() {
 		//イベント待つ
 		WaitForSingleObject(fenceEvent_, INFINITE);
 	}
+	updateFixFPS();
 	//次のフレーム用のコマンドリストを準備
 	hr_ = commandAllocator_->Reset();
 	assert(SUCCEEDED(hr_));
@@ -378,4 +380,23 @@ void DirectXCommon::CreateDebug()
 #endif
 }
 
+void DirectXCommon::InitializeFixFPS()
+{
+	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
+	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
 
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+
+	std::chrono::microseconds elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - reference_);
+	if (elapsed < kMinTime) {
+		while (std::chrono::steady_clock::now() - reference_ < kMinTime)
+		{
+			std::this_thread::sleep_for(std::chrono::microseconds(1));
+		}
+	}reference_ = std::chrono::steady_clock::now();
+}
+
+void DirectXCommon::updateFixFPS()
+{
+	reference_ = std::chrono::steady_clock::now();
+}

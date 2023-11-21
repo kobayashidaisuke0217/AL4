@@ -17,12 +17,12 @@ public:
 	void Finalize();
 private:
 	Texturemanager* textureManager_;
-	DirectionalLight* directionalLight_; 
+	DirectionalLight* directionalLight_;
 	DirectXCommon* dxCommon_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
 	VertexData* vertexData_;
-	
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource_;
 	Transformmatrix* wvpData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
@@ -31,14 +31,14 @@ private:
 	const float pi = 3.14159265358979f;
 	uint32_t kSubDivision;
 	uint32_t vertexCount;
-	
-	
-	
+
+
+
 
 private:
 	void CreateVartexData();
 	void SetColor();
 	void TransformMatrix();
-	
+
 };
 

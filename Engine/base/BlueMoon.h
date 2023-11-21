@@ -41,6 +41,7 @@ public:
 
 	void ModelPreDraw();
 	void ModelPreDrawWireFrame();
+	void PariclePreDraw();
 	void SpritePreDraw();
 	void SetBlendMode(int BlendModeNum);
 private:
@@ -50,7 +51,7 @@ private:
 	DirectXCommon* direct_;
 
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	
+	D3D12_DEPTH_STENCIL_DESC depthStencilDescParticle{};
 
 
 
@@ -83,7 +84,18 @@ D3D12_RASTERIZER_DESC rasterizerDesc3D_{};
 D3D12_RASTERIZER_DESC rasterizerDesc3DWireFrame_{};
 	D3D12_VIEWPORT viewport_{};
 	D3D12_RECT scissorRect_{};
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[3];
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs3D_[3];
+
+	//Particle用のパイプライン
+	Microsoft::WRL::ComPtr<ID3DBlob>signatureBlobParticle_;
+	Microsoft::WRL::ComPtr<ID3DBlob>errorBlobParticle_;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature>rootSignatureParticle_;
+	IDxcBlob* vertexShaderBlobParticle_;
+	IDxcBlob* pixelShaderBlobParticle_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState>graphicsPipelineStateParticle_;
+	D3D12_RASTERIZER_DESC rasterizerDescParticle_{};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescsParticle_[3];
+
 	//頂点リソースにデータを書き込む
 	Vector4* vertexData_;
 	int PSO2DCount_;
@@ -114,6 +126,11 @@ D3D12_RASTERIZER_DESC rasterizerDesc3DWireFrame_{};
 	void SettingRasterizerState2D();
 	void InitializePSO2D();
 	void CreateInputlayOut2D();
+
+	void CreateRootSignatureParticle();
+	void SettingRasterizerStateParticle();
+	void InitializePSOParticle();
+	void CreateInputlayOutParticle();
 };
 
 

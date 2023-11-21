@@ -20,6 +20,8 @@ void SceneManager::Run() {
 		if (winApp_->Procesmessage()) {
 			break;
 		}
+
+
 		imguiManager_->Begin();
         input->Update();
 		glovalVariables_->Update();
@@ -42,11 +44,11 @@ void SceneManager::Run() {
 		sceneArr_[sceneNum_]->Draw();
 		
 
-		
+	
 		imguiManager_->End();
-//#ifdef _DEBUG
+	
 imguiManager_->Draw();
-//#endif // DEBUG
+
 
 		
 		blueMoon_->EndFrame();

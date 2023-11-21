@@ -12,14 +12,14 @@
 class Model
 {
 public:
-	void Initialize( const std::string& directoryPath, const std::string& filename);
+	void Initialize(const std::string& directoryPath, const std::string& filename);
 	void Draw(const WorldTransform& transform, const ViewProjection& viewProjection);
 	void Finalize();
 
 	static Model* CreateModelFromObj(const std::string& directoryPath, const std::string& filename);
 	ModelData modelData_;
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
-	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath,const std::string&filename);
+	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 	void SetColor(Vector4 col) { color = col; }
 private:
 	Texturemanager* textureManager_;
@@ -36,9 +36,9 @@ private:
 	uint32_t texture_;
 	Vector4 color = { 1.0f,1.0f,1.0f,1.0f };
 	DirectionalLight* directionalLight_;
-	
-	
-	
+
+
+
 private:
 	void CreateVartexData();
 	void SetColor();

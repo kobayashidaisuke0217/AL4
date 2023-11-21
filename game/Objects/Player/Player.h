@@ -9,13 +9,13 @@
 #include <optional>
 #include"GlobalVariables.h"
 
-class Player:public Collider, public ICharactor
+class Player :public Collider, public ICharactor
 {
 public:
 	void Initialize(const std::vector<Model*>& models) override;
 	void Update()override;
 	void Draw(const ViewProjection& view)override;
-    WorldTransform GetWorldTransform()override { return worldTransformBody_; }
+	WorldTransform GetWorldTransform()override { return worldTransformBody_; }
 	const WorldTransform& GetWorldTransformBase() { return worldTransformBody_; }
 	void SetViewProjection(const ViewProjection* view) { viewProjection_ = view; }
 	void IsFall();
@@ -24,7 +24,7 @@ public:
 	bool isGameover() { return gameOver; }
 	void OnCollision() override;
 	void Setparent(const WorldTransform* parent);
-	void IsCollision(const WorldTransform& worldtransform );
+	void IsCollision(const WorldTransform& worldtransform);
 	void DeleteParent();
 	void SetObjectPos(const WorldTransform& worldtransform) { objectPos_ = worldtransform; }
 	const WorldTransform& GetWorldTransformBody() { return worldTransformBody_; }
@@ -50,7 +50,7 @@ private:
 	StructSphere structSphere_;
 	bool gameOver = false;
 	WorldTransform worldTransform_;
-	
+
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformLarm_;
 	WorldTransform worldTransformRarm_;
@@ -59,7 +59,7 @@ private:
 	WorldTransform objectPos_;
 	float floatingParametor_ = 0.0f;
 	int animationFrame;
-	
+
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 	float cosin;
@@ -90,5 +90,3 @@ private:
 
 	void BehaviorDashUpdate();
 };
-
-

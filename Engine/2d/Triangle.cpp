@@ -2,29 +2,29 @@
 #include <assert.h>
 #include "BlueMoon.h"
 
-void Triangle::Initialize( )
+void Triangle::Initialize()
 {
 	direct_ = DirectXCommon::GetInstance();
 	Engine = BlueMoon::GetInstance();
 	textureManager_ = Texturemanager::GetInstance();
 	directionalLight_ = DirectionalLight::GetInstance();
-	SettingVertex( );
+	SettingVertex();
 	SetColor();
 
 }
 void Triangle::TransformMatrix()
 {
 	wvpResource_ = DirectXCommon::CreateBufferResource(direct_->GetDevice().Get(), sizeof(Transformmatrix));
-	
+
 	wvpResource_->Map(0, NULL, reinterpret_cast<void**>(&wvpData_));
 	wvpData_->WVP = MakeIdentity4x4();
-	
+
 }
 void Triangle::SetColor() {
 	materialResource_ = DirectXCommon::CreateBufferResource(direct_->GetDevice().Get(), sizeof(Material));
 
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	
+
 }
 
 void Triangle::Draw(const WorldTransform& transform, const ViewProjection& viewProjection, const Vector4& material)
@@ -47,11 +47,11 @@ void Triangle::Draw(const WorldTransform& transform, const ViewProjection& viewP
 	direct_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//worldTransform
 	direct_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transform.constBuff_->GetGPUVirtualAddress());
-	
+
 	direct_->GetCommandList()->SetGraphicsRootConstantBufferView(4, viewProjection.constBuff_->GetGPUVirtualAddress());
 	//Light
 	direct_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLight_->GetResource()->GetGPUVirtualAddress());
-	
+
 	//texture
 	direct_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetGPUHandle(0));
 
@@ -62,7 +62,7 @@ void Triangle::Draw(const WorldTransform& transform, const ViewProjection& viewP
 }
 void Triangle::Finalize()
 {
-	
+
 }
 
 void Triangle::SettingVertex() {

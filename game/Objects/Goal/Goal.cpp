@@ -18,7 +18,7 @@ void Goal::Update()
 
 void Goal::Draw(const ViewProjection& view)
 {
-	sphere_->Draw({ 1.0f,1.0f,1.0f,1.0f }, worldTransform_, 0, view);
+	sphere_->Draw({ 1.0f,1.0f,1.0f,1.0f }, worldTransform_, 2, view);
 }
 
 void Goal::OnCollision()

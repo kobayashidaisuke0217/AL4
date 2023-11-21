@@ -19,17 +19,15 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		!(colliderB->GetCollisionAttribute() & colliderA->GetCollisionMask())) {
 		return;
 	}
-	if (colliderA && colliderB) {
-		Vector3 posA = colliderA->GetWorldTransform().GetWorldPos();
-		Vector3 posB = colliderB->GetWorldTransform().GetWorldPos();
-		float radA = colliderA->Getradius();
-		float radB = colliderB->Getradius();
-		Vector3 Distance = {
-			(posB.x - posA.x) * (posB.x - posA.x), (posB.y - posA.y) * (posB.y - posA.y),
-			(posB.z - posA.z) * (posB.z - posA.z) };
-		if (Distance.x + Distance.y + Distance.z <= (radA + radB) * (radA + radB)) {
-			colliderA->OnCollision();
-			colliderB->OnCollision();
-		}
+	Vector3 posA = colliderA->GetWorldTransform().GetWorldPos();
+	Vector3 posB = colliderB->GetWorldTransform().GetWorldPos();
+	float radA = colliderA->Getradius();
+	float radB = colliderB->Getradius();
+	Vector3 Distance = {
+		(posB.x - posA.x) * (posB.x - posA.x), (posB.y - posA.y) * (posB.y - posA.y),
+		(posB.z - posA.z) * (posB.z - posA.z) };
+	if (Distance.x + Distance.y + Distance.z <= (radA + radB) * (radA + radB)) {
+		colliderA->OnCollision();
+		colliderB->OnCollision();
 	}
 }

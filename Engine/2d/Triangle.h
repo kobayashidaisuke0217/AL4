@@ -10,17 +10,17 @@ class BlueMoon;
 class Triangle
 {
 public:
-	void Initialize(  );
+	void Initialize();
 	//void Draw(const Transform& transform, const Transform& cameraTransform, const Vector4& material);
 	//void Draw(const WorldTransform& transform, const Transform& cameratransform, const Vector4& material);
 	void Draw(const WorldTransform& transform, const ViewProjection& viewProjection, const Vector4& material);
 	void Finalize();
-	
+
 private:
 	void SettingVertex();
 	void SetColor();
 	void TransformMatrix();
-	
+
 private:
 	Texturemanager* textureManager_;
 	BlueMoon* Engine;
@@ -30,10 +30,10 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 
-	Material *materialData_;
+	Material* materialData_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource_;
 	Transformmatrix* wvpData_;
 	DirectionalLight* directionalLight_;
-	
+
 };
 

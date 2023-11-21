@@ -3,7 +3,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <dxgi1_6.h>
-
+#include<chrono>
 
 #include <wrl.h>
 #include <dxgidebug.h>
@@ -72,7 +72,7 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain4>swapChain_;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 
-	
+	uint32_t knumDescriptor = 100000;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	//RTVを２つ作るのでディスクリプタを２つ用意
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvhandle;
@@ -92,6 +92,7 @@ private:
 	
 	Microsoft::WRL::ComPtr<ID3D12Resource>  depthStencilResource;
 
+	std::chrono::steady_clock::time_point reference_;
 private:
 
 	
@@ -104,5 +105,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStenciltextureResource(ID3D12Device* device, int32_t width, int32_t height);
 	void CreateDepthStensil();
 	void CreateDebug();
+	void InitializeFixFPS();
+
+	void updateFixFPS();
 };
 
