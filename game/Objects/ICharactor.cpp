@@ -1,8 +1,9 @@
 #include "ICharactor.h"
 
-void ICharactor::Initialize(const std::vector<Model*>& models)
+void ICharactor::Initialize(const std::vector<Model*>& models,Vector3 pos)
 {
 	models_ = models;
+	worldTransform_.translation_ = pos;
 	worldTransform_.Initialize();
 }
 

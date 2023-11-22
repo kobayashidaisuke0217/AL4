@@ -12,7 +12,7 @@
 class Player :public Collider, public ICharactor
 {
 public:
-	void Initialize(const std::vector<Model*>& models) override;
+	void Initialize(const std::vector<Model*>& models,Vector3 pos) override;
 	void Update()override;
 	void Draw(const ViewProjection& view)override;
 	WorldTransform GetWorldTransform()override { return worldTransformBody_; }

@@ -638,3 +638,5 @@ Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e) {
 
 	return (t1 * ns + t2 * ne);
 }
+
+

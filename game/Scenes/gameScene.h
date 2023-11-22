@@ -19,6 +19,7 @@
 #include "Goal.h"
 #include "Enemy.h"
 #include <list>
+#include "game/Manager/LookOn.h"
 using namespace std;
 class GameScene :public Iscene
 {
@@ -53,8 +54,9 @@ private:
 	unique_ptr<groundManager> groundmanager_;
 	unique_ptr<CollisionManager> collisionManager_;
 	unique_ptr<Goal> goal_;
-	list<Enemy> enemys_;
+	list<Enemy*> enemys_;
 	unique_ptr<Enemy>enemy_;
+	unique_ptr<LookOn> lockOn_;
 	std::unique_ptr<Model> enemyHeadModel = nullptr;
 	std::unique_ptr<Model> enemyBodyModel = nullptr;
 	std::unique_ptr<Model> enemyL_armModel = nullptr;

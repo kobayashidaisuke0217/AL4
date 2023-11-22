@@ -45,4 +45,5 @@ struct WorldTransform {
 	Transform GetTransform() {
 		return{ scale_,rotation_,translation_ };
 	}
+	Vector3 GetCenter();
 };

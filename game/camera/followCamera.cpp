@@ -1,6 +1,7 @@
 #include "FollowCamera.h"
 #include"MyMath.h"
 #include "ImguiManger.h"
+#include "game/Manager/LookOn.h"
 void FollowCamera::Initialize() {
 	viewprojection_.Initialize();
 	input_ = Input::GetInstance();
@@ -16,7 +17,16 @@ void FollowCamera::Initialize() {
 void FollowCamera::Update() {
 	ApplyGlobalVariables();
 	Move();
-	Rotate();
+	if (lockOn_&&lockOn_->Existtarget()) {
+		Vector3 LockOntrans = lockOn_->GetTargetPos();
+		Vector3 sub = LockOntrans - GettargetWordPos();
+		//rotate.y = std::atan2(sub.x, sub.z);
+		viewprojection_.rotation_.y = std::atan2(sub.x, sub.z);//Lerp(delay_, rotate, viewprojection_.rotation_);
+	}
+	else {
+		Rotate();
+	}
+	rotate = { viewprojection_.rotation_.x,rotate.y,viewprojection_.rotation_.z };
 	viewprojection_.UpdateViewMatrix();
 	viewprojection_.TransferMatrix();
 }
@@ -36,9 +46,10 @@ Vector3 FollowCamera::GettargetWordPos()
 }
 
 void FollowCamera::Move() {
+
 	if (target_) {
 
-		Vector3 offset = { 0.0f, 2.0f, -10.0f };
+		Vector3 offset = { 0.0f, 3.5f, -10.0f };
 
 		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewprojection_.rotation_);
 
@@ -56,7 +67,9 @@ void FollowCamera::Rotate() {
 
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kRotateSpeed = 0.02f;
-		viewprojection_.rotation_.y += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
+		/*rotate.y*/viewprojection_.rotation_.y += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
+		/*changeRotate= Lerp(delay_, rotate, changeRotate);
+		viewprojection_.rotation_ = changeRotate;*/
 	}
 }
 void FollowCamera::ApplyGlobalVariables()
@@ -71,6 +84,11 @@ void FollowCamera::ApplyGlobalVariables()
 	if (delay_ <= 0.0f) {
 		delay_ = 0.0f;
 	}
+}
+void FollowCamera::Change()
+{
+	changeRotate = viewprojection_.rotation_;
+
 }
 void FollowCamera::Reset() {
 	if (target_) {

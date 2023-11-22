@@ -9,7 +9,7 @@
 class Enemy :public ICharactor, public Collider
 {
 public:
-	void Initialize(const std::vector<Model*>& models) override;
+	void Initialize(const std::vector<Model*>& models,Vector3 pos) override;
 
 
 	void Update()override;
@@ -32,7 +32,7 @@ private:
 	int animationFrame;
 	Vector3 move_;
 	StructSphere structSphere_;
-	bool isAlive_;
+	bool isAlive_=true;
 private:
 	void Move();
 	void SetParent(const WorldTransform* parent);

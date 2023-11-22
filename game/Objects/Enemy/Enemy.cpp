@@ -1,8 +1,8 @@
 #include "Enemy.h"
 #include "ImguiManger.h"
-void Enemy::Initialize(const std::vector<Model*>& models)
+void Enemy::Initialize(const std::vector<Model*>& models,Vector3 pos )
 {
-	ICharactor::Initialize(models);
+	ICharactor::Initialize(models,pos);
 	models_[kModelHead] = models[kModelHead];
 	models_[kModelBody] = models[kModelBody];
 	models_[kModelLarm] = models[kModelLarm];
@@ -11,9 +11,10 @@ void Enemy::Initialize(const std::vector<Model*>& models)
 	
 	//worldTransform_.Initialize();
 	InitializeFloatGimmick();
-
+	worldTransform_.translation_ = pos;
 	worldTransform_.translation_.y = 5.0f;
-	worldTransformBody_.translation_ = { 0.0f,2.0f,50.0f };
+	
+	worldTransformBody_.translation_ = { pos.x,2.0f,pos.z };
 	worldTransformHead_.translation_ = { 0.0f, 1.0f, 0.0f };
 	worldTransformLarm_.translation_ = { -0.2f, 1.0f, 0.0f };
 	worldTransformRarm_.translation_ = { 0.2f, 1.0f, 0.0f };
@@ -30,7 +31,7 @@ void Enemy::Initialize(const std::vector<Model*>& models)
 	models_[kModelRarm] = models[kModelRarm];
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributeEnemy);
 	SetCollisionMask(~CollisionConfig::kCollisionAttributeEnemy);
-	move_ = { 0.3f,0.0f,0.0f };
+	move_ = { 0.1f,0.0f,0.0f };
 	isAlive_ = true;
 }
 

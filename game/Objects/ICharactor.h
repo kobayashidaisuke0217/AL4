@@ -7,7 +7,7 @@ enum ModelParts { kModelBody, kModelHead, kModelLarm, kModelRarm, kModelHammer }
 class ICharactor
 {
 public:
-	virtual void Initialize(const std::vector<Model*>& models);
+	virtual void Initialize(const std::vector<Model*>& models,Vector3 pos);
 
 	virtual void Update();
 

@@ -1,9 +1,10 @@
 #include "Player.h"
 #include "ImguiManger.h"
-void Player::Initialize(const std::vector<Model*>& models)
+void Player::Initialize(const std::vector<Model*>& models,Vector3 pos)
 {
-	ICharactor::Initialize(models);
-	//worldTransformBody_.translation_ = { 0.0f,2.0f,50.0f };
+	ICharactor::Initialize(models,pos);
+	worldTransform_.translation_ = { 0.0f,2.0f,-10.0f };
+	worldTransformBody_.translation_ = { 0.0f,2.0f,-10.0f };
 	worldTransformHead_.translation_ = { 0.0f, 1.0f, 0.0f };
 	worldTransformLarm_.translation_ = { -0.2f, 1.0f, 0.0f };
 	worldTransformRarm_.translation_ = { 0.2f, 1.0f, 0.0f };
@@ -64,7 +65,7 @@ void Player::Update()
 	structSphere_.center = worldTransformBody_.GetWorldPos();
 	structSphere_.radius = 1.5f;
 
-	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
 		behaviorRequest_ = Behavior::kAtack;
 	}
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {

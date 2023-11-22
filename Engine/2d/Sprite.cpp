@@ -72,13 +72,18 @@ void Sprite::CreateVartexData(const Vector4& a, const Vector4& b)
 
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	Vector2 size = { b.x,b.y };
+	float left = (0.0f - anchorPos_.x) * size.x;
+	float right = (1.0f - anchorPos_.x) * size.x;
+	float top = (0.0f - anchorPos_.y) * size.y;
+	float bottom = (1.0f - anchorPos_.y) * size.y;
 	////座標
-	vertexData_[0].position = { a.x,b.y,0.0f,1.0f };
-	vertexData_[1].position = { a.x,a.y,0.0f,1.0f };
-	vertexData_[2].position = { b.x,b.y,0.0f,1.0f };
-	vertexData_[3].position = { a.x,a.y,0.0f,1.0f };
-	vertexData_[4].position = { b.x,a.y,0.0f,1.0f };
-	vertexData_[5].position = { b.x,b.y,0.0f,1.0f };
+	vertexData_[0].position = { left,bottom,0.0f,1.0f };
+	vertexData_[1].position = { left,top,0.0f,1.0f };
+	vertexData_[2].position = { right,bottom,0.0f,1.0f };
+	vertexData_[3].position = { left,top,0.0f,1.0f };
+	vertexData_[4].position = { right,top,0.0f,1.0f };
+	vertexData_[5].position = { right,bottom,0.0f,1.0f };
 
 	//texcoord
 	vertexData_[0].texcoord = { 0.0f,1.0f };

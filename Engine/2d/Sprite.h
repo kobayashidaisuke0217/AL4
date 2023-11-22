@@ -33,6 +33,7 @@ private:
 	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
 	uint32_t* indexData_;
 	Matrix4x4* wvpData_;
+	Vector2 anchorPos_ = { 0.5f,0.5f };
 private:
 	void CreateVartexData(const Vector4& a, const Vector4& b);
 	void CreateTransform();

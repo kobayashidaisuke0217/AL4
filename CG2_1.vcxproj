@@ -151,6 +151,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Disabled</Optimization>
     </ClCompile>
     <ClCompile Include="game\camera\followCamera.cpp" />
+    <ClCompile Include="game\Manager\LookOn.cpp" />
     <ClCompile Include="game\Manager\SceneManager.cpp" />
     <ClCompile Include="game\Objects\Enemy\Enemy.cpp" />
     <ClCompile Include="game\Objects\Goal\Goal.cpp" />
@@ -198,6 +199,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="game\camera\followCamera.h" />
+    <ClInclude Include="game\Manager\LookOn.h" />
     <ClInclude Include="game\Manager\SceneManager.h" />
     <ClInclude Include="game\Objects\Enemy\Enemy.h" />
     <ClInclude Include="game\Objects\Goal\Goal.h" />

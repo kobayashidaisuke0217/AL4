@@ -7,6 +7,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 #include <algorithm>
+#include "WinApp.h"
 struct Vector4 {
 	float x;
 	float y;
@@ -179,6 +180,7 @@ Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
 Quaternion Lerp(float t, const Quaternion& s, const Quaternion& e);
 Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e);
+
 /// obbの衝突判定
 inline Matrix4x4& SetTranslate(Matrix4x4& m, const Vector3& v) {
 	m.m[3][0] = v.x, m.m[3][1] = v.y, m.m[3][2] = v.z;
