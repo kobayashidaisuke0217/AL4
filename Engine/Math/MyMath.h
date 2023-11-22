@@ -476,3 +476,4 @@ inline bool CompereVector3(const Vector3& q1, const Vector3& q2) {
 	}
 
 }
+Matrix4x4 MakeRotateAxisAngle(Vector3 axis, float angle);
