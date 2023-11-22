@@ -1,6 +1,6 @@
 #include "TitleScene.h"
 #include "ImGuiManger.h"
-
+#include <string>
 TitleScene::~TitleScene()
 {
 }
@@ -13,7 +13,20 @@ void TitleScene::Initialize()
 
 void TitleScene::Update()
 {
-	
+	Matrix4x4 rotatematrix = MakeRotateAxisAngle(axis, angle);
+	std::string result;
+	ImGui::Begin("matrix");
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 4; x++) {
+			result += std::to_string(rotatematrix.m[y][x])+", ";
+
+
+		
+		}
+		result += "\n";
+	}
+	ImGui::Text("%s", result.c_str());
+	ImGui::End();
 	ImGui::Begin("SceneManager");
 	ImGui::InputInt("SceneNum", &sceneNum);
 	ImGui::Text("count %d",count);

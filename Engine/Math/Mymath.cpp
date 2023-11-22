@@ -621,7 +621,7 @@ Matrix4x4 MakeRotateAxisAngle(Vector3 axis, float angle)
 	result = MakeIdentity4x4();
 	result.m[0][0] = (axis.x * axis.x) * (1 - cos) +cos;
 	result.m[0][1] = axis.x * axis.y * (1 - cos) + axis.z * sin;
-	result.m[0][2] = axis.x * axis.z * (1 - cos) - axis.y + sin;
+	result.m[0][2] = axis.x * axis.z * (1 - cos) - axis.y * sin;
 	result.m[1][0] = axis.x * axis.y*(1 - cos) - axis.z * sin;
 	result.m[1][1]= (axis.y * axis.y) * (1 - cos) + cos;
 	result.m[1][2]= axis.y * axis.z * (1 - cos) + axis.x * sin;
