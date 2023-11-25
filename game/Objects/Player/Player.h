@@ -8,7 +8,7 @@
 #include "Icharactor.h"
 #include <optional>
 #include"GlobalVariables.h"
-
+class LookOn;
 class Player :public Collider, public ICharactor
 {
 public:
@@ -30,6 +30,7 @@ public:
 	const WorldTransform& GetWorldTransformBody() { return worldTransformBody_; }
 	OBB getcollsionObb() { return collisionObb_; }
 	bool GetIsAtack() { return isAtack; }
+	void SetLockOn( LookOn* lock) { LockOn_ = lock; }
 private:
 	enum class Behavior {
 		kRoot,
@@ -72,6 +73,7 @@ private:
 	bool isAtack;
 	bool isMove_;
 	float moveSpeed_;
+	LookOn* LockOn_;
 private:
 	void Move();
 	void SetParentModel(const WorldTransform* parent);

@@ -12,10 +12,11 @@ void GameScene::Initialize()
 
 	directXCommon_ = DirectXCommon::GetInstance();
 
+	
 	textureManager_ = Texturemanager::GetInstance();
 	collisionManager_ = make_unique<CollisionManager>();
 	input_ = Input::GetInstance();
-	int a = textureManager_->Load("Resource/tex.png");
+	  a = textureManager_->Load("Resource/tex.png");
 	viewProjection_.Initialize();
 	viewProjection_.translation_ = { 0.0f,0.0f,-5.0f };
 	playerModel_.reset(Model::CreateModelFromObj("Resource", "saikoro.obj"));
@@ -50,7 +51,10 @@ void GameScene::Initialize()
 	blendCount_ = 0;
 	lockOn_ = make_unique<LookOn>();
 	lockOn_->Initialize();
+	player_->SetLockOn(lockOn_.get());
 	followCamera_->SetlockOn(lockOn_.get());
+	particle = make_unique<Particle>();
+	particle->Initialize(1000);
 	ApplyGlobalVariables();
 	count_ = 0;
 }
@@ -60,7 +64,9 @@ void GameScene::Update()
 	count_++;
 	groundmanager_->Update();
 	for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
-		(*enemy)->Update();
+		if ((*enemy)->GetisAlive()) {
+			(*enemy)->Update();
+		}
 	}
 	if (player_->isGameover() == true) {
 		Finalize();
@@ -89,12 +95,19 @@ void GameScene::Update()
 
 
 		if (player_->GetIsAtack()) {
-			for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
-				if (IsCollision(player_->getcollsionObb(), (*enemy)->GetStructSphere())) {
-					(*enemy)->IsDead();
+			int i = 0;
+				for (Enemy* enemy : enemys_) {
+					if (enemy->GetisAlive()) {
+						if (IsCollision(player_->getcollsionObb(), enemy->GetStructSphere())) {
+							enemy->IsDead();
+							Transform t = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},enemy->GetWorldTransformBody().translation_};
+							particle->AddParticle({t}, 35);
+							i++;
+						}
+					}
 				}
 			}
-		}
+		
 		player_->Update();
 		viewProjection_.UpdateMatrix();
 		followCamera_->Update();
@@ -102,7 +115,7 @@ void GameScene::Update()
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 		viewProjection_.TransferMatrix();
 		lockOn_->Update(enemys_, viewProjection_);
-
+		particle->Update();
 		if (sceneNum > 1) {
 			sceneNum = 1;
 		}
@@ -111,13 +124,13 @@ void GameScene::Update()
 		collisionManager_->ClearColliders();
 		collisionManager_->AddCollider(player_.get());
 		collisionManager_->AddCollider(goal_.get());
-		enemys_.remove_if([](Enemy* enemy) {
+		/*enemys_.remove_if([](Enemy* enemy) {
 			if (!enemy->GetisAlive()) {
 				delete enemy;
 				return true;
 			}
 			return false;
-			});
+			});*/
 		for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
 
 			if ((*enemy)) {
@@ -154,7 +167,8 @@ void GameScene::Draw3D()
 	for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
 		(*enemy)->Draw(viewProjection_);
 	}
-	
+	blueMoon_->PariclePreDraw();
+    particle->Draw(viewProjection_,{1.0f,1.0f,1.0f,1.0f},a);
 
 }
 

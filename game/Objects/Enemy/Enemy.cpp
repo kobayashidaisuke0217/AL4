@@ -18,7 +18,7 @@ void Enemy::Initialize(const std::vector<Model*>& models,Vector3 pos )
 	worldTransformHead_.translation_ = { 0.0f, 1.0f, 0.0f };
 	worldTransformLarm_.translation_ = { -0.2f, 1.0f, 0.0f };
 	worldTransformRarm_.translation_ = { 0.2f, 1.0f, 0.0f };
-		worldTransform_.Initialize();
+	worldTransform_.Initialize();
 	worldTransformBase_.Initialize();
 	worldTransformBody_.Initialize();
 	worldTransformHead_.Initialize();

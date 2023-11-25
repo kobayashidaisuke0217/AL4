@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "ImguiManger.h"
+#include "Game/Manager/LookOn.h"
 void Player::Initialize(const std::vector<Model*>& models,Vector3 pos)
 {
 	ICharactor::Initialize(models,pos);
@@ -229,6 +230,27 @@ void Player::Move()
 			preMove_ = move;
 			
 		}
+		else if(LockOn_&&LockOn_->Existtarget()) {
+			Vector3 Direction;
+			//プレイヤーの現在の向き
+			Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+			Direction = Normalise(Direction);
+			Vector3 newPos = Subtract( LockOn_->GetTargetPos(), worldTransformBody_.translation_);
+			Vector3 newDirection = Normalise(newPos);
+			float cosin = Dot(Direction, newDirection);
+
+			//行きたい方向のQuaternionの作成
+			Quaternion newquaternion_;
+
+			newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+			//quaternionの合成
+			quaternion_ = Normalize(quaternion_);
+			newquaternion_ = Normalize(newquaternion_);
+
+			quaternion_ = Multiply(quaternion_, newquaternion_);
+		}
 
 		worldTransformBody_.quaternion_ = Slerp(0.3f,   worldTransformBody_.quaternion_, quaternion_);
 		
@@ -304,7 +326,32 @@ void Player::BehaviorAtackUpdate() {
 	else {
 		behaviorRequest_ = Behavior::kRoot;
 	}
+	if (LockOn_ && LockOn_->Existtarget()) {
+		Vector3 Direction;
+		//プレイヤーの現在の向き
+		Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
 
+		Direction = Normalise(Direction);
+		Vector3 newPos = Subtract(LockOn_->GetTargetPos(), worldTransformBody_.translation_);
+		Vector3 newDirection = Normalise(newPos);
+		float cosin = Dot(Direction, newDirection);
+
+		//行きたい方向のQuaternionの作成
+		Quaternion newquaternion_;
+
+		newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+		//quaternionの合成
+		quaternion_ = Normalize(quaternion_);
+		newquaternion_ = Normalize(newquaternion_);
+
+		quaternion_ = Multiply(quaternion_, newquaternion_);
+		worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
+
+	   worldTransform_.quaternion_ = worldTransformBody_.quaternion_;
+	}
+
+	
 	animationFrame++;
 
 }

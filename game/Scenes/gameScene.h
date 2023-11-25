@@ -20,6 +20,7 @@
 #include "Enemy.h"
 #include <list>
 #include "game/Manager/LookOn.h"
+#include "Engine/2D/particle.h"
 using namespace std;
 class GameScene :public Iscene
 {
@@ -44,6 +45,8 @@ private:
 	void ApplyGlobalVariables();
 #pragma endregion
 #pragma region ゲームの機能
+	int a;
+	unique_ptr<Particle> particle;
 	int count_;
 	unique_ptr<SkyDome> skyDome_ = nullptr;
 	unique_ptr<Model> skyDomeModel_ = nullptr;
