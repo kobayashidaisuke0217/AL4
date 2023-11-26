@@ -1,6 +1,13 @@
 #include "Player.h"
 #include "ImguiManger.h"
 #include "Game/Manager/LookOn.h"
+const std::array<ConstAttack, Player::comboNum>
+Player::kConstAttacks_ = { {
+	{5,1,20,10,0.0f,0.0f,0.15f},
+	{15,10,15,10,0.2f,0.0f,0.0f},
+	{15,10,15,30,0.2f,0.0f,0.0f},
+	}
+};
 void Player::Initialize(const std::vector<Model*>& models,Vector3 pos)
 {
 	ICharactor::Initialize(models,pos);
@@ -41,6 +48,7 @@ void Player::Initialize(const std::vector<Model*>& models,Vector3 pos)
 	worldTransformHammer_.translation_ = globalVariables->GetVector3Value(groupName, "HammerPos");
 	ApplyGlobalVariables();
 	moveSpeed_ = 0.1f; 
+
 }
 
 void Player::Update()
@@ -52,7 +60,7 @@ void Player::Update()
 	XINPUT_STATE joyState;
 	collisionObb_.center = worldTransformHammer_.GetWorldPos();
 	//collisionObb_.center.y += 1.0f;
-	GetOrientations(MakeRotateXYZMatrix(worldTransformHammer_.rotation_), collisionObb_.orientation);
+	GetOrientations(MakeRotateMatrix(worldTransformHammer_.rotation_), collisionObb_.orientation);
 	collisionObb_.size = { 1.0f,3.0f,1.0f };
 	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
 		return;
@@ -67,7 +75,9 @@ void Player::Update()
 	structSphere_.radius = 1.5f;
 
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
-		behaviorRequest_ = Behavior::kAtack;
+		if (!isAtack) {
+			behaviorRequest_ = Behavior::kAtack;
+		}
 	}
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
 		if (workDash_.cooltime_ <= workDash_.currentcooltime_) {
@@ -311,21 +321,93 @@ void Player::BehaviorRootUpdate() {
 }
 
 void Player::BehaviorAtackUpdate() {
-	if (animationFrame < 10) {
-		worldTransformLarm_.rotation_.x += 0.05f;
-		worldTransformRarm_.rotation_.x += 0.05f;
+	XINPUT_STATE joyState;
+	uint32_t anticipationTime = kConstAttacks_[workAtack_.comboIndex].anticipationTIme;
+	uint32_t chargeTime = kConstAttacks_[workAtack_.comboIndex].anticipationTIme + kConstAttacks_[workAtack_.comboIndex].chargeTime;
+	uint32_t swingTime = chargeTime + kConstAttacks_[workAtack_.comboIndex].swingTime;
+	uint32_t recoveryTime = swingTime + kConstAttacks_[workAtack_.comboIndex].recoveryTime;
+	if (workAtack_.comboIndex < comboNum - 1)
+	{
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 
-		worldTransformHammer_.rotation_.x += 0.05f;
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B)
+			{
+				workAtack_.comboNext = true;
+			}
+		}
 	}
-	else if (worldTransformHammer_.rotation_.x >= -2.0f * (float)M_PI / 4) {
-		worldTransformLarm_.rotation_.x -= 0.1f;
-		worldTransformRarm_.rotation_.x -= 0.1f;
+	if (workAtack_.Time >=recoveryTime )
+	{
+		if (workAtack_.comboNext)
+		{
+			workAtack_.comboNext = false;
+			workAtack_.Time = 0;
+			workAtack_.comboIndex++;
 
-		worldTransformHammer_.rotation_.x -= 0.1f;
+			
+
+			switch (workAtack_.comboIndex)
+			{
+			case 0:
+				workAtack_.rotate = (float)M_PI;
+				workAtack_.hammerRotate = 0.0f;
+				workAtack_.Time = 0;
+				animationFrame = 0.0f;
+				break;
+
+			case 1:
+				workAtack_.rotate = (float)M_PI;
+				workAtack_.hammerRotate = 0.0f;
+				workAtack_.Time = 0;
+				animationFrame = 0.0f;
+				break;
+
+			case 2:
+				workAtack_.rotate = (float)M_PI;
+				workAtack_.hammerRotate = 0.0f;
+				workAtack_.Time = 0;
+				animationFrame = 0.0f;
+				break;
+			}
+		
+		}
+		else {
+			behaviorRequest_ = Behavior::kRoot;
+			
+		}
 	}
-	else {
+	
+	if (workAtack_.Time < anticipationTime) {
+
+		worldTransformLarm_.rotation_.x = Lerp(animationFrame, workAtack_.rotate , anticipationRotate);
+		worldTransformRarm_.rotation_.x = Lerp(animationFrame, workAtack_.rotate, anticipationRotate);
+
+		worldTransformHammer_.rotation_.x = Lerp(animationFrame, workAtack_.hammerRotate, anticipationRotateHammer);
+		animationFrame += 1.0f / kConstAttacks_[workAtack_.comboIndex].anticipationTIme;
+	}
+	else if (workAtack_.Time < chargeTime) {
+		workAtack_.rotate = worldTransformLarm_.rotation_.x;
+		workAtack_.hammerRotate = worldTransformHammer_.rotation_.x;
+		animationFrame = 0.0f;
+	}
+	else if (workAtack_.Time < swingTime) {
+
+		worldTransformLarm_.rotation_.x = Lerp(animationFrame, workAtack_.rotate, swingRotate);
+		worldTransformRarm_.rotation_.x = Lerp(animationFrame, workAtack_.rotate, swingRotate);
+
+		worldTransformHammer_.rotation_.x = Lerp(animationFrame, workAtack_.hammerRotate, swingRotateHammer);
+		animationFrame += 1.0f / kConstAttacks_[workAtack_.comboIndex].swingTime;
+	}
+	
+	/*else if(workAtack_.Time>recoveryTime&&!workAtack_.comboNext) {
 		behaviorRequest_ = Behavior::kRoot;
-	}
+	}*/
+	ImGui::Begin("atack");
+	ImGui::DragFloat3("Larm", &worldTransformLarm_.rotation_.x);
+	ImGui::DragFloat3("Rarm", &worldTransformRarm_.rotation_.x);
+	ImGui::DragFloat3("Hammmer", &worldTransformHammer_.rotation_.x);
+	ImGui::End();
+	workAtack_.Time++;
 	if (LockOn_ && LockOn_->Existtarget()) {
 		Vector3 Direction;
 		//プレイヤーの現在の向き
@@ -352,7 +434,7 @@ void Player::BehaviorAtackUpdate() {
 	}
 
 	
-	animationFrame++;
+	
 
 }
 
@@ -374,10 +456,11 @@ void Player::BehaviorRootInitialize() {
 }
 
 void Player::BehaviorAtackInitialize() {
-	worldTransformLarm_.rotation_.x = (float)M_PI;
-	worldTransformRarm_.rotation_.x = (float)M_PI;
-	worldTransformHammer_.rotation_.x = 0.0f;
-	animationFrame = 0;
+	workAtack_.rotate = (float)M_PI;
+	workAtack_.hammerRotate = 0.0f;
+	workAtack_.Time = 0;
+	workAtack_.comboIndex = 0;
+	animationFrame = 0.0f;
 	isAtack = true;
 	isDash_ = false;
 	workDash_.currentcooltime_ = 0;

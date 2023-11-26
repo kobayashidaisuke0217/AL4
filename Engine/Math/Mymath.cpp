@@ -540,6 +540,13 @@ Vector3 Slerp(float t, const Vector3& s, const Vector3& e) {
 
 	return Add(Multiply(t1, s), Multiply(t2, e));
 }
+float Lerp(float t, const float& s, const float& e)
+{
+	float result;
+	float es = e - s;
+	result = s + t * es;
+	return result;
+}
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	return {
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],

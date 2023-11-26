@@ -9,9 +9,33 @@
 #include <optional>
 #include"GlobalVariables.h"
 class LookOn;
+struct ConstAttack {
+	//振りかぶり
+	uint32_t anticipationTIme;
+	//ため
+	uint32_t chargeTime;
+	//攻撃振り
+	uint32_t swingTime;
+	//硬直
+	uint32_t recoveryTime;
+	//振りかぶりの速度
+	float anticipationSpeed;
+	//ための速度
+	float chargeSpeed;
+	//攻撃振りの速度
+	float swingSpeed;
+};
+static const float anticipationRotate = 3.642f;
+static const float anticipationRotateHammer = 0.5f;
+
+static const float swingRotate = 1.542f;
+static const float swingRotateHammer = -1.6f;
+
 class Player :public Collider, public ICharactor
 {
+	
 public:
+	
 	void Initialize(const std::vector<Model*>& models,Vector3 pos) override;
 	void Update()override;
 	void Draw(const ViewProjection& view)override;
@@ -31,6 +55,8 @@ public:
 	OBB getcollsionObb() { return collisionObb_; }
 	bool GetIsAtack() { return isAtack; }
 	void SetLockOn( LookOn* lock) { LockOn_ = lock; }
+	static const int comboNum = 3;
+	static const std::array<ConstAttack, comboNum> kConstAttacks_;
 private:
 	enum class Behavior {
 		kRoot,
@@ -44,7 +70,16 @@ private:
 		uint32_t currentcooltime_;
 		float velocity_;
 	};
+	struct WorkAtack {
+		uint32_t Time;
+		float rotate;
+		float hammerRotate;
+		int32_t comboIndex = 0;
+		int32_t inComboPhase = 0;
+		bool comboNext = false;
+	};
 	WorkDash workDash_;
+	WorkAtack workAtack_;
 	Vector4 color;
 	Input* input_ = nullptr;
 	const ViewProjection* viewProjection_ = nullptr;
@@ -59,7 +94,7 @@ private:
 	WorldTransform worldTransformHammer_;
 	WorldTransform objectPos_;
 	float floatingParametor_ = 0.0f;
-	int animationFrame;
+	float animationFrame;
 
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
