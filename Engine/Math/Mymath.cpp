@@ -547,6 +547,30 @@ float Lerp(float t, const float& s, const float& e)
 	result = s + t * es;
 	return result;
 }
+float Angle(Vector3 from, Vector3 to)
+{
+	from = Normalise(from);
+	to = Normalise(to);
+	Vector2 from2 = { from.x,from.z };
+	Vector2 to2 = { to.x,to.z };
+	float dot = Dot(from, to);
+	if (dot >= 1.0f) {
+		return 0.0f;
+	}
+	if (dot <= -1.0f) {
+		return 180.0f * ( 2.0f / 180.0f);
+	}
+	if (Cross(from2, to2) > 0) {
+		return -std::acosf(dot);
+	}
+	else {
+	 return std::acosf(dot);
+	}
+}
+float Cross(Vector2 a, Vector2 b)
+{
+	return a.x*b.y - a.y*b.x;
+}
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	return {
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],

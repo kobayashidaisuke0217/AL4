@@ -32,6 +32,7 @@ void Enemy::Initialize(const std::vector<Model*>& models,Vector3 pos )
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributeEnemy);
 	SetCollisionMask(~CollisionConfig::kCollisionAttributeEnemy);
 	move_ = { 0.1f,0.0f,0.0f };
+	color = { 1.0f,1.0f,1.0f,1.0f };
 	isAlive_ = true;
 }
 
@@ -41,10 +42,22 @@ void Enemy::Update()
 		structSphere_.center = worldTransformBody_.GetWorldPos();
 		structSphere_.radius = 1.5f;
 		UpdateFloatGimmick();
-		Move();
+	//	Move();
 		ModelUpdateMatrix();
 		
 	}
+	if (HP <= 0) {
+		color.w -= 0.05f;
+	}
+	if (color.w < 0.0f) {
+		IsDead();
+	}
+	models_[kModelBody]->SetColor(color);
+	models_[kModelHead]->SetColor(color);
+	models_[kModelLarm]->SetColor(color);
+	models_[kModelRarm]->SetColor(color);
+	
+	
 }
 
 
@@ -53,6 +66,7 @@ void Enemy::Update()
 
 void Enemy::Draw(const ViewProjection& view)
 {
+	
 	if (isAlive_ == true) {
 		models_[kModelBody]->Draw(worldTransformBody_, view);
 		models_[kModelHead]->Draw(worldTransformHead_, view);
@@ -63,6 +77,12 @@ void Enemy::Draw(const ViewProjection& view)
 
 void Enemy::OnCollision()
 {
+	
+}
+
+void Enemy::isCollision()
+{
+	HP--;
 	
 }
 

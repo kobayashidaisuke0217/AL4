@@ -5,7 +5,7 @@ const std::array<ConstAttack, Player::comboNum>
 Player::kConstAttacks_ = { {
 	{5,1,20,10,0.0f,0.0f,0.15f},
 	{15,10,15,10,0.2f,0.0f,0.0f},
-	{15,10,15,30,0.2f,0.0f,0.0f},
+	{15,10,10,30,0.2f,0.0f,0.0f},
 	}
 };
 void Player::Initialize(const std::vector<Model*>& models,Vector3 pos)
@@ -34,6 +34,7 @@ void Player::Initialize(const std::vector<Model*>& models,Vector3 pos)
 	SetCollisionMask(~CollisionConfig::kCollisionAttributePlayer);
 	color = { 1.0f,1.0f,1.0f,1.0f };
 	worldTransform_.translation_ = { 1.0f,2.5f,1.0f };
+	BehaviorRootInitialize();
 	GlovalVariables* globalVariables{};
 	globalVariables = GlovalVariables::GetInstance();
 	quaternion_ = createQuaternion(0.0f, { 0.0f,1.0f,0.0f });
@@ -61,7 +62,7 @@ void Player::Update()
 	collisionObb_.center = worldTransformHammer_.GetWorldPos();
 	//collisionObb_.center.y += 1.0f;
 	GetOrientations(MakeRotateMatrix(worldTransformHammer_.rotation_), collisionObb_.orientation);
-	collisionObb_.size = { 1.0f,3.0f,1.0f };
+	collisionObb_.size = { 2.0f,4.0f,2.0f };
 	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
 		return;
 	}
@@ -125,7 +126,7 @@ void Player::Update()
 	
 	ModelUpdateMatrix();
 
-
+	prejoy = joyState;
 }
 
 void Player::Draw(const ViewProjection& view)
@@ -147,7 +148,7 @@ void Player::IsFall()
 
 void Player::OnCollision()
 {
-	gameOver = true;
+	//gameOver = true;
 }
 
 void Player::Setparent(const WorldTransform* parent)
@@ -332,7 +333,10 @@ void Player::BehaviorAtackUpdate() {
 
 			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B)
 			{
-				workAtack_.comboNext = true;
+				if (workAtack_.Time >= 20) {
+					workAtack_.comboNext = true;
+				}
+				
 			}
 		}
 	}
@@ -353,6 +357,7 @@ void Player::BehaviorAtackUpdate() {
 				workAtack_.hammerRotate = 0.0f;
 				workAtack_.Time = 0;
 				animationFrame = 0.0f;
+				workAtack_.isAtack = false;
 				break;
 
 			case 1:
@@ -360,6 +365,7 @@ void Player::BehaviorAtackUpdate() {
 				workAtack_.hammerRotate = 0.0f;
 				workAtack_.Time = 0;
 				animationFrame = 0.0f;
+				workAtack_.isAtack = false;
 				break;
 
 			case 2:
@@ -367,6 +373,7 @@ void Player::BehaviorAtackUpdate() {
 				workAtack_.hammerRotate = 0.0f;
 				workAtack_.Time = 0;
 				animationFrame = 0.0f;
+				workAtack_.isAtack = false;
 				break;
 			}
 		
@@ -399,9 +406,9 @@ void Player::BehaviorAtackUpdate() {
 		animationFrame += 1.0f / kConstAttacks_[workAtack_.comboIndex].swingTime;
 	}
 	
-	/*else if(workAtack_.Time>recoveryTime&&!workAtack_.comboNext) {
+	else if(workAtack_.Time>recoveryTime&&!workAtack_.comboNext) {
 		behaviorRequest_ = Behavior::kRoot;
-	}*/
+	}
 	ImGui::Begin("atack");
 	ImGui::DragFloat3("Larm", &worldTransformLarm_.rotation_.x);
 	ImGui::DragFloat3("Rarm", &worldTransformRarm_.rotation_.x);
@@ -453,6 +460,8 @@ void Player::BehaviorRootInitialize() {
 	isAtack = false;
 	isDash_ = false;
 	workDash_.currentcooltime_ = 0;
+	workAtack_.hitAtack = 0;
+	workAtack_.Combo = false;
 }
 
 void Player::BehaviorAtackInitialize() {
@@ -464,6 +473,9 @@ void Player::BehaviorAtackInitialize() {
 	isAtack = true;
 	isDash_ = false;
 	workDash_.currentcooltime_ = 0;
+	workAtack_.hitAtack = 0;
+	workAtack_.Combo = true;
+	workAtack_.isAtack = false;
 }
 
 void Player::ApplyGlobalVariables()

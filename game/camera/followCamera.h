@@ -26,6 +26,7 @@ private:
 	Vector3 rotate;
 	bool isChange;
 	Vector3 changeRotate;
+	Quaternion quaternion_;
 private:
 	void Move();
 	void Rotate();

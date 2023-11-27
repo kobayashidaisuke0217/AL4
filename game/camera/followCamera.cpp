@@ -5,6 +5,8 @@
 void FollowCamera::Initialize() {
 	viewprojection_.Initialize();
 	input_ = Input::GetInstance();
+	quaternion_ = createQuaternion(0.0f, { 0.0f,1.0f,0.0f });
+	quaternion_ = Normalize(quaternion_);
 	GlovalVariables* globalVariables{};
 	globalVariables = GlovalVariables::GetInstance();
 	const char* groupName = "Camera";
@@ -20,8 +22,8 @@ void FollowCamera::Update() {
 	if (lockOn_&&lockOn_->Existtarget()) {
 		Vector3 LockOntrans = lockOn_->GetTargetPos();
 		Vector3 sub = LockOntrans - GettargetWordPos();
-		//rotate.y = std::atan2(sub.x, sub.z);
-		viewprojection_.rotation_.y = std::atan2(sub.x, sub.z);//Lerp(delay_, rotate, viewprojection_.rotation_);
+		
+		viewprojection_.rotation_.y = Angle({0.0f,0.0f,1.0f},sub);//Lerp(delay_, rotate, viewprojection_.rotation_);
 	}
 	else {
 		Rotate();
@@ -51,8 +53,8 @@ void FollowCamera::Move() {
 
 		Vector3 offset = { 0.0f, 3.5f, -10.0f };
 
-		Matrix4x4 rotateMatrix = MakeRotateMatrix(viewprojection_.rotation_);
-
+	Matrix4x4 rotateMatrix = MakeRotateMatrix(viewprojection_.rotation_);
+		//Matrix4x4 rotateMatrix = quate(viewprojection_.rotation_);
 		offset = TransformNormal(offset, rotateMatrix);
 		Vector3 worldTranslate= { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
 		
@@ -63,7 +65,7 @@ void FollowCamera::Move() {
 }
 
 void FollowCamera::Rotate() {
-	XINPUT_STATE joystate;
+	XINPUT_STATE joystate; 
 
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kRotateSpeed = 0.02f;

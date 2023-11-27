@@ -84,11 +84,11 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 			}
 		}
 	
-	if (isAut) {
+	/*if (isAut) {
 		Search(enemys, viewProjection);
 		Target();
 		
-	}
+	}*/
 	if (!isLockOn_) {
 		Reset();
 			
@@ -104,10 +104,10 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 		Vector3 pos = WorldToScreen(positionWorld, viewProjection);
 		SpriteTransform_.translate.x = pos.x;
 		SpriteTransform_.translate.y = pos.y;
-		/*if (isRangeOut(viewProjection)) {
+		if (isRangeOut(viewProjection)) {
 			Reset();
 			Search(enemys, viewProjection);
-		}*/
+		}
 	}
 	preInputPad = joystate;
 	ImGui::Begin("LockOn");

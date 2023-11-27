@@ -33,3 +33,10 @@ void ViewProjection::UpdateViewMatrix() {
 void ViewProjection::UpdateProjectionMatrix() {
 	matProjection = MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
 }
+
+void ViewProjection::UpdateQuaternionMatrix()
+{
+	Matrix4x4 quart_ = quaternionToMatrix(quaternion_);
+	Matrix4x4 Afine = MakeQuatAffineMatrix({ 1.0f,1.0f,1.0f }, quart_, translation_);
+	matView = Inverse(Afine);
+}

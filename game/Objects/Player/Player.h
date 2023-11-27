@@ -55,6 +55,9 @@ public:
 	OBB getcollsionObb() { return collisionObb_; }
 	bool GetIsAtack() { return isAtack; }
 	void SetLockOn( LookOn* lock) { LockOn_ = lock; }
+	bool GetIsHitAtack() { return workAtack_.isAtack; }
+	void SetIsHitAtack() { workAtack_.isAtack = true; }
+	bool GetIsCombo() { return workAtack_.Combo; }
 	static const int comboNum = 3;
 	static const std::array<ConstAttack, comboNum> kConstAttacks_;
 private:
@@ -77,6 +80,9 @@ private:
 		int32_t comboIndex = 0;
 		int32_t inComboPhase = 0;
 		bool comboNext = false;
+		int32_t hitAtack;
+		bool isAtack;
+		bool Combo;
 	};
 	WorkDash workDash_;
 	WorkAtack workAtack_;
@@ -109,6 +115,7 @@ private:
 	bool isMove_;
 	float moveSpeed_;
 	LookOn* LockOn_;
+	XINPUT_STATE prejoy;
 private:
 	void Move();
 	void SetParentModel(const WorldTransform* parent);

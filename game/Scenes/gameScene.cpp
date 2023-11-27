@@ -99,12 +99,21 @@ void GameScene::Update()
 				for (Enemy* enemy : enemys_) {
 					if (enemy->GetisAlive()) {
 						if (IsCollision(player_->getcollsionObb(), enemy->GetStructSphere())) {
-							enemy->IsDead();
-							Transform t = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},enemy->GetWorldTransformBody().translation_};
-							particle->AddParticle({t}, 35);
-							i++;
+							//enemy->IsDead();
+
+							if (!player_->GetIsHitAtack()) {
+								Transform t = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},enemy->GetWorldTransformBody().translation_ };
+								particle->AddParticle({ t }, 35);
+								player_->SetIsHitAtack();
+								enemy->isCollision();
+							}
+						}
+
+						if (!player_->GetIsCombo()) {
+							enemy->resetHP();
 						}
 					}
+					
 				}
 			}
 		
