@@ -47,10 +47,11 @@ void Enemy::Update()
 		
 	}
 	if (HP <= 0) {
-		color.w -= 0.05f;
+		knockback = true;
+		
 	}
-	if (color.w < 0.0f) {
-		IsDead();
+	if (knockback) {
+		KnockBack();
 	}
 	models_[kModelBody]->SetColor(color);
 	models_[kModelHead]->SetColor(color);
@@ -139,4 +140,15 @@ void Enemy::UpdateFloatGimmick()
 
 	worldTransformLarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;
 	worldTransformRarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;
+}
+
+void Enemy::KnockBack()
+{
+	knockBacvelo = Multiply(1.0f, knockBacvelo);
+	worldTransformBody_.translation_ = Add(worldTransformBody_.translation_, knockBacvelo);
+	worldTransformBase_.translation_ = worldTransformBody_.translation_;
+	color.w -= 0.1f;
+	if (color.w < 0.0f) {
+		IsDead();
+	}
 }

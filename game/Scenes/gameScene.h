@@ -64,6 +64,10 @@ private:
 	std::unique_ptr<Model> enemyBodyModel = nullptr;
 	std::unique_ptr<Model> enemyL_armModel = nullptr;
 	std::unique_ptr<Model> enemyR_armModel = nullptr;
+	std::unique_ptr<Model> HeadModel = nullptr;
+	std::unique_ptr<Model> BodyModel = nullptr;
+	std::unique_ptr<Model> L_armModel = nullptr;
+	std::unique_ptr<Model> R_armModel = nullptr;
 	std::unique_ptr<Model> player_Hammer_ = nullptr;
 	std::vector<Model*>enemyModels;
 #pragma endregion

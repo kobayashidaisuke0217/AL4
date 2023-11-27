@@ -22,7 +22,7 @@ void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProj
     uvtransformMtrix = Multiply(uvtransformMtrix, MakeRotateZMatrix(uvTransform.rotate.z));
     uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
 
-
+   
     *material_ = { color,true };
     material_->uvTransform = uvtransformMtrix;
 
@@ -175,7 +175,6 @@ void Model::SetColor()
 
     materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&material_));
     material_->uvTransform = MakeIdentity4x4();
-
 }
 
 void Model::TransformMatrix()

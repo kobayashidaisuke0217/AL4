@@ -25,8 +25,12 @@ void GameScene::Initialize()
 	enemyHeadModel.reset(Model::CreateModelFromObj("Resource", "float_head.obj"));
 	enemyL_armModel.reset(Model::CreateModelFromObj("Resource", "float_L_arm.obj"));
 	enemyR_armModel.reset(Model::CreateModelFromObj("Resource", "float_R_arm.obj"));
+	BodyModel.reset(Model::CreateModelFromObj("Resource", "float_Body.obj"));
+	HeadModel.reset(Model::CreateModelFromObj("Resource", "float_head.obj"));
+	L_armModel.reset(Model::CreateModelFromObj("Resource", "float_L_arm.obj"));
+	R_armModel.reset(Model::CreateModelFromObj("Resource", "float_R_arm.obj"));
 	player_Hammer_.reset(Model::CreateModelFromObj("resource", "Hammer.obj"));
-	std::vector<Model*>playerModels = { enemyBodyModel.get(),enemyHeadModel.get(),enemyL_armModel.get(),enemyR_armModel.get(),player_Hammer_.get() };
+	std::vector<Model*>playerModels = { BodyModel.get(),HeadModel.get(),L_armModel.get(),R_armModel.get(),player_Hammer_.get() };
 	player_->Initialize(playerModels,{10.0f,0.0f,0.0f});
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
@@ -106,6 +110,7 @@ void GameScene::Update()
 								particle->AddParticle({ t }, 35);
 								player_->SetIsHitAtack();
 								enemy->isCollision();
+								enemy->SetVelocity(Normalise(Subtract( enemy->GetWorldTransform().GetWorldPos(), player_->GetWorldTransform().GetWorldPos())));
 							}
 						}
 
