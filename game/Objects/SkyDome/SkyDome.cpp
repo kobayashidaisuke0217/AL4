@@ -14,5 +14,6 @@ void SkyDome::Update() {
 }
 
 void SkyDome::Draw(const ViewProjection& viewPrijection) {
+	model_->setLighting(false);
 	model_->Draw(worldTransform_, viewPrijection);
 }

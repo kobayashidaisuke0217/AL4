@@ -101,7 +101,9 @@ private:
 	WorldTransform objectPos_;
 	float floatingParametor_ = 0.0f;
 	float animationFrame;
-
+	bool isJump_;
+	float velo;
+	int jumpCount;
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 	float cosin;

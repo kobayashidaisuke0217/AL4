@@ -11,8 +11,8 @@ Player::kConstAttacks_ = { {
 void Player::Initialize(const std::vector<Model*>& models,Vector3 pos)
 {
 	ICharactor::Initialize(models,pos);
-	worldTransform_.translation_ = { 0.0f,2.0f,-10.0f };
-	worldTransformBody_.translation_ = { 0.0f,2.0f,-10.0f };
+	worldTransform_.translation_ = { 0.0f,2.0f,-20.0f };
+	worldTransformBody_.translation_ = { 0.0f,2.0f,-20.0f };
 	worldTransformHead_.translation_ = { 0.0f, 1.0f, 0.0f };
 	worldTransformLarm_.translation_ = { -0.2f, 1.0f, 0.0f };
 	worldTransformRarm_.translation_ = { 0.2f, 1.0f, 0.0f };
@@ -49,7 +49,7 @@ void Player::Initialize(const std::vector<Model*>& models,Vector3 pos)
 	worldTransformHammer_.translation_ = globalVariables->GetVector3Value(groupName, "HammerPos");
 	ApplyGlobalVariables();
 	moveSpeed_ = 0.1f; 
-
+	velo = 0;
 }
 
 void Player::Update()
@@ -66,12 +66,20 @@ void Player::Update()
 	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
 		return;
 	}
-	if (worldTransform_.GetWorldPos().y < -10.0f) {
-		gameOver = true;
+	if (!isHit_ || worldTransformBody_.GetWorldPos().y < 0.0f) {
+		if (!isJump_) {
+			IsFall();
+		}
+
+	}if (worldTransformBody_.translation_.y < 2.3f) {
+		isJump_ = false;
 	}
 
 
-
+	if (worldTransform_.GetWorldPos().y < -10.0f) {
+		gameOver = true;
+	}
+	
 	structSphere_.center = worldTransformBody_.GetWorldPos();
 	structSphere_.radius = 1.5f;
 
@@ -87,6 +95,8 @@ void Player::Update()
 		}
 
 	}
+	
+	
 	if (!isDash_) {
 		workDash_.currentcooltime_++;
 	}
@@ -123,7 +133,25 @@ void Player::Update()
 
 	Vector3 a = worldTransformBody_.GetWorldPos();
 	Vector3 b = worldTransform_.GetWorldPos();
-	
+	if (!isJump_) {
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
+			if (!(prejoy.Gamepad.wButtons & XINPUT_GAMEPAD_X)) {
+				isJump_ = true;
+				velo = 1.5f;
+				worldTransformBody_.translation_.y += 2.0f;
+				worldTransform_.translation_ = worldTransformBody_.translation_;
+				jumpCount = 0;
+			}
+		}
+	}
+	else {
+		velo -= 0.05f;
+		jumpCount++;
+		
+			worldTransformBody_.translation_.y += velo;
+			worldTransform_.translation_.y = worldTransformBody_.translation_.y;
+		
+	}
 	ModelUpdateMatrix();
 
 	prejoy = joyState;
@@ -142,13 +170,16 @@ void Player::Draw(const ViewProjection& view)
 
 void Player::IsFall()
 {
+	if (velo >= 0.0f) {
+		velo -= 0.1f;
+	}
 	worldTransform_.translation_.y -= 0.1f;
 	worldTransformBody_.translation_ = worldTransform_.GetWorldPos();
 }
 
 void Player::OnCollision()
 {
-	//gameOver = true;
+	gameOver = true;
 }
 
 void Player::Setparent(const WorldTransform* parent)
@@ -194,6 +225,7 @@ void Player::Move()
 	
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kCharctorSpeed = 0.3f;
+		float jumpvelo=0.0f;
 		
 		Vector3 move = {
 			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
@@ -207,7 +239,9 @@ void Player::Move()
 		if (isMove_ == true) {
 			Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
 			move = TransformNormal(move, rotateMatrix);
+			
 			move = Multiply(kCharctorSpeed, Normalise(move));
+			
 			worldTransform_.translation_ = Add(move, worldTransform_.translation_);
 
 			preQuaternion_ = quaternion_;
@@ -305,11 +339,8 @@ void Player::UpdateFloatGimmick()
 	floatingParametor_ = (float)std::fmod(floatingParametor_, 2.0f * M_PI);
 
 
-	if (!isHit_ || worldTransformBody_.GetWorldPos().y < 0.0f) {
-		IsFall();
-	}
-
-	else {
+	
+  if(isHit_) {
 		worldTransform_.translation_.y = objectPos_.translation_.y + objectPos_.scale_.y + worldTransform_.scale_.y;
 		worldTransformBody_.translation_.y = std::sin(floatingParametor_) * floatingAmplitude + 1.0f;
 	}
@@ -318,7 +349,7 @@ void Player::UpdateFloatGimmick()
 }
 void Player::BehaviorRootUpdate() {
 	Move();
-	UpdateFloatGimmick();
+	//UpdateFloatGimmick();
 }
 
 void Player::BehaviorAtackUpdate() {

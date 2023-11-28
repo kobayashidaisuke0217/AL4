@@ -47,7 +47,7 @@ void GameScene::Initialize()
 	enemys_.clear();
 	for (int i = 0; i < 5; i++) {
 		Enemy* enemy = new Enemy();
-		enemy->Initialize(enemyModels, { i*1.0f,0.0f,i*10.0f });
+		enemy->Initialize(enemyModels, { i * 1.0f,1.0f,i * 10.0f + 2.0f });
 
 		enemys_.push_back(enemy);
 	}
@@ -114,9 +114,9 @@ void GameScene::Update()
 							}
 						}
 
-						if (!player_->GetIsCombo()) {
+						/*if (!player_->GetIsCombo()) {
 							enemy->resetHP();
-						}
+						}*/
 					}
 					
 				}
@@ -149,7 +149,7 @@ void GameScene::Update()
 
 			if ((*enemy)) {
 				if ((*enemy)->GetisAlive()) {
-					collisionManager_->AddCollider((*enemy));
+					//collisionManager_->AddCollider((*enemy));
 				}
 			}
 		}

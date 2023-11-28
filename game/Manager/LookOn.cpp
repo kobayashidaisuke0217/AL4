@@ -1,3 +1,4 @@
+
 #include "LookOn.h"
 #include "Enemy.h"
 #include  "ImGuiManger.h"
@@ -49,23 +50,7 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 	}
 	
 	
-		if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
-			if (!(preInputPad.Gamepad.wButtons & XINPUT_GAMEPAD_X)) {
-				isLockOn_ = true;
-				//Search(enemys, viewProjection);
-				if (iteratornum < max) {
-					
-					iteratornum++;
-					Search(enemys, viewProjection);
-					Target();
-				}
-				else {
-					iteratornum = 0;
-					Search(enemys, viewProjection);
-					Target();
-				}
-			}
-		}
+		
 		if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
 			if (!(preInputPad.Gamepad.wButtons & XINPUT_GAMEPAD_Y)) {
 				isLockOn_ = true;
@@ -104,9 +89,12 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 		Vector3 pos = WorldToScreen(positionWorld, viewProjection);
 		SpriteTransform_.translate.x = pos.x;
 		SpriteTransform_.translate.y = pos.y;
-		if (isRangeOut(viewProjection)) {
-			Reset();
-			Search(enemys, viewProjection);
+		if (isAut) {
+			if (isRangeOut(viewProjection)) {
+				Reset();
+				Search(enemys, viewProjection);
+				Target();
+			}
 		}
 	}
 	preInputPad = joystate;

@@ -11,7 +11,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
     directionalLight_ = DirectionalLight::GetInstance();
     CreateVartexData();
     SetColor();
-
+    material_->enableLighting = true;
 }
 
 void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProjection)
@@ -23,7 +23,7 @@ void Model::Draw(const WorldTransform& transform, const ViewProjection& viewProj
     uvtransformMtrix = Multiply(uvtransformMtrix, MakeTranslateMatrix(uvTransform.translate));
 
    
-    *material_ = { color,true };
+    *material_ = { color,material_->enableLighting };
     material_->uvTransform = uvtransformMtrix;
 
     dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
