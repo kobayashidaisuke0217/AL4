@@ -15,9 +15,10 @@ public:
 	 void Draw() override;
 	 void Finalize()override;
 private:
-	Input* input=nullptr;
-	Vector3 axis=Normalise({1.0f,1.0f,1.0f});
-	float angle = 0.44f;
-	
+	Input* input;
+	Vector3 from0 = Normalise({ 1.0f,0.7f,0.5f });
+	Vector3 to0 = -from0;
+	Vector3 from1 = Normalise({ -0.6f,0.9f,0.2f });
+	Vector3 to1 = Normalise({ 0.4f,0.7f,-0.5f });
 };
 

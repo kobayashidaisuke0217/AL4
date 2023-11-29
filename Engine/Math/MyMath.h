@@ -248,7 +248,7 @@ inline Vector3 Reflect(const Vector3& input, const Vector3& normal) {
 inline float  DotProduct(const Vector2& a, const Vector2& b) {
 	return a.x * b.y - a.y * b.x;
 }
-Matrix4x4 DirectiontoDirection(const Vector3& to, const Vector3& from);
+
 inline Vector4 MakeQuaternion(Vector3 axis, float radian) {
 	Vector4 quaternion;
 	float halfSin, halfCos;      //動かす角度の半分のsin,cos
@@ -477,3 +477,4 @@ inline bool CompereVector3(const Vector3& q1, const Vector3& q2) {
 
 }
 Matrix4x4 MakeRotateAxisAngle(Vector3 axis, float angle);
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);

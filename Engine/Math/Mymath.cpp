@@ -553,37 +553,6 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2) {
 	result.z = (v1.x * v2.y - v1.y * v2.x);
 	return result;
 }
-Matrix4x4 DirectiontoDirection(const Vector3& to, const Vector3& from)
-{
-
-	float cosin_ = Dot(to, from);
-	float sin_ = Length(Cross(to, from));
-	Vector3 Direction = Normalise(to * from);
-	Matrix4x4 result;
-	if (to.x != 0 || to.y != 0) {
-		Direction = { to.y,-to.x,0.0f };
-	}
-	result.m[0][0] = (Direction.x * Direction.x) * (1 - cosin_) + cosin_;
-	result.m[0][1] = Direction.x * Direction.y * (1 - cosin_) + Direction.z * sin_;
-	result.m[0][2] = Direction.x * Direction.z * (1 - cosin_) - Direction.y * sin_;
-	result.m[0][3] = 0;
-
-	result.m[1][0] = Direction.x * Direction.y * (1 - cosin_) - Direction.z * sin_;
-	result.m[1][1] = (Direction.y * Direction.y) * (1 - cosin_) + cosin_;
-	result.m[1][2] = Direction.y * Direction.z * (1 - cosin_) + Direction.z * sin_;
-	result.m[1][3] = 0;
-
-	result.m[2][0] = Direction.x * Direction.z * (1 - cosin_) + Direction.y * sin_;
-	result.m[2][1] = Direction.y * Direction.z * (1 - cosin_) - Direction.x * sin_;
-	result.m[2][2] = (Direction.z * Direction.z) * (1 - cosin_) * cosin_;
-	result.m[2][3] = 0;
-
-	result.m[3][0] = 0;
-	result.m[3][1] = 0;
-	result.m[3][2] = 0;
-	result.m[3][3] = 1;
-	return result;
-}
 Quaternion createQuaternion(float Radian, Vector3 axis)
 {
 	Quaternion quat;
@@ -658,3 +627,32 @@ Quaternion Slerp(float t, const Quaternion& s, const Quaternion& e) {
 }
 
 
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
+	Matrix4x4 result = MakeIdentity4x4();
+	Vector3 normal = Normalise(Cross(from, to));
+	if (from.x == -to.x &&from.y==-to.y&&from.z==-to.z) {
+		if (from.x != 0.0f || from.y != 0.0f) {
+			normal = { from.y,-from.x,0.0f };
+		}
+		else if (from.x != 0.0f || from.z != 0.0f) {
+			normal = { from.z,0.0f,-from.x };
+		}
+
+	}
+	float cos = Dot(from, to);
+	float sin = Length(Cross(from, to));
+
+	result.m[0][0] = normal.x * normal.x * (1.0f - cos) + cos;
+	result.m[0][1] = normal.x * normal.y * (1.0f - cos) + normal.z * sin;
+	result.m[0][2] = normal.x * normal.z * (1.0f - cos) - normal.y * sin;
+
+	result.m[1][0] = normal.x * normal.y * (1.0f - cos) - normal.z * sin;
+	result.m[1][1] = normal.y * normal.y * (1.0f - cos) + cos;
+	result.m[1][2] = normal.y * normal.z * (1.0f - cos) + normal.x * sin;
+
+	result.m[2][0] = normal.x * normal.z * (1.0f - cos) + normal.y * sin;
+	result.m[2][1] = normal.y * normal.z * (1.0f - cos) - normal.x * sin;
+	result.m[2][2] = normal.z * normal.z * (1.0f - cos) + cos;
+
+	return result;
+}
