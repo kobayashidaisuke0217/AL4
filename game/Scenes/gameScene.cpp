@@ -47,7 +47,7 @@ void GameScene::Initialize()
 	enemys_.clear();
 	for (int i = 0; i < 5; i++) {
 		Enemy* enemy = new Enemy();
-		enemy->Initialize(enemyModels, { i * 1.0f,1.0f,i * 10.0f + 2.0f });
+		enemy->Initialize(enemyModels, { 1.0f,1.0f,i * 10.0f + 2.0f });
 
 		enemys_.push_back(enemy);
 	}
@@ -106,7 +106,7 @@ void GameScene::Update()
 							//enemy->IsDead();
 
 							if (!player_->GetIsHitAtack()) {
-								Transform t = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},enemy->GetWorldTransformBody().translation_ };
+								Transform t = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},Vector3(enemy->GetWorldTransformBody().matWorld_.m[3][0],enemy->GetWorldTransformBody().matWorld_.m[3][1],enemy->GetWorldTransformBody().matWorld_.m[3][2])};
 								particle->AddParticle({ t }, 35);
 								player_->SetIsHitAtack();
 								enemy->isCollision();
@@ -128,7 +128,10 @@ void GameScene::Update()
 		viewProjection_.matView = followCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 		viewProjection_.TransferMatrix();
-		lockOn_->Update(enemys_, viewProjection_);
+	lockOn_->Update(enemys_, viewProjection_);
+	if (player_->Getisjjunm()) {
+		lockOn_->Reset();
+	}
 		particle->Update();
 		if (sceneNum > 1) {
 			sceneNum = 1;

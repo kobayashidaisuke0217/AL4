@@ -560,7 +560,7 @@ float Angle(Vector3 from, Vector3 to)
 	if (dot <= -1.0f) {
 		return 180.0f * ( 2.0f / 180.0f);
 	}
-	if (Cross(from2, to2) > 0) {
+	if (Cross(from2, to2) >= 0) {
 		return -std::acosf(dot);
 	}
 	else {
@@ -632,14 +632,24 @@ Quaternion createQuaternion(float Radian, Vector3 axis)
 Vector3 quaternionToEulerAngles(const Quaternion& quat)
 {
 	Vector3 euler;
+	//// ロール (X軸周りの回転)
+	//euler.x = atan2(2 * (quat.y * quat.z + quat.w * quat.x), quat.w * quat.w - quat.x * quat.x - quat.y * quat.y + quat.z * quat.z);
+
+	//// ピッチ (Y軸周りの回転)
+	//euler.y = asin(2 * (quat.x * quat.z - quat.w * quat.y));
+
+	//// ヨー (Z軸周りの回転)
+	//euler.z = atan2(2 * (quat.x * quat.y + quat.w * quat.z), quat.w * quat.w + quat.x * quat.x - quat.y * quat.y - quat.z * quat.z);
+
 	// ロール (X軸周りの回転)
-	euler.x = atan2(2 * (quat.y * quat.z + quat.w * quat.x), quat.w * quat.w - quat.x * quat.x - quat.y * quat.y + quat.z * quat.z);
+	euler.x = atan2(2 * (quat.x * quat.y + quat.z * quat.w), quat.z * quat.z - quat.w * quat.w - quat.x * quat.x + quat.y * quat.y);
 
 	// ピッチ (Y軸周りの回転)
-	euler.y = asin(2 * (quat.x * quat.z - quat.w * quat.y));
+	euler.y = asin(2 * (quat.w * quat.y - quat.w * quat.x));
 
 	// ヨー (Z軸周りの回転)
-	euler.z = atan2(2 * (quat.x * quat.y + quat.w * quat.z), quat.w * quat.w + quat.x * quat.x - quat.y * quat.y - quat.z * quat.z);
+	euler.z = atan2(2 * (quat.w * quat.x + quat.z * quat.y), quat.z * quat.z + quat.w * quat.w - quat.x * quat.x - quat.y * quat.y);
+
 
 	return euler;
 }

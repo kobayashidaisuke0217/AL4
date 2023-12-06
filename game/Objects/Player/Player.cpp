@@ -59,10 +59,12 @@ void Player::Update()
 	
 	ApplyGlobalVariables();
 	XINPUT_STATE joyState;
-	collisionObb_.center = worldTransformHammer_.GetWorldPos();
-	//collisionObb_.center.y += 1.0f;
-	GetOrientations(MakeRotateMatrix(worldTransformHammer_.rotation_), collisionObb_.orientation);
-	collisionObb_.size = { 2.0f,4.0f,2.0f };
+	Vector3 offset = { 0.0f,4.0f,0.0f };
+	collisionObb_.center = worldTransformBody_.GetWorldPos() + (Normalise( QuatToEuler(worldTransformBody_.quaternion_)));//worldTransformHammer_.GetWorldPos();
+
+	GetOrientations(MakeRotateMatrix({0.0f,0.0f,0.0f}), collisionObb_.orientation);
+	collisionObb_.size = {3.0f,0.0f,3.0f };
+	worldTransformHead_.translation_=collisionObb_.center;
 	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
 		return;
 	}
@@ -306,7 +308,7 @@ void Player::Move()
 
 void Player::SetParentModel(const WorldTransform* parent)
 {
-	worldTransformHead_.parent_ = parent;
+	//worldTransformHead_.parent_ = parent;
 	worldTransformRarm_.parent_ = parent;
 	worldTransformLarm_.parent_ = parent;
 	worldTransform_.parent_ = parent;

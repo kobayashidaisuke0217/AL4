@@ -12,6 +12,7 @@ void LookOn::Initialize()
 	texhandle_= Texturemanager::GetInstance()->Load("Resource/reticle.png");
 	isLockOn_ = false;
 	count_ = 0;
+	cooltime = 0;
 }
 
 void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewProjection)
@@ -23,13 +24,14 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 	}
 	if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
 		if (!(preInputPad.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
-			if (!target_) {
+			if (!isLockOn_) {
 				isLockOn_ = true;
 				Search(enemys, viewProjection);
-				Target();
+				//Target();
 			}
 			else {
 				isLockOn_ = false;
+				Reset();
 			}
 			
 		}
@@ -50,7 +52,7 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 	}
 	
 	
-		
+	if (!isAut) {
 		if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
 			if (!(preInputPad.Gamepad.wButtons & XINPUT_GAMEPAD_Y)) {
 				isLockOn_ = true;
@@ -58,26 +60,23 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 				if (iteratornum > 0) {
 
 					iteratornum--;
-					Search(enemys, viewProjection);
+					//Search(enemys, viewProjection);
 					Target();
 				}
 				else {
 					iteratornum = max-1;
-					Search(enemys, viewProjection);
+					//Search(enemys, viewProjection);
 					Target();
 				}
 			}
 		}
-	
+	}
 		if (isAut) {
 			Search(enemys, viewProjection);
 			Target();
-
+			isLockOn_ = true;
 		}
-	if (!isLockOn_) {
-		Reset();
-			
-	}
+	
 	
 	if (target_) {
 		if (!target_->GetisAlive()) {
@@ -101,7 +100,6 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 	ImGui::Begin("LockOn");
 	ImGui::Checkbox("IsAut", &isAut);
 	ImGui::End();
-	count_++;
 }
 
 void LookOn::Draw()
@@ -114,34 +112,35 @@ void LookOn::Draw()
 
 void LookOn::Target()
 {
-	target_ = nullptr;
+	//target_ = nullptr;
+	
+		if (!targets.empty()) {
+			targets.sort([](auto& pair1, auto& pair2) {return pair1.first > pair2.first; });
+			max = (int)targets.size();
+			if (isAut == true) { target_ = targets.front().second; }
+			else {
+				auto it = targets.begin(); // イテレータをリストの先頭に設定する
+				if (iteratornum >= targets.size()) {
+					iteratornum = (int)targets.size();
+				}
 
-	if (!targets.empty()) {
-		targets.sort([](auto& pair1, auto& pair2) {return pair1.first > pair2.first; });
-		max = (int)targets.size();
-		if (isAut == true) { target_ = targets.front().second; }
-		else {
-			auto it = targets.begin(); // イテレータをリストの先頭に設定する
-			if (iteratornum >= targets.size()) {
-				iteratornum = (int)targets.size();
+				std::advance(it, iteratornum);
+				if (it != targets.end()) {
+					std::pair<float, Enemy*>element = *it;
+					target_ = element.second;
+				}
+
+
 			}
-
-			std::advance(it, iteratornum);
-			if (it != targets.end()) {
-				std::pair<float, Enemy*>element = *it;
-				target_ = element.second;
-			}
-
-
 		}
-	}
+	
 }
 
 
 
 void LookOn::Search(const std::list<Enemy*>& enemys, const ViewProjection& viewProjection)
 {
-	if (count_ > 60) {
+	if (count_ > 60){
 	
 		
 		target_ = nullptr;
@@ -154,8 +153,8 @@ void LookOn::Search(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 					Vector3 viewXZ = Normalise({ positionView.x,0.0f,positionView.z });
 					Vector3 viewZ = Normalise({ 0.0f,0.0f,positionView.z });
 					float cos = Length(Cross(viewXZ, viewZ));
-					
-					if (std::abs(cos) <= angleRange_) {
+					//cos= Angle({ 0.0f,0.0f,1.0f }, viewXZ);
+					if (std::abs(cos)<= angleRange_) {
 						
 						targets.emplace_back(std::make_pair(positionView.z, enemy));
 					}
@@ -171,11 +170,11 @@ void LookOn::Search(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 
 void LookOn::Reset()
 {
-	if (target_) {
+	//if (target_) {
 		target_ = nullptr;
 		isLockOn_ = false;
 		iteratornum = 0;
-	}
+	
 	
 }
 
@@ -207,6 +206,9 @@ bool LookOn::isRangeOut(const ViewProjection& viewProjection)
 		Vector3 viewZ = Normalise({ 0.0f,0.0f,positionView.z });
 
 		float cos = Length(Cross(viewXZ, viewZ));
+		//cos = Angle({ 0.0f,0.0f,1.0f }, viewXZ);
+	//	if (cos <= angleRange_) {
+
 		if (std::abs(cos) <= angleRange_) {
 			//範囲内
 			return false;

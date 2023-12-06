@@ -58,6 +58,7 @@ public:
 	bool GetIsHitAtack() { return workAtack_.isAtack; }
 	void SetIsHitAtack() { workAtack_.isAtack = true; }
 	bool GetIsCombo() { return workAtack_.Combo; }
+	bool Getisjjunm() { return isJump_; }
 	static const int comboNum = 3;
 	static const std::array<ConstAttack, comboNum> kConstAttacks_;
 private:

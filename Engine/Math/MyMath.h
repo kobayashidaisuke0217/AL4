@@ -251,6 +251,13 @@ inline Vector3 Reflect(const Vector3& input, const Vector3& normal) {
 inline float  DotProduct(const Vector2& a, const Vector2& b) {
 	return a.x * b.y - a.y * b.x;
 }
+inline Vector3 QuatToEuler(Quaternion q) {
+	Vector3 euler{};
+	euler.x = std::atan2(2.0f * (q.z * q.w + q.x * q.y), 1.0f - 2.0f * (q.w * q.w + q.x * q.x));
+	euler.y = std::asin(2.0f * (q.z* q.x - q.y * q.w));
+	euler.z = std::atan2(2.0f * (q.z * q.y + q.w * q.x), 1.0f - 2.0f * (q.x * q.x + q.y * q.y));
+	return euler;
+}
 Matrix4x4 DirectiontoDirection(const Vector3& to, const Vector3& from);
 inline Vector4 MakeQuaternion(Vector3 axis, float radian) {
 	Vector4 quaternion;
