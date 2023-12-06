@@ -13,33 +13,22 @@ void TitleScene::Initialize()
 
 void TitleScene::Update()
 {
-	Matrix4x4 rotatematrix0 =DirectionToDirection(Normalise({1.0f,0.0f,0.0f}),Normalise({-1.0f,0.0f,0.0f}));
-	Matrix4x4 rotateMatrix1 = DirectionToDirection(from0,to0);
-	Matrix4x4 rotateMatrix2 = DirectionToDirection(from1, to1);
+	mul1 = QuaternionToVEctor4(Multiply(q1, q2));
+	mul2 = QuaternionToVEctor4(Multiply(q2, q1));
+	normal = QuaternionToVEctor4(Normalize(q1));
+	norm = LengthQuaternion(q1);
+	conj = QuaternionToVEctor4(Conjugate(q1));
+	identity = QuaternionToVEctor4(IdentityQuaternion());
+	inv = QuaternionToVEctor4(Inverse(q1));
+	ImGui::Begin("Quaternion");
+	ImGui::InputFloat4("Identity", &identity.x);
+	ImGui::InputFloat4("Conjugate", &conj.x);
+	ImGui::InputFloat4("Inverse", &inv.x);
+	ImGui::InputFloat4("Normalise", &normal.x);
+	ImGui::InputFloat4("Mul1", &mul1.x);
+	ImGui::InputFloat4("Mul2", &mul2.x);
+	ImGui::InputFloat("norm", &norm);
 
-	std::string result;
-
-	std::string result1;
-
-	std::string result2;
-	ImGui::Begin("matrix");
-	for (int y = 0; y < 4; y++) {
-		for (int x = 0; x < 4; x++) {
-			result += std::to_string(rotatematrix0.m[y][x])+", ";
-			result1 += std::to_string(rotateMatrix1.m[y][x]) + ", ";
-			result2 += std::to_string(rotateMatrix2.m[y][x]) + ", ";
-		
-		}
-		result += "\n";
-		result1 += "\n";
-		result2 += "\n";
-	}
-	ImGui::Text("matrix0\n" );
-	ImGui::Text("%s", result.c_str());
-	ImGui::Text("matrix1\n");
-	ImGui::Text("%s", result1.c_str());
-	ImGui::Text("matrix2\n");
-	ImGui::Text("%s", result2.c_str());
 	ImGui::End();
 	ImGui::Begin("SceneManager");
 	ImGui::InputInt("SceneNum", &sceneNum);

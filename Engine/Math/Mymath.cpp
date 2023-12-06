@@ -581,6 +581,30 @@ Vector3 quaternionToEulerAngles(const Quaternion& quat)
 
 	return euler;
 }
+Quaternion IdentityQuaternion()
+{
+	return {1.0f,0.0f,0.0f,0.0f};
+}
+Quaternion Conjugate(Quaternion q)
+{
+	return {q.w,-q.x,-q.y,-q.z};
+}
+Quaternion Inverse(Quaternion q)
+{
+	float norm = LengthQuaternion(q);
+	if (norm != 0.0f) {
+		float inverse = 1.0f / (norm * norm);
+		Quaternion conj = Conjugate(q);
+		return{ conj.w * inverse,conj.x * inverse,conj.y * inverse,conj.z * inverse };
+	}
+	else {
+		return q;
+	}
+}
+float Norm(Quaternion q)
+{
+	return sqrtf(q.x*q.x);
+}
 Matrix4x4 MakeRotateAxisAngle(Vector3 axis, float angle)
 {
 	axis = Normalise(axis);

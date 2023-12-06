@@ -16,9 +16,15 @@ public:
 	 void Finalize()override;
 private:
 	Input* input;
-	Vector3 from0 = Normalise({ 1.0f,0.7f,0.5f });
-	Vector3 to0 = -from0;
-	Vector3 from1 = Normalise({ -0.6f,0.9f,0.2f });
-	Vector3 to1 = Normalise({ 0.4f,0.7f,-0.5f });
+	Quaternion q1 = { 1.0f,2.0f,3.0f,4.0f };
+	Quaternion q2 = { 2.0f,1.0f,3.0f,5.0f };
+    Vector4 identity;
+    Vector4 conj;
+    Vector4 inv;
+    Vector4 normal;
+    Vector4 mul1;
+    Vector4 mul2;
+	float norm;
+
 };
 

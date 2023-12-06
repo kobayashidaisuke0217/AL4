@@ -97,6 +97,9 @@ struct StructSphere {
 	Vector3 center;
 	float radius;
 };
+inline Vector4 QuaternionToVEctor4(Quaternion q) {
+	return{ q.x,q.y,q.z,q.w };
+}
 inline Vector3 operator-(const Vector3& v) {
 	return { -v.x, -v.y, -v.z };
 }
@@ -476,5 +479,9 @@ inline bool CompereVector3(const Vector3& q1, const Vector3& q2) {
 	}
 
 }
+Quaternion IdentityQuaternion();
+Quaternion Conjugate(Quaternion q);
+Quaternion Inverse(Quaternion q);
+float Norm(Quaternion q);
 Matrix4x4 MakeRotateAxisAngle(Vector3 axis, float angle);
 Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
