@@ -62,18 +62,18 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 					Target();
 				}
 				else {
-					iteratornum = max;
+					iteratornum = max-1;
 					Search(enemys, viewProjection);
 					Target();
 				}
 			}
 		}
 	
-	/*if (isAut) {
-		Search(enemys, viewProjection);
-		Target();
-		
-	}*/
+		if (isAut) {
+			Search(enemys, viewProjection);
+			Target();
+
+		}
 	if (!isLockOn_) {
 		Reset();
 			

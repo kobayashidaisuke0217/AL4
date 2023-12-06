@@ -25,7 +25,7 @@ private:
 	Transform SpriteTransform_;
 
 	int texhandle_;
-	float minDistance_ = 2.0f;
+	float minDistance_ = 0.0f;
 	float maxDistance_ = 30.0f;
 	float angleRange_ = 50.0f * 3.14159265f / 180.0f;
 	bool isLockOn_;
