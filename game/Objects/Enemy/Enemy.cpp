@@ -41,8 +41,8 @@ void Enemy::Update()
 	if (isAlive_ == true) {
 		structSphere_.center = worldTransformBody_.GetWorldPos();
 		structSphere_.radius = 1.5f;
-		UpdateFloatGimmick();
-	//	Move();
+		//dateFloatGimmick();
+	//Move();
 		ModelUpdateMatrix();
 		
 	}

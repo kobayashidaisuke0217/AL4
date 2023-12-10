@@ -119,6 +119,7 @@ private:
 	float moveSpeed_;
 	LookOn* LockOn_;
 	XINPUT_STATE prejoy;
+	Vector3 MoveVec;
 private:
 	void Move();
 	void SetParentModel(const WorldTransform* parent);

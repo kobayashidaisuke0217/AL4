@@ -70,7 +70,7 @@ void FollowCamera::Rotate() {
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kRotateSpeed = 0.02f;
 		/*rotate.y*/viewprojection_.rotation_.y += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
-		/*changeRotate= Lerp(delay_, rotate, changeRotate);
+	/*	changeRotate= Lerp(delay_, rotate, changeRotate);
 		viewprojection_.rotation_ = changeRotate;*/
 	}
 }

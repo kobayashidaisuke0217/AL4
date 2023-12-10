@@ -60,11 +60,14 @@ void Player::Update()
 	ApplyGlobalVariables();
 	XINPUT_STATE joyState;
 	Vector3 offset = { 0.0f,4.0f,0.0f };
-	collisionObb_.center = worldTransformBody_.GetWorldPos() + (Normalise( QuatToEuler(worldTransformBody_.quaternion_)));//worldTransformHammer_.GetWorldPos();
+	Matrix4x4 quatmat = quaternionToMatrix(Normalize(worldTransform_.quaternion_));
+	Vector3 world = { 0.0f,0.0f,1.0f };
+	world = vectorTransform(world, quatmat);
+	collisionObb_.center = worldTransformBody_.GetWorldPos()+(-1.0f*3.0f*world) ;//worldTransformHammer_.GetWorldPos();
 
 	GetOrientations(MakeRotateMatrix({0.0f,0.0f,0.0f}), collisionObb_.orientation);
-	collisionObb_.size = {3.0f,0.0f,3.0f };
-	worldTransformHead_.translation_=collisionObb_.center;
+	collisionObb_.size = {1.5f,1.0f,1.5f };
+	//worldTransformHead_.translation_=collisionObb_.center;
 	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
 		return;
 	}
@@ -232,6 +235,9 @@ void Player::Move()
 		Vector3 move = {
 			(float)joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
 			(float)joystate.Gamepad.sThumbLY / SHRT_MAX };
+		
+			MoveVec = move;
+		
 		if (CompereVector3(move, { 0.0f,0.0f,0.0f })) {
 			isMove_ = false;
 		}
@@ -308,7 +314,7 @@ void Player::Move()
 
 void Player::SetParentModel(const WorldTransform* parent)
 {
-	//worldTransformHead_.parent_ = parent;
+	worldTransformHead_.parent_ = parent;
 	worldTransformRarm_.parent_ = parent;
 	worldTransformLarm_.parent_ = parent;
 	worldTransform_.parent_ = parent;

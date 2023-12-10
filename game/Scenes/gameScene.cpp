@@ -47,7 +47,7 @@ void GameScene::Initialize()
 	enemys_.clear();
 	for (int i = 0; i < 5; i++) {
 		Enemy* enemy = new Enemy();
-		enemy->Initialize(enemyModels, { 1.0f,1.0f,i * 10.0f + 2.0f });
+		enemy->Initialize(enemyModels, { i*10.0f+2.0f,1.0f,i * 10.0f + 2.0f });
 
 		enemys_.push_back(enemy);
 	}
@@ -67,11 +67,7 @@ void GameScene::Update()
 {
 	count_++;
 	groundmanager_->Update();
-	for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
-		if ((*enemy)->GetisAlive()) {
-			(*enemy)->Update();
-		}
-	}
+	
 	if (player_->isGameover() == true) {
 		Finalize();
 		Initialize();
@@ -121,7 +117,11 @@ void GameScene::Update()
 					
 				}
 			}
-		
+		for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
+			if ((*enemy)->GetisAlive()) {
+				(*enemy)->Update();
+			}
+		}
 		player_->Update();
 		viewProjection_.UpdateMatrix();
 		followCamera_->Update();
@@ -141,13 +141,7 @@ void GameScene::Update()
 		collisionManager_->ClearColliders();
 		collisionManager_->AddCollider(player_.get());
 		collisionManager_->AddCollider(goal_.get());
-		/*enemys_.remove_if([](Enemy* enemy) {
-			if (!enemy->GetisAlive()) {
-				delete enemy;
-				return true;
-			}
-			return false;
-			});*/
+		
 		for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
 
 			if ((*enemy)) {
