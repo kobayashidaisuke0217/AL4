@@ -357,7 +357,7 @@ void Player::UpdateFloatGimmick()
 }
 void Player::BehaviorRootUpdate() {
 	Move();
-	//UpdateFloatGimmick();
+	UpdateFloatGimmick();
 }
 
 void Player::BehaviorAtackUpdate() {
@@ -430,11 +430,61 @@ void Player::BehaviorAtackUpdate() {
 
 		worldTransformHammer_.rotation_.x = Lerp(animationFrame, workAtack_.hammerRotate, anticipationRotateHammer);
 		animationFrame += 1.0f / kConstAttacks_[workAtack_.comboIndex].anticipationTIme;
+		if (LockOn_ && LockOn_->Existtarget()) {
+			Vector3 Direction;
+			//プレイヤーの現在の向き
+			Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+			Direction = Normalise(Direction);
+			Vector3 newPos = Subtract(LockOn_->GetTargetPos(), worldTransformBody_.translation_);
+			Vector3 newDirection = Normalise(newPos);
+			float cosin = Dot(Direction, newDirection);
+
+			//行きたい方向のQuaternionの作成
+			Quaternion newquaternion_;
+
+			newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+			//quaternionの合成
+			quaternion_ = Normalize(quaternion_);
+			newquaternion_ = Normalize(newquaternion_);
+
+			quaternion_ = Multiply(quaternion_, newquaternion_);
+			worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
+
+			worldTransform_.quaternion_ = worldTransformBody_.quaternion_;
+		}
+
 	}
 	else if (workAtack_.Time < chargeTime) {
 		workAtack_.rotate = worldTransformLarm_.rotation_.x;
 		workAtack_.hammerRotate = worldTransformHammer_.rotation_.x;
 		animationFrame = 0.0f;
+		if (LockOn_ && LockOn_->Existtarget()) {
+			Vector3 Direction;
+			//プレイヤーの現在の向き
+			Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+			Direction = Normalise(Direction);
+			Vector3 newPos = Subtract(LockOn_->GetTargetPos(), worldTransformBody_.translation_);
+			Vector3 newDirection = Normalise(newPos);
+			float cosin = Dot(Direction, newDirection);
+
+			//行きたい方向のQuaternionの作成
+			Quaternion newquaternion_;
+
+			newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+			//quaternionの合成
+			quaternion_ = Normalize(quaternion_);
+			newquaternion_ = Normalize(newquaternion_);
+
+			quaternion_ = Multiply(quaternion_, newquaternion_);
+			worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
+
+			worldTransform_.quaternion_ = worldTransformBody_.quaternion_;
+		}
+
 	}
 	else if (workAtack_.Time < swingTime) {
 
@@ -454,31 +504,7 @@ void Player::BehaviorAtackUpdate() {
 	ImGui::DragFloat3("Hammmer", &worldTransformHammer_.rotation_.x);
 	ImGui::End();
 	workAtack_.Time++;
-	if (LockOn_ && LockOn_->Existtarget()) {
-		Vector3 Direction;
-		//プレイヤーの現在の向き
-		Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
-
-		Direction = Normalise(Direction);
-		Vector3 newPos = Subtract(LockOn_->GetTargetPos(), worldTransformBody_.translation_);
-		Vector3 newDirection = Normalise(newPos);
-		float cosin = Dot(Direction, newDirection);
-
-		//行きたい方向のQuaternionの作成
-		Quaternion newquaternion_;
-
-		newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
-
-		//quaternionの合成
-		quaternion_ = Normalize(quaternion_);
-		newquaternion_ = Normalize(newquaternion_);
-
-		quaternion_ = Multiply(quaternion_, newquaternion_);
-		worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
-
-	   worldTransform_.quaternion_ = worldTransformBody_.quaternion_;
-	}
-
+	
 	
 	
 

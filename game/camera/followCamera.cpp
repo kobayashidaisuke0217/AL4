@@ -23,12 +23,16 @@ void FollowCamera::Update() {
 		Vector3 LockOntrans = lockOn_->GetTargetPos();
 		Vector3 sub = LockOntrans - GettargetWordPos();
 		
-		viewprojection_.rotation_.y = Angle({0.0f,0.0f,1.0f},sub);//Lerp(delay_, rotate, viewprojection_.rotation_);
+
+
+		viewprojection_.rotation_.y = Angle({ 0.0f,0.0f,1.0f }, sub);//Lerp(delay_, rotate, viewprojection_.rotation_);
+
 	}
 	else {
+		
 		Rotate();
 	}
-	rotate = { viewprojection_.rotation_.x,rotate.y,viewprojection_.rotation_.z };
+	//rotate = { viewprojection_.rotation_.x,rotate.y,viewprojection_.rotation_.z };
 	viewprojection_.UpdateViewMatrix();
 	viewprojection_.TransferMatrix();
 }
@@ -57,9 +61,14 @@ void FollowCamera::Move() {
 		//Matrix4x4 rotateMatrix = quate(viewprojection_.rotation_);
 		offset = TransformNormal(offset, rotateMatrix);
 		Vector3 worldTranslate= { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
-		
+	/*	if (lockOn_ && lockOn_->Existtarget()) {
+			Vector3 Loktrans = lockOn_->GetTargetPos();
+			Loktrans.y = worldTranslate.y;
+			worldTranslate = worldTranslate + Loktrans+offset;
+			worldTranslate.y = Loktrans.y;
+		}*/
 		interTarget_ = Lerp(delay_, worldTranslate, interTarget_);
-		viewprojection_.translation_ = interTarget_ + offset;
+		viewprojection_.translation_ = worldTranslate + offset;
 	}
 	
 }
@@ -69,9 +78,10 @@ void FollowCamera::Rotate() {
 
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {
 		const float kRotateSpeed = 0.02f;
-		/*rotate.y*/viewprojection_.rotation_.y += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
-	/*	changeRotate= Lerp(delay_, rotate, changeRotate);
-		viewprojection_.rotation_ = changeRotate;*/
+		//rotate.y/*viewprojection_.rotation_.y*/ += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
+		//changeRotate= Lerp(delay_, rotate, changeRotate);
+		//viewprojection_.rotation_ = changeRotate;
+		viewprojection_.rotation_.y += (float)joystate.Gamepad.sThumbRX / SHRT_MAX * kRotateSpeed;
 	}
 }
 void FollowCamera::ApplyGlobalVariables()

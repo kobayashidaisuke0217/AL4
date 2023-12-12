@@ -45,13 +45,27 @@ void GameScene::Initialize()
 	goal_->Initialize({ 0.0f,2.0f,62.0f }, { 1.0f,1.0f,1.0f });
 	enemyModels = { enemyBodyModel.get(),enemyHeadModel.get(),enemyL_armModel.get(),enemyR_armModel.get() };
 	enemys_.clear();
+	Enemy* enemy[5];
 	for (int i = 0; i < 5; i++) {
-		Enemy* enemy = new Enemy();
-		enemy->Initialize(enemyModels, { i*10.0f+2.0f,1.0f,i * 10.0f + 2.0f });
-
-		enemys_.push_back(enemy);
+		enemy[i] = new Enemy();
 	}
+	enemy[0]->Initialize(enemyModels, {10.0f ,1.0f, 10.0f});
+
+	enemys_.push_back(enemy[0]);
 	
+	enemy[1]->Initialize(enemyModels, {20.0f ,1.0f, 20.0f});
+
+	enemys_.push_back(enemy[1]);
+
+	enemy[2]->Initialize(enemyModels, {-10.0f ,1.0f, -10.0f});
+
+	enemys_.push_back(enemy[2]);
+	enemy[3]->Initialize(enemyModels, {-20.0f ,1.0f, -20.0f});
+
+	enemys_.push_back(enemy[3]);
+	enemy[4]->Initialize(enemyModels, {20.0f ,1.0f, 0.0f});
+
+	enemys_.push_back(enemy[4]);
 	blendCount_ = 0;
 	lockOn_ = make_unique<LookOn>();
 	lockOn_->Initialize();
@@ -146,7 +160,7 @@ void GameScene::Update()
 
 			if ((*enemy)) {
 				if ((*enemy)->GetisAlive()) {
-					//collisionManager_->AddCollider((*enemy));
+					collisionManager_->AddCollider((*enemy));
 				}
 			}
 		}
