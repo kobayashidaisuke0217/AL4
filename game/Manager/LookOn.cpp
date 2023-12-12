@@ -38,14 +38,16 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 		if (!(preInputPad.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)) {
 			if (isAut) {
 				isAut = false;
-				Search(enemys, viewProjection);
+				
 
 			}
 			else {
 				isAut = true;
-				Search(enemys, viewProjection);
+			
 
 			}
+			Search(enemys, viewProjection);
+			Target();
 		}
 	}
 
@@ -54,6 +56,7 @@ void LookOn::Update(const std::list<Enemy*>& enemys, const ViewProjection& viewP
 	if (joystate.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
 		if (!(preInputPad.Gamepad.wButtons & XINPUT_GAMEPAD_Y)) {
 			isLockOn_ = true;
+			isAut = false;
 			//Search(enemys, viewProjection);
 			if (iteratornum > 0) {
 
