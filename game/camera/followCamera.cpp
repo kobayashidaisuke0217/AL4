@@ -2,6 +2,7 @@
 #include"MyMath.h"
 #include "ImguiManger.h"
 #include "game/Manager/LookOn.h"
+#include <numbers>
 void FollowCamera::Initialize() {
 	viewprojection_.Initialize();
 	input_ = Input::GetInstance();
@@ -19,13 +20,24 @@ void FollowCamera::Initialize() {
 void FollowCamera::Update() {
 	ApplyGlobalVariables();
 	Move();
-	if (lockOn_&&lockOn_->Existtarget()) {
+	if (lockOn_ && lockOn_->Existtarget()) {
 		Vector3 LockOntrans = lockOn_->GetTargetPos();
 		Vector3 sub = LockOntrans - GettargetWordPos();
-		
+		if (sub.z != 0.0) {
+			viewprojection_.rotation_.y = std::asin(sub.x / std::sqrt(sub.x * sub.x + sub.z * sub.z));
+
+			if (sub.z < 0.0) {
+				viewprojection_.rotation_.y = (sub.x >= 0.0) ? std::numbers::pi_v<float> -viewprojection_.rotation_.y : -std::numbers::pi_v<float> -viewprojection_.rotation_.y;
+			}
+		}
+		else {
+			viewprojection_.rotation_.y = (sub.x >= 0.0) ? std::numbers::pi_v<float> / 2.0f : -std::numbers::pi_v<float> / 2.0f;
+		}
 
 
-		viewprojection_.rotation_.y = Angle({ 0.0f,0.0f,1.0f }, sub);//Lerp(delay_, rotate, viewprojection_.rotation_);
+
+
+		//viewprojection_.rotation_.y = Angle({ 0.0f,0.0f,1.0f }, sub);//Lerp(delay_, rotate, viewprojection_.rotation_);
 
 	}
 	else {
@@ -68,7 +80,7 @@ void FollowCamera::Move() {
 			worldTranslate.y = Loktrans.y;
 		}*/
 		interTarget_ = Lerp(delay_, worldTranslate, interTarget_);
-		viewprojection_.translation_ = worldTranslate + offset;
+		viewprojection_.translation_ = interTarget_ + offset;
 	}
 	
 }

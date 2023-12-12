@@ -357,7 +357,7 @@ void Player::UpdateFloatGimmick()
 }
 void Player::BehaviorRootUpdate() {
 	Move();
-	UpdateFloatGimmick();
+	//UpdateFloatGimmick();
 }
 
 void Player::BehaviorAtackUpdate() {
