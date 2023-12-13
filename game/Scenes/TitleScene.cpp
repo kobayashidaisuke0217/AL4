@@ -8,31 +8,33 @@ void TitleScene::Initialize()
 {	
 	input = Input::GetInstance();
 	count = 0;
-
+	pointY = { 2.1f,-0.9f,1.3f };
 }
 
 void TitleScene::Update()
 {
-	mul1 = QuaternionToVEctor4(Multiply(q1, q2));
-	mul2 = QuaternionToVEctor4(Multiply(q2, q1));
-	normal = QuaternionToVEctor4(Normalize(q1));
-	norm = LengthQuaternion(q1);
-	conj = QuaternionToVEctor4(Conjugate(q1));
-	identity = QuaternionToVEctor4(IdentityQuaternion());
-	inv = QuaternionToVEctor4(Inverse(q1));
-	ImGui::Begin("Quaternion");
-	ImGui::InputFloat4("Identity", &identity.x);
-	ImGui::InputFloat4("Conjugate", &conj.x);
-	ImGui::InputFloat4("Inverse", &inv.x);
-	ImGui::InputFloat4("Normalise", &normal.x);
-	ImGui::InputFloat4("Mul1", &mul1.x);
-	ImGui::InputFloat4("Mul2", &mul2.x);
-	ImGui::InputFloat("norm", &norm);
-
-	ImGui::End();
-	ImGui::Begin("SceneManager");
-	ImGui::InputInt("SceneNum", &sceneNum);
-	ImGui::Text("count %d",count);
+	Rotation = createQuaternion(0.45f,Normalise({ 1.0f,0.4f,-0.2f }));
+	
+	Vector4 rot = QuaternionToVEctor4(Rotation);
+	rotateMatrix= quaternionToMatrix(Normalize( Rotation));
+	rotateByMatrix = vectorTransform(pointY, rotateMatrix);
+	rotateByQuaternion = Rotatevector(pointY, Rotation);
+	std::string result;
+	ImGui::Begin("");
+	ImGui::InputFloat4("rotation",&rot.x );
+	ImGui::InputFloat3("rotateByMatrix", &rotateByMatrix.x);
+	ImGui::InputFloat3("rotateByQuaternion", &rotateByQuaternion.x);
+	
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 4; x++) {
+			result += std::to_string(rotateMatrix.m[y][x]) + ", ";
+			
+		}
+		result += "\n";
+	
+	}
+	ImGui::Text("matrix\n");
+	ImGui::Text("%s", result.c_str());
 	ImGui::End();
 	if (input->PushKey(DIK_SPACE)) {
 		sceneNum = GAME_SCENE;

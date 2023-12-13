@@ -300,8 +300,22 @@ inline Matrix4x4 quaternionToMatrix(const Quaternion& quat) {
 
 	float zz = quat.z * quat.z;
 	float zw = quat.z * quat.w;
+	float ww = quat.w * quat.w;
+	result.m[0][0] = ww+xx -yy - zz;
+	result.m[0][1] = 2.0f * (xy + zw);
+	result.m[0][2] = 2.0f * (xz - yw);
+	result.m[0][3] = 0.0f;
 
-	result.m[0][0] = 1.0f - 2.0f * (yy + zz);
+	result.m[1][0] = 2.0f * (xy - zw);
+	result.m[1][1] = ww - xx + yy - zz;
+	result.m[1][2] = 2.0f * (yz + xw);
+	result.m[1][3] = 0.0f;
+
+	result.m[2][0] = 2.0f * (xz + yw);
+	result.m[2][1] = 2.0f * (yz - xw);
+	result.m[2][2] = ww - xx - yy + zz;
+	result.m[2][3] = 0.0f;
+	/*result.m[0][0] = 1.0f - 2.0f * (yy + zz);
 	result.m[0][1] = 2.0f * (xy - zw);
 	result.m[0][2] = 2.0f * (xz + yw);
 	result.m[0][3] = 0.0f;
@@ -314,7 +328,7 @@ inline Matrix4x4 quaternionToMatrix(const Quaternion& quat) {
 	result.m[2][0] = 2.0f * (xz - yw);
 	result.m[2][1] = 2.0f * (yz + xw);
 	result.m[2][2] = 1.0f - 2.0f * (xx + yy);
-	result.m[2][3] = 0.0f;
+	result.m[2][3] = 0.0f;*/
 
 	result.m[3][0] = 0.0f;
 	result.m[3][1] = 0.0f;
@@ -347,6 +361,7 @@ inline Vector3 matrixToEulerAngles(const Matrix4x4 mat) {
 inline float LengthQuaternion(const Quaternion& q) {
 	return std::sqrtf(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
 }
+Vector3 Rotatevector(Vector3 v, Quaternion q);
 inline Quaternion Normalize(const Quaternion& q) {
 	float len = LengthQuaternion(q);
 	Quaternion result;

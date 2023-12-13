@@ -16,15 +16,11 @@ public:
 	 void Finalize()override;
 private:
 	Input* input;
-	Quaternion q1 = { 1.0f,2.0f,3.0f,4.0f };
-	Quaternion q2 = { 2.0f,1.0f,3.0f,5.0f };
-    Vector4 identity;
-    Vector4 conj;
-    Vector4 inv;
-    Vector4 normal;
-    Vector4 mul1;
-    Vector4 mul2;
-	float norm;
+	Quaternion Rotation;
+	Vector3 pointY = { 2.1f,-0.9f,1.3f };
+	Matrix4x4 rotateMatrix;
+	Vector3 rotateByQuaternion;
+	Vector3 rotateByMatrix;
 
 };
 

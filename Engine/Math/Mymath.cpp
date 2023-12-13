@@ -581,6 +581,13 @@ Vector3 quaternionToEulerAngles(const Quaternion& quat)
 
 	return euler;
 }
+Vector3 Rotatevector(Vector3 v, Quaternion q)
+{
+	Quaternion vec = { 0.0f,v.x,v.y,v.z };
+	Quaternion conju = Conjugate(q);
+	Quaternion result = Multiply(q, Multiply(vec, conju));
+	return {result.x,result.y,result.z};
+}
 Quaternion IdentityQuaternion()
 {
 	return {1.0f,0.0f,0.0f,0.0f};
