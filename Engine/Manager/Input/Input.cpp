@@ -24,17 +24,20 @@ void Input::Initialize(WinApp* winApp) {
 	keys = {};
 	preKeys = {};
 	count = 0;
+	GetJoystickState(0, joystate);
 }
 
 void Input::Update()
 {
+	preState = joystate;
+	GetJoystickState(0, joystate);
 	preKeys = keys;
 	//キーボード情報の取得開始
 	keyboard->Acquire();
 	keys = {};
 	//全てのキーの入力状態を取得する
 	keyboard->GetDeviceState(sizeof(keys), &keys);
-
+	
 }
 
 bool Input::PushKey(uint8_t keyNumber)const
@@ -79,6 +82,14 @@ bool Input::GetJoystickState(int32_t stickNo, XINPUT_STATE& out) const
 	else {
 		return false;
 	}
+}
+
+bool Input::PushButtun(int sticNo, uint32_t state) const
+{
+	if (joystate.Gamepad.wButtons & state&&!(preState.Gamepad.wButtons & state)) {
+		return true;
+	}
+	return false;
 }
 
 void Input::SetJoyStickDeadZone(int32_t stickNo, XINPUT_STATE& out)const

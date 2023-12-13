@@ -13,16 +13,15 @@ public:
 
 
 	void Update()override;
-	StructSphere GetStructSphere() { return structSphere_; }
+
 	void Draw(const ViewProjection& view)override;
 	void OnCollision() override;
+	StructSphere GetStructSphere() { return structSphere_; }
 	void isCollision();
 	const WorldTransform& GetWorldTransformBody() { return worldTransformBody_; }
 	WorldTransform GetWorldTransform()override { return worldTransformBase_; }
-	void IsDead();
 	bool GetisAlive() { return isAlive_; }
-	void resetHP() { HP = 3; }
-	void SetVelocity(Vector3 a) { knockBacvelo = a; }
+	
 private:
 	WorldTransform worldTransformBase_;
 	WorldTransform worldTransformHead_;
@@ -36,15 +35,12 @@ private:
 	Vector3 move_;
 	StructSphere structSphere_;
 	bool isAlive_=true;
-	int32_t HP = 3;
 	Vector4 color;
-	Vector3 knockBacvelo;
-	bool knockback;
 private:
 	void Move();
 	void SetParent(const WorldTransform* parent);
 	void ModelUpdateMatrix();
 	void InitializeFloatGimmick();
 	void UpdateFloatGimmick();
-	void KnockBack();
+	
 };

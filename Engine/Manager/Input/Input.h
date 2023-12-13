@@ -24,6 +24,9 @@ public:
 	bool IsReleseKey(uint8_t keyNumber)const;
 	//joystateがつながっているかどうか
 	bool GetJoystickState(int32_t stickNo, XINPUT_STATE& out) const;
+	bool PushButtun(int sticNo, uint32_t state)const;
+	XINPUT_STATE joystate;
+	XINPUT_STATE preState;
 	//デッドゾーンの設定
 	void SetJoyStickDeadZone(int32_t stickNo, XINPUT_STATE& out)const;
 private:
@@ -35,5 +38,5 @@ private:
 	std::array<BYTE, 256> keys;
 	std::array<BYTE, 256> preKeys;
 	int count;
-
+	
 };

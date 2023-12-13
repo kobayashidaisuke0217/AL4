@@ -13,14 +13,12 @@
 #include "Texturemanager.h"
 #include "GlobalVariables.h"
 #include "SkyDome.h"
-#include "player.h"
 #include"FollowCamera.h"
 #include "groundManager.h"
-#include "Goal.h"
 #include "Enemy.h"
 #include <list>
-#include "game/Manager/LookOn.h"
 #include "Engine/2D/particle.h"
+#include "game/Objects/Player/Player.h"
 using namespace std;
 class GameScene :public Iscene
 {
@@ -51,15 +49,13 @@ private:
 	unique_ptr<SkyDome> skyDome_ = nullptr;
 	unique_ptr<Model> skyDomeModel_ = nullptr;
 	unique_ptr<Model> playerModel_ = nullptr;
-	unique_ptr<Player> player_;
 	unique_ptr<FollowCamera> followCamera_;
 	//unique_ptr<ground> ground_;
 	unique_ptr<groundManager> groundmanager_;
 	unique_ptr<CollisionManager> collisionManager_;
-	unique_ptr<Goal> goal_;
 	list<Enemy*> enemys_;
 	unique_ptr<Enemy>enemy_;
-	unique_ptr<LookOn> lockOn_;
+	unique_ptr<Player> player_;
 	std::unique_ptr<Model> enemyHeadModel = nullptr;
 	std::unique_ptr<Model> enemyBodyModel = nullptr;
 	std::unique_ptr<Model> enemyL_armModel = nullptr;

@@ -66,7 +66,7 @@ void GlovalVariables::Update() {
 			}
 			else if (std::holds_alternative<Vector3>(item.value)) {
 				Vector3* ptr = std::get_if<Vector3>(&item.value);
-				ImGui::SliderFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), -10.0f, 10.0f);
+				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr),0.1f ,-100.0f, 100.0f);
 			}
 		}
 		ImGui::Text("\n");

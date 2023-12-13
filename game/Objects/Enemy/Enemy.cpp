@@ -3,10 +3,7 @@
 void Enemy::Initialize(const std::vector<Model*>& models,Vector3 pos )
 {
 	ICharactor::Initialize(models,pos);
-	models_[kModelHead] = models[kModelHead];
-	models_[kModelBody] = models[kModelBody];
-	models_[kModelLarm] = models[kModelLarm];
-	models_[kModelRarm] = models[kModelRarm];
+	
 	input_ = Input::GetInstance();
 	
 	//worldTransform_.Initialize();
@@ -46,13 +43,7 @@ void Enemy::Update()
 		ModelUpdateMatrix();
 		
 	}
-	if (HP <= 0) {
-		knockback = true;
-		
-	}
-	if (knockback) {
-		KnockBack();
-	}
+	
 	models_[kModelBody]->SetColor(color);
 	models_[kModelHead]->SetColor(color);
 	models_[kModelLarm]->SetColor(color);
@@ -83,13 +74,8 @@ void Enemy::OnCollision()
 
 void Enemy::isCollision()
 {
-	HP--;
 	
-}
-
-void Enemy::IsDead()
-{
-	isAlive_ = false;
+	
 }
 
 void Enemy::Move()
@@ -142,13 +128,4 @@ void Enemy::UpdateFloatGimmick()
 	worldTransformRarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;
 }
 
-void Enemy::KnockBack()
-{
-	knockBacvelo = Multiply(1.0f, knockBacvelo);
-	worldTransformBody_.translation_ = Add(worldTransformBody_.translation_, knockBacvelo);
-	worldTransformBase_.translation_ = worldTransformBody_.translation_;
-	color.w -= 0.1f;
-	if (color.w < 0.0f) {
-		IsDead();
-	}
-}
+

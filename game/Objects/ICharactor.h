@@ -3,7 +3,7 @@
 #include "WorldTransform.h"
 #include <Model.h>
 #include <vector>
-enum ModelParts { kModelBody, kModelHead, kModelLarm, kModelRarm, kModelHammer };
+enum ModelParts { kModelBody, kModelHead, kModelLarm, kModelRarm };
 class ICharactor
 {
 public:
