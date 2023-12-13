@@ -22,16 +22,18 @@ void Player::Initialize(const std::vector<Model*>& models, Vector3 pos)
 
 void Player::Update()
 {
-	if (isAlive_ == true) {
 		structSphere_.center = worldTransformBody_.GetWorldPos();
 		structSphere_.radius = 1.5f;
 		UpdateFloatGimmick();
-	    Move();
+
+		if (isSelected) {
+			MovePlay();
+		}
+		else {
+			MoveAI();
+		}
+
 		ModelUpdateMatrix();
-
-	}
-
-
 
 }
 
@@ -57,7 +59,67 @@ void Player::isCollision()
 
 }
 
-void Player::Move()
+void Player::MoveAI()
+{
+	const float kCharctorSpeed = 0.3f;
+	Vector3 move = {
+		0.0f, 0.0f,
+		1.0f };
+
+	MoveVec = move;
+
+	if (CompereVector3(move, { 0.0f,0.0f,0.0f })) {
+		isMove_ = false;
+	}
+	else {
+		isMove_ = true;
+	}
+	if (isMove_ == true) {
+		/*Matrix4x4 rotateMatrix = MakeRotateMatrix(viewProjection_->rotation_);
+		move = TransformNormal(move, rotateMatrix);*/
+
+		move = Multiply(kCharctorSpeed, Normalise(move));
+
+		worldTransform_.translation_ = Add(move, worldTransform_.translation_);
+
+		preQuaternion_ = quaternion_;
+		worldTransformBody_.translation_ = worldTransform_.translation_;
+		//プレイヤーの行きたい方向
+		Vector3 newPos = Subtract(Add(worldTransformBody_.translation_, move), worldTransformBody_.translation_);
+		Vector3 Direction;
+		//プレイヤーの現在の向き
+		Direction = TransformNormal({ 1.0f,0.0f,0.0f }, quaternionToMatrix(quaternion_));
+
+		Direction = Normalise(Direction);
+		Vector3 newDirection = Normalise(newPos);
+		float cosin = Dot(Direction, newDirection);
+
+		//行きたい方向のQuaternionの作成
+		Quaternion newquaternion_;
+
+		newquaternion_ = createQuaternion(cosin, { 0.0f,1.0f,0.0f });
+
+		//quaternionの合成
+		quaternion_ = Normalize(quaternion_);
+		newquaternion_ = Normalize(newquaternion_);
+
+		quaternion_ = Multiply(quaternion_, newquaternion_);
+		if (CompereQuaternion(quaternion_, preQuaternion_) && !CompereVector3(move, preMove_)) {
+			cosin = -1.0f;
+			quaternion_ = Multiply(quaternion_, createQuaternion(cosin, { 0.0f,1.0f,0.0f }));
+			//preQuaternion_ = quaternion_;
+		}
+
+		preMove_ = move;
+
+	}
+	worldTransformBody_.quaternion_ = Slerp(0.3f, worldTransformBody_.quaternion_, quaternion_);
+
+	worldTransform_.quaternion_ = worldTransformBody_.quaternion_;
+}
+
+
+void Player::MovePlay()
 {
 	XINPUT_STATE joystate;
 	if (Input::GetInstance()->GetJoystickState(0, joystate)) {

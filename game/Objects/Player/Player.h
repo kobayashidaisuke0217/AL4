@@ -42,8 +42,10 @@ private:
 	Vector3 preMove_;
 	Quaternion preQuaternion_;
 	Vector3 MoveVec;
+	bool isSelected;
 private:
-	void Move();
+	void MoveAI();
+	void MovePlay();
 	void SetParent(const WorldTransform* parent);
 	void ModelUpdateMatrix();
 	void InitializeFloatGimmick();
