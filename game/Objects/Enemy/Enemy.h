@@ -7,6 +7,8 @@
 #include"ViewProjection.h"
 #include"ICharactor.h"
 #include "../ground/../../Manager/ICommand.h"
+#include "../../Manager/Ball.h"
+
 class Enemy :public ICharactor, public Collider
 {
 public:
@@ -24,6 +26,8 @@ public:
 	bool GetisAlive() { return isAlive_; }
 	void Move(Vector3 velo)override;
 	void Pass()override;
+	void SetTarget(const WorldTransform& trans) { target = trans; }
+	OBB obb_;
 private:
 	WorldTransform worldTransformBase_;
 	WorldTransform worldTransformHead_;
@@ -39,6 +43,8 @@ private:
 	bool isAlive_=true;
 	Vector4 color;
 	ICommand* command_;
+	Ball* ball;
+	WorldTransform target;
 private:
 	
 	void SetParent(const WorldTransform* parent);

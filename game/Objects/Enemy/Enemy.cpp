@@ -2,6 +2,7 @@
 #include "ImguiManger.h"
 void Enemy::Initialize(const std::vector<Model*>& models,Vector3 pos , int positionNo)
 {
+	ball = Ball::GetInstance();
 	ICharactor::Initialize(models,pos,positionNo);
 	
 	input_ = Input::GetInstance();
@@ -11,10 +12,11 @@ void Enemy::Initialize(const std::vector<Model*>& models,Vector3 pos , int posit
 	worldTransform_.translation_ = pos;
 	worldTransform_.translation_.y = 5.0f;
 	
-	worldTransformBody_.translation_ = { pos.x,2.0f,pos.z };
+	worldTransformBody_.translation_ = { 73.0f,2.0f,pos.z };
 	worldTransformHead_.translation_ = { 0.0f, 1.0f, 0.0f };
 	worldTransformLarm_.translation_ = { -0.2f, 1.0f, 0.0f };
 	worldTransformRarm_.translation_ = { 0.2f, 1.0f, 0.0f };
+	worldTransformBody_.rotation_.y = 3.14159265f / 2.0f;
 	worldTransform_.Initialize();
 	worldTransformBase_.Initialize();
 	worldTransformBody_.Initialize();
@@ -40,9 +42,21 @@ void Enemy::Update()
 	//	structSphere_.radius = 1.5f;
 	//	//dateFloatGimmick();
 	////Move();
-	//	command_ = new CharaMoveCommand(this);
+		obb_.center = worldTransformBody_.GetWorldPos();//worldTransformHammer_.GetWorldPos();
 
-	//	command_->Exec();
+		GetOrientations(MakeRotateMatrix({ 0.0f,0.0f,0.0f }), obb_.orientation);
+		obb_.size = { 1.0f,1.0f,1.0f };
+		move_ =  ball->transform_.GetWorldPos()-worldTransformBody_.GetWorldPos();
+		move_.x = 0.0f; move_.y = 0.0f;
+		move_ =Normalise(move_)* 0.3f;
+		if (std::abs(move_.z) <= 0.1f) {
+			move_.z = 0.0f;
+		}
+		command_ = new CharaMoveCommand(this);
+
+		command_->Exec();
+		/*Vector3 pos = Normalise(ball->transform_.GetWorldPos()- target.translation_);
+		worldTransformBody_.translation_.z = target.translation_.z+(pos * 3.0f).z;*/
 		ModelUpdateMatrix();
 		
 	}

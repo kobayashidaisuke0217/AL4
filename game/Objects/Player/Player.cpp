@@ -62,6 +62,9 @@ void Player::Initialize(const std::vector<Model*>& models, Vector3 pos,int posit
 	}
 	ModelUpdateMatrix();
 	count_ = 0;
+	hitCount_ = 0;
+	passCount_ = 0;
+	retutnCount_ = 0;
 }
 
 void Player::Update()
@@ -69,13 +72,9 @@ void Player::Update()
 	obb_.center = worldTransformBody_.GetWorldPos() ;//worldTransformHammer_.GetWorldPos();
 
 	GetOrientations(MakeRotateMatrix({ 0.0f,0.0f,0.0f }),obb_.orientation);
-	obb_.size = { 1.5f,1.0f,1.5f };
+	obb_.size = { 1.0f,1.0f,1.0f };
 	if (positionNo_ != GoalKeeper) {
-	if (worldTransformBody_.translation_.x <= 7.0f || worldTransformBody_.translation_.x >= 80.0f) {
-		behaviorRequest_ = Behavior::kReturn;
-	}if (worldTransformBody_.translation_.z <= 7.0f || worldTransformBody_.translation_.z >= 48.0f) {
-		behaviorRequest_ = Behavior::kReturn;
-	}
+	
 	
 		if (map[mapZ_][mapX_] == 0&&behavior_!=Behavior::kReturn) {
 			behaviorRequest_ = Behavior::kAtack;
@@ -83,9 +82,18 @@ void Player::Update()
 			prevMapZ_ = currentMapZ_;
 
 		}
+		if (worldTransformBody_.translation_.x <= 7.0f || worldTransformBody_.translation_.x >= 80.0f) {
+			behaviorRequest_ = Behavior::kReturn;
+		}if (worldTransformBody_.translation_.z <= 7.0f || worldTransformBody_.translation_.z >= 48.0f) {
+			behaviorRequest_ = Behavior::kReturn;
+		}
+		if (retutnCount_ >= 40) {
+			behaviorRequest_ = Behavior::kAtack;
+			retutnCount_ = 0;
+		}
 	}
 		structSphere_.center = worldTransformBody_.GetWorldPos();
-		structSphere_.radius = 1.5f;
+		structSphere_.radius = 1.0f;
 		UpdateFloatGimmick();
 		Vector3 world = worldTransformBody_.GetWorldPos();
 		
@@ -116,12 +124,14 @@ void Player::Update()
 		ModelUpdateMatrix();
 	
 		if (IsCollision(obb_, ball_->structSphere_)&&passCount_>=20) {
-			isBall_ = true;
-			ball_->Setparent(&worldTransformBody_);
-			ball_->velocity_ = { 0.0f,0.0f,0.0f };
+			if (!ball_->transform_.parent_) {
+				isBall_ = true;
+				ball_->Setparent(&worldTransformBody_);
+				ball_->velocity_ = { 0.0f,0.0f, 0.0f};
+			}
+			
 		}
 		else {
-			//ball_->DeleteParent();
 			isBall_ = false;
 		}
 		passCount_++;
@@ -227,7 +237,7 @@ void Player::Move(Vector3 Move)
 void Player::Pass()
 {
 	
-	if (isBall_) {
+	if (ball_->transform_.parent_) {
 		passCount_ = 0;
 		ball_->DeleteParent();
 		Vector3 vel =
@@ -235,7 +245,7 @@ void Player::Pass()
 			(float)input_->joystate.Gamepad.sThumbLX / SHRT_MAX, 0.0f,
 				(float)input_->joystate.Gamepad.sThumbLY / SHRT_MAX };
 
-		ball_->velocity_ = Normalise(vel)*0.4f;
+		ball_->velocity_ = Normalise(vel);
 	}
 }
 
@@ -484,6 +494,7 @@ void Player::setMoveVectorRerturn()
 	velocity_=  Normalise(Vector3(6.0f * 8.0f, 1.0f, 4.0f * 8.0f) - worldTransformBody_.GetWorldPos());
 	velocity_.y = 0.0f;
 	move_ = velocity_;
+	retutnCount_++;
 }
 
 

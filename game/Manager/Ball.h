@@ -17,5 +17,6 @@ public:
 	Sphere* sphere_;
 	Vector3 velocity_;
 	StructSphere structSphere_;
+	Vector3 prevPos_;
 };
 

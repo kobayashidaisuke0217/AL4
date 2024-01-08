@@ -7,8 +7,8 @@ void PlayerManager::Initialize(const std::vector<Model*>& models)
 	}
 	player_[0]->Initialize(models, { 50.0f,1.0f,25.0f },Fowerd);
 	player_[1]->Initialize(models, { 15.0f,1.0f,8.0f },RightBack);
-	player_[2]->Initialize(models, { 30.0f,1.0f,26.0f },MidFirld);
-	//player_[3]->Initialize(models, { 15.0f,1.0f,45.0f },LeftBack);
+	//player_[2]->Initialize(models, { 30.0f,1.0f,26.0f },MidFirld);
+	player_[2]->Initialize(models, { 15.0f,1.0f,45.0f },LeftBack);
 	player_[3]->Initialize(models, { 0.0f,1.0f,25.0f },GoalKeeper);
 	selectNum_ = -1;
 }

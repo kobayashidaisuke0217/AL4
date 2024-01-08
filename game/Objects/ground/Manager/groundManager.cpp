@@ -53,9 +53,9 @@ void groundManager::Draw(const ViewProjection& view)
 				movemodel_->Draw(worldTransform_[index_], view);
 				
 			}
-			/*else {
+			else {
 				model_->Draw(worldTransform_[index_], view);
-			}*/
+			}
 			index_++;
 		}
 	}/*model_->Draw(worldTransform_[0], view);*/

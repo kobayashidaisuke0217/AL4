@@ -87,6 +87,8 @@ private:
 	
 	int passCount_;
 	int backCount_;
+	int hitCount_;
+	int retutnCount_;
 private:
 	void MoveAI();
 	void Move(Vector3 Move)override;

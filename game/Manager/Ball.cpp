@@ -5,7 +5,9 @@ void Ball::Init()
 	sphere_ = new Sphere();
 	sphere_->Initialize();
 	transform_.Initialize();
+	transform_.parent_ = nullptr;
 	transform_.translation_ = { 30.0f,1.0f,15.0f };
+	velocity_ = { 0.0f,0.0f,0.0f };
 }
 
 void Ball::Update()
@@ -16,8 +18,11 @@ void Ball::Update()
 	if (transform_.translation_.z <= 0.0f||transform_.translation_.z>=40.0f) {
 		velocity_.z *= -1.0f;
 	}
-	if (transform_.translation_.x <= 0.0f || transform_.translation_.x >= 80.0f) {
+	if (transform_.translation_.x <= 0.0f || transform_.translation_.x >= 75.0f) {
 		velocity_.x *= -1.0f;
+	}
+	if (velocity_.x != 0.0f || velocity_.y != 0.0f || velocity_.z != 0.0f) {
+		DeleteParent();
 	}
 	transform_.UpdateMatrix();
 }

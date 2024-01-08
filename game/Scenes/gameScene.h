@@ -22,6 +22,7 @@
 #include "../Manager/PlayerManager.h"
 #include "../Manager/MoveMap.h"
 #include"../Manager/Ball.h"
+#include "../Objects/Goal.h"
 using namespace std;
 class GameScene :public Iscene
 {
@@ -69,7 +70,10 @@ private:
 	std::unique_ptr<Model> R_armModel = nullptr;
 	std::unique_ptr<Model> player_Hammer_ = nullptr;
 	std::vector<Model*>enemyModels;
+	std::unique_ptr<Goal>goal_;
 	Ball* ball_ = nullptr;
 	MoveMap* map_=nullptr;
+	bool isGoal_;
+	int goalCount_;
 #pragma endregion
 };
