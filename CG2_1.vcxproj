@@ -151,8 +151,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Disabled</Optimization>
     </ClCompile>
     <ClCompile Include="game\camera\followCamera.cpp" />
+    <ClCompile Include="game\Manager\Ball.cpp" />
+    <ClCompile Include="game\Manager\ICommand.cpp" />
+    <ClCompile Include="game\Manager\InputHandler.cpp" />
+    <ClCompile Include="game\Manager\MoveMap.cpp" />
+    <ClCompile Include="game\Manager\PlayerManager.cpp" />
     <ClCompile Include="game\Manager\SceneManager.cpp" />
     <ClCompile Include="game\Objects\Enemy\Enemy.cpp" />
+    <ClCompile Include="game\Objects\Goal.cpp" />
     <ClCompile Include="game\Objects\ground\ground.cpp" />
     <ClCompile Include="game\Objects\ground\Manager\groundManager.cpp" />
     <ClCompile Include="game\Objects\ground\MoveGround.cpp" />
@@ -197,8 +203,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="game\camera\followCamera.h" />
+    <ClInclude Include="game\Manager\Ball.h" />
+    <ClInclude Include="game\Manager\ICommand.h" />
+    <ClInclude Include="game\Manager\InputHandler.h" />
+    <ClInclude Include="game\Manager\MoveMap.h" />
+    <ClInclude Include="game\Manager\PlayerManager.h" />
     <ClInclude Include="game\Manager\SceneManager.h" />
     <ClInclude Include="game\Objects\Enemy\Enemy.h" />
+    <ClInclude Include="game\Objects\Goal.h" />
     <ClInclude Include="game\Objects\ground\ground.h" />
     <ClInclude Include="game\Objects\ground\Manager\groundManager.h" />
     <ClInclude Include="game\Objects\ground\MoveGround.h" />

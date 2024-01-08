@@ -22,5 +22,8 @@ private:
 	unique_ptr<Model> model_;
 	unique_ptr<Model> movemodel_;
 	OBB Obb_[3];
+	int map_[14][25];
+	WorldTransform worldTransform_[350];
+	int index_;
 };
 

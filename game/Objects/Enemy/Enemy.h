@@ -6,10 +6,11 @@
 #include"Input.h"
 #include"ViewProjection.h"
 #include"ICharactor.h"
+#include "../ground/../../Manager/ICommand.h"
 class Enemy :public ICharactor, public Collider
 {
 public:
-	void Initialize(const std::vector<Model*>& models,Vector3 pos) override;
+	void Initialize(const std::vector<Model*>& models,Vector3 pos, int positionNo) override;
 
 
 	void Update()override;
@@ -21,7 +22,8 @@ public:
 	const WorldTransform& GetWorldTransformBody() { return worldTransformBody_; }
 	WorldTransform GetWorldTransform()override { return worldTransformBase_; }
 	bool GetisAlive() { return isAlive_; }
-	
+	void Move(Vector3 velo)override;
+	void Pass()override;
 private:
 	WorldTransform worldTransformBase_;
 	WorldTransform worldTransformHead_;
@@ -32,12 +34,13 @@ private:
 	const ViewProjection* viewProjection_ = nullptr;
 	float floatingParametor_ = 0.0f;
 	int animationFrame;
-	Vector3 move_;
+	//Vector3 move_;
 	StructSphere structSphere_;
 	bool isAlive_=true;
 	Vector4 color;
+	ICommand* command_;
 private:
-	void Move();
+	
 	void SetParent(const WorldTransform* parent);
 	void ModelUpdateMatrix();
 	void InitializeFloatGimmick();

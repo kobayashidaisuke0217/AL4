@@ -8,37 +8,56 @@ void groundManager::Initialize()
 	}
 	moveGround_ = make_unique<MoveGround>();
 	movemodel_.reset(Model::CreateModelFromObj("Resource", "move.obj"));
-	model_.reset(Model::CreateModelFromObj("Resource", "CUBE.obj"));
-	ground_[0]->Initialize(model_.get(), { 0.0f,0.0f,-5.0f }, { 90.0f,1.0f,40.0f });
-	ground_[1]->Initialize(model_.get(), { 0.0f,0.0f,55.0f }, {90.0f,1.0f,40.0f });
-	moveGround_->Initialize(movemodel_.get(), { 0.0f,0.0f,25.0f }, { 1.0f,1.0f,1.0f });
-	
+	model_.reset(Model::CreateModelFromObj("Resource", "cube.obj"));
+	model_->SetColor({ 0.0f,0.0f,0.0f,1.0f });
+	int map[7][11] = {
+		{1,1,1,1,1,1,1,1,1,1,1},
+		{1,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,1},
+	    {1,0,0,0,0,0,0,0,0,0,1},
+		{1,0,0,0,0,0,0,0,0,0,1},
+	    {1,1,1,1,1,1,1,1,1,1,1},
+
+	};
+	index_ = 0;
+	for (int i = 0; i < 11; i++) {
+		for (int j = 0; j < 7; j++) {
+			
+			worldTransform_[index_].Initialize();
+			map_[j][i] = map[j][i];
+			worldTransform_[index_].translation_ = { /*-50.0f +*/ i* 8.0f ,-1.0f,/*20.0f -*/ j * 8.0f };
+			worldTransform_[index_].scale_ = { 4.0f,1.0f,4.0f };
+			index_++;
+		}
+	}
+	//worldTransform_[0].translation_ = { 54.0f,-10.0f,30.0f };
+	//worldTransform_[0].scale_ = { 54.0f,-10.0f,30.0f };
+
 }
 
 void groundManager::Update()
 {
-	for (int i = 0; i < 2; i++) {
-		Obb_[i].center = ground_[i]->GetWorldTransform().GetWorldPos();
-		GetOrientations(MakeRotateXYZMatrix(ground_[i]->GetWorldTransform().rotation_), Obb_[i].orientation);
-		Obb_[i].size = ground_[i]->GetWorldTransform().scale_;
-	}
-	/*Obb_[2].center = moveGround_->GetWorldTransform().GetWorldPos();
-	GetOrientations(MakeRotateXYZMatrix(moveGround_->GetWorldTransform().rotation_), Obb_[2].orientation);
-	Obb_[2].size = moveGround_->GetWorldTransform().scale_;
-	*/
-	for (int i = 0; i < 2; i++) {
-		ground_[i]->Update();
 
+	for (int i = 0; i < 77; i++) {
+		worldTransform_[i].UpdateMatrix();
 	}
-	//moveGround_->Update();
 }
 
 void groundManager::Draw(const ViewProjection& view)
 {
-	for (int i = 0; i < 2; i++) {
-		ground_[i]->Draw(view);
-
-	}
-
+	index_ = 0;
+	for (int i = 0; i < 11; i++) {
+		for (int j = 0; j < 7; j++) {
+			if (map_[j][i] == 0) {
+				movemodel_->Draw(worldTransform_[index_], view);
+				
+			}
+			/*else {
+				model_->Draw(worldTransform_[index_], view);
+			}*/
+			index_++;
+		}
+	}/*model_->Draw(worldTransform_[0], view);*/
 	//moveGround_->Draw(view);
 }

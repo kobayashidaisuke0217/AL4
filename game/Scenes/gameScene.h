@@ -19,6 +19,9 @@
 #include <list>
 #include "Engine/2D/particle.h"
 #include "game/Objects/Player/Player.h"
+#include "../Manager/PlayerManager.h"
+#include "../Manager/MoveMap.h"
+#include"../Manager/Ball.h"
 using namespace std;
 class GameScene :public Iscene
 {
@@ -55,7 +58,7 @@ private:
 	unique_ptr<CollisionManager> collisionManager_;
 	list<Enemy*> enemys_;
 	unique_ptr<Enemy>enemy_;
-	unique_ptr<Player> player_;
+	unique_ptr<PlayerManager> player_;
 	std::unique_ptr<Model> enemyHeadModel = nullptr;
 	std::unique_ptr<Model> enemyBodyModel = nullptr;
 	std::unique_ptr<Model> enemyL_armModel = nullptr;
@@ -66,5 +69,7 @@ private:
 	std::unique_ptr<Model> R_armModel = nullptr;
 	std::unique_ptr<Model> player_Hammer_ = nullptr;
 	std::vector<Model*>enemyModels;
+	Ball* ball_ = nullptr;
+	MoveMap* map_=nullptr;
 #pragma endregion
 };

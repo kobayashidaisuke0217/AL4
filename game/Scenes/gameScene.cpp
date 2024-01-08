@@ -11,7 +11,8 @@ void GameScene::Initialize()
 	blueMoon_ = BlueMoon::GetInstance();
 
 	directXCommon_ = DirectXCommon::GetInstance();
-
+	map_=MoveMap:: GetInstance();
+	map_->Init();
 	
 	textureManager_ = Texturemanager::GetInstance();
 	collisionManager_ = make_unique<CollisionManager>();
@@ -20,7 +21,9 @@ void GameScene::Initialize()
 	viewProjection_.Initialize();
 	viewProjection_.translation_ = { 0.0f,0.0f,-5.0f };
 	playerModel_.reset(Model::CreateModelFromObj("Resource", "saikoro.obj"));
-
+  
+	ball_ =Ball::GetInstance();
+	ball_->Init();
 	enemyBodyModel.reset(Model::CreateModelFromObj("Resource", "float_Body.obj"));
 	enemyHeadModel.reset(Model::CreateModelFromObj("Resource", "float_head.obj"));
 	enemyL_armModel.reset(Model::CreateModelFromObj("Resource", "float_L_arm.obj"));
@@ -32,9 +35,11 @@ void GameScene::Initialize()
 	player_Hammer_.reset(Model::CreateModelFromObj("resource", "Hammer.obj"));
 	std::vector<Model*>playerModels = { BodyModel.get(),HeadModel.get(),L_armModel.get(),R_armModel.get() };
 
-	followCamera_ = std::make_unique<FollowCamera>(); player_ = make_unique<Player>();
-	player_->Initialize(playerModels, { 10.0f,0.0f,0.0f });
+	followCamera_ = std::make_unique<FollowCamera>(); 
+	player_ = make_unique<PlayerManager>();
+	player_->Initialize(playerModels);
 	followCamera_->Initialize();
+	
 
 	
 	skyDomeModel_.reset(Model::CreateModelFromObj("Resource", "skyDome.obj"));
@@ -44,27 +49,15 @@ void GameScene::Initialize()
 	groundmanager_->Initialize();
 	enemyModels = { enemyBodyModel.get(),enemyHeadModel.get(),enemyL_armModel.get(),enemyR_armModel.get() };
 	enemys_.clear();
-	Enemy* enemy[5];
-	for (int i = 0; i < 5; i++) {
+	Enemy* enemy[1];
+	for (int i = 0; i < 1; i++) {
 		enemy[i] = new Enemy();
 	}
-	enemy[0]->Initialize(enemyModels, {10.0f ,1.0f, 10.0f});
+	enemy[0]->Initialize(enemyModels, {10.0f ,1.0f, 10.0f},GoalKeeper);
 
 	enemys_.push_back(enemy[0]);
 	
-	enemy[1]->Initialize(enemyModels, {20.0f ,1.0f, 20.0f});
-
-	enemys_.push_back(enemy[1]);
-
-	enemy[2]->Initialize(enemyModels, {-10.0f ,1.0f, -10.0f});
-
-	enemys_.push_back(enemy[2]);
-	enemy[3]->Initialize(enemyModels, {-20.0f ,1.0f, -20.0f});
-
-	enemys_.push_back(enemy[3]);
-	enemy[4]->Initialize(enemyModels, {20.0f ,1.0f, 0.0f});
-
-	enemys_.push_back(enemy[4]);
+	
 	blendCount_ = 0;
 	
 	particle = make_unique<Particle>();
@@ -86,12 +79,12 @@ void GameScene::Update()
 	ApplyGlobalVariables();
 	count_++;
 	groundmanager_->Update();
-	
+	ball_->Update();
 	
 		
 	
 	if (count_ >= 5) {
-		
+
 
 		/*if (IsCollision(groundmanager_->GetOBB(2), player_->GetStructSphere())) {
 			player_->isHit_ = true;
@@ -102,17 +95,17 @@ void GameScene::Update()
 		}*/
 
 		player_->Update();
-	
+
 		for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
 			if ((*enemy)->GetisAlive()) {
 				(*enemy)->Update();
 			}
 		}
-		
+
 		viewProjection_.UpdateMatrix();
-	
+
 		viewProjection_.TransferMatrix();
-	
+
 		particle->Update();
 		if (sceneNum > 1) {
 			sceneNum = 1;
@@ -120,21 +113,10 @@ void GameScene::Update()
 
 
 		collisionManager_->ClearColliders();
-		
-		
-		for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
 
-			if ((*enemy)) {
-				if ((*enemy)->GetisAlive()) {
-					collisionManager_->AddCollider((*enemy));
-				}
-			}
-		}
+
+
 	}
-		if (count_ >= 20) {
-			collisionManager_->CheckAllCollision();
-		}
-		
 }
 
 
@@ -156,9 +138,10 @@ void GameScene::Draw3D()
 	
 	groundmanager_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
-	for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
+	/*for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
 		(*enemy)->Draw(viewProjection_);
-	}
+	}*/
+	ball_->Draw(viewProjection_);
 	blueMoon_->PariclePreDraw();
     particle->Draw(viewProjection_,{1.0f,1.0f,1.0f,1.0f},a);
 

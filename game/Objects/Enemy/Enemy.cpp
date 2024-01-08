@@ -1,8 +1,8 @@
 #include "Enemy.h"
 #include "ImguiManger.h"
-void Enemy::Initialize(const std::vector<Model*>& models,Vector3 pos )
+void Enemy::Initialize(const std::vector<Model*>& models,Vector3 pos , int positionNo)
 {
-	ICharactor::Initialize(models,pos);
+	ICharactor::Initialize(models,pos,positionNo);
 	
 	input_ = Input::GetInstance();
 	
@@ -28,18 +28,21 @@ void Enemy::Initialize(const std::vector<Model*>& models,Vector3 pos )
 	models_[kModelRarm] = models[kModelRarm];
 	SetCollisionAttribute(CollisionConfig::kCollisionAttributeEnemy);
 	SetCollisionMask(~CollisionConfig::kCollisionAttributeEnemy);
-	move_ = { 0.1f,0.0f,0.0f };
-	color = { 1.0f,1.0f,1.0f,1.0f };
+	move_ = { 1.0f,0.0f,0.0f };
+	color = { 0.0f,0.0f,1.0f,1.0f };
 	isAlive_ = true;
 }
 
 void Enemy::Update()
 {
 	if (isAlive_ == true) {
-		structSphere_.center = worldTransformBody_.GetWorldPos();
-		structSphere_.radius = 1.5f;
-		//dateFloatGimmick();
-	//Move();
+	//	structSphere_.center = worldTransformBody_.GetWorldPos();
+	//	structSphere_.radius = 1.5f;
+	//	//dateFloatGimmick();
+	////Move();
+	//	command_ = new CharaMoveCommand(this);
+
+	//	command_->Exec();
 		ModelUpdateMatrix();
 		
 	}
@@ -78,12 +81,17 @@ void Enemy::isCollision()
 	
 }
 
-void Enemy::Move()
+void Enemy::Move(Vector3 velo)
 {
+	move_=velo;
 	worldTransformBody_.translation_ = Add(worldTransformBody_.translation_, move_);
-	if (worldTransformBody_.translation_.x >= 9.5f || worldTransformBody_.translation_.x <= -9.5) {
+	/*if (worldTransformBody_.translation_.x >= 9.5f || worldTransformBody_.translation_.x <= -9.5) {
 		move_ = Multiply(-1.0f, move_);
-	}
+	}*/
+}
+
+void Enemy::Pass()
+{
 }
 
 void Enemy::SetParent(const WorldTransform* parent)
@@ -112,7 +120,7 @@ void Enemy::InitializeFloatGimmick()
 
 void Enemy::UpdateFloatGimmick()
 {
-	uint16_t T = 120;
+	/*uint16_t T = 120;
 
 	float step = 2.0f * (float)M_PI / T;
 	float floatingAmplitude = 0.3f;
@@ -125,7 +133,7 @@ void Enemy::UpdateFloatGimmick()
 	worldTransformBody_.translation_.y = std::sin(floatingParametor_) * floatingAmplitude + 1.0f;
 
 	worldTransformLarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;
-	worldTransformRarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;
+	worldTransformRarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;*/
 }
 
 
