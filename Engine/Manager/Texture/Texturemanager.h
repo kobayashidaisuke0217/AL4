@@ -18,6 +18,7 @@ public:
 	uint32_t GetSizeRTV() { return descriptorSizeRTV; }
 	uint32_t GetSizeDSV() { return descriptorSizeDSV; }
 	uint32_t Load(const std::string& filePath);
+	Microsoft::WRL::ComPtr<ID3D12Resource> GetTextureResource(uint32_t index) { return textureResource[index]; }
 
 private:
 	DirectXCommon* dirctXCommon_;

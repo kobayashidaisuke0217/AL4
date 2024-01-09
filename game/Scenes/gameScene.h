@@ -75,5 +75,6 @@ private:
 	MoveMap* map_=nullptr;
 	bool isGoal_;
 	int goalCount_;
+	Sprite* uiSprite_;
 #pragma endregion
 };

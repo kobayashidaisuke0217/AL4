@@ -32,7 +32,10 @@ void Enemy::Initialize(const std::vector<Model*>& models,Vector3 pos , int posit
 	SetCollisionMask(~CollisionConfig::kCollisionAttributeEnemy);
 	move_ = { 1.0f,0.0f,0.0f };
 	color = { 0.0f,0.0f,1.0f,1.0f };
-	isAlive_ = true;
+	for (int i = 0; i < 4; i++) {
+		models_[i]->SetTex(Texturemanager::GetInstance()->Load("Resource/wi.png"));
+		models_[i]->SetColor({ 0.0f,0.0f,1.0f,1.0f });
+	}isAlive_ = true;
 }
 
 void Enemy::Update()
@@ -60,12 +63,12 @@ void Enemy::Update()
 		ModelUpdateMatrix();
 		
 	}
-	
+	/*
 	models_[kModelBody]->SetColor(color);
 	models_[kModelHead]->SetColor(color);
 	models_[kModelLarm]->SetColor(color);
 	models_[kModelRarm]->SetColor(color);
-	
+	*/
 	
 }
 

@@ -65,10 +65,12 @@ void Player::Initialize(const std::vector<Model*>& models, Vector3 pos,int posit
 	hitCount_ = 0;
 	passCount_ = 0;
 	retutnCount_ = 0;
+	tex = Texturemanager::GetInstance()->Load("Resource/selected.png");
 }
 
 void Player::Update()
 {
+
 	obb_.center = worldTransformBody_.GetWorldPos() ;//worldTransformHammer_.GetWorldPos();
 
 	GetOrientations(MakeRotateMatrix({ 0.0f,0.0f,0.0f }),obb_.orientation);
@@ -150,6 +152,20 @@ void Player::Update()
 
 void Player::Draw(const ViewProjection& view)
 {
+	if (isSelected) {
+		models_[kModelBody]->SetTex(tex);
+		models_[kModelHead]->SetTex(tex);
+		models_[kModelLarm]->SetTex(tex);
+		models_[kModelRarm]->SetTex(tex);
+	
+	}
+	else {
+		models_[kModelBody]->SetTex(Texturemanager::GetInstance()->Load("Resource/player.png"));
+		models_[kModelHead]->SetTex(Texturemanager::GetInstance()->Load("Resource/player.png"));
+		models_[kModelLarm]->SetTex(Texturemanager::GetInstance()->Load("Resource/player.png"));
+		models_[kModelRarm]->SetTex(Texturemanager::GetInstance()->Load("Resource/player.png"));
+		
+	}
 
 	if (isAlive_ == true) {
 		models_[kModelBody]->Draw(worldTransformBody_, view);
@@ -191,7 +207,9 @@ void Player::Move(Vector3 Move)
 			move = TransformNormal(move, rotateMatrix);*/
 
 			move = Multiply(kCharctorSpeed, Normalise(move));
-
+			if (worldTransformBody_.translation_.x + move.x <= 0.0f || worldTransformBody_.translation_.x + move.x >= 80.0f) {
+				move.x = 0.0f;
+			}
 			worldTransform_.translation_ = Add(move, worldTransform_.translation_);
 
 			preQuaternion_ = quaternion_;
@@ -366,6 +384,7 @@ void Player::setMovevectorAtack()
 		move_ = velocity_;
 		if (positionNo_ == GoalKeeper) {
 			move_ = { 1.0f,0.0f,0.0f };
+			move_.z = Normalise(Vector3{ 25.0f,0.0f,25.0f }-worldTransformBody_.GetWorldPos() ).z;
 		}
 	
 		if (worldTransformBody_.translation_.x >= AtackEnd_) {
@@ -408,6 +427,7 @@ void Player::setMovevectorAtack()
 		}
 		if (positionNo_ == GoalKeeper) {
 			move_ = { -1.0f,0.0f,0.0f };
+			move_.z = Normalise(Vector3{ 25.0f,0.0f,25.0f } - worldTransformBody_.GetWorldPos()).z;
 		}
 	}
 }

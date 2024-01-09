@@ -1,6 +1,7 @@
 #pragma once
 #include "Iscene.h"
 #include "Input.h"
+#include "Sprite.h"
 class TitleScene:public Iscene
 {
 private:
@@ -14,6 +15,8 @@ public:
 	 void Draw() override;
 	 void Finalize()override;
 private:
+	std::unique_ptr<Sprite> sprite_;
+	BlueMoon* bluemoon_;
 	Input* input=nullptr;
 };
 

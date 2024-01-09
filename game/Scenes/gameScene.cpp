@@ -17,7 +17,7 @@ void GameScene::Initialize()
 	textureManager_ = Texturemanager::GetInstance();
 	collisionManager_ = make_unique<CollisionManager>();
 	input_ = Input::GetInstance();
-	  a = textureManager_->Load("Resource/tex.png");
+	  a = textureManager_->Load("Resource/circle.png");
 	viewProjection_.Initialize();
 	viewProjection_.translation_ = { 0.0f,0.0f,-5.0f };
 	playerModel_.reset(Model::CreateModelFromObj("Resource", "saikoro.obj"));
@@ -59,6 +59,8 @@ void GameScene::Initialize()
 	enemy[0]->SetTarget(goal_->transform_);
 	enemys_.push_back(enemy[0]);
 
+	uiSprite_ = new Sprite();
+	uiSprite_->Initialize(textureManager_->Load("Resource/ui.png"));
 
 
 	blendCount_ = 0;
@@ -75,18 +77,21 @@ void GameScene::Initialize()
 	globalVariables->AddItem(groupName, "Rotate", viewProjection_.rotation_);
 
 	goalCount_ = 0;
-	isGoal_ = false;
+	isGoal_ = false;ApplyGlobalVariables();
 }
 
 void GameScene::Update()
 {
-	ApplyGlobalVariables();
+	uiSprite_->position = { 640.0f,360.0f };
+	uiSprite_->size_ = { 35.0f,26.0f };
 	count_++;
 	groundmanager_->Update();
 	ball_->Update();
 	goal_->Update();
-
-
+	ImGui::Begin("Scene");
+	ImGui::DragFloat3("translate", &uiSprite_->position.x, 0.1f);
+	ImGui::DragFloat3("scale", &uiSprite_->size_.x, 0.1f);
+	ImGui::End();
 	if (count_ >= 5) {
 
 
@@ -97,12 +102,13 @@ void GameScene::Update()
 		else {
 			player_->DeleteParent();
 		}*/
+		if (!isGoal_) {
+			player_->Update();
 
-		player_->Update();
-
-		for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
-			if ((*enemy)->GetisAlive()) {
-				(*enemy)->Update();
+			for (std::list<Enemy*>::iterator enemy = enemys_.begin(); enemy != enemys_.end(); enemy++) {
+				if ((*enemy)->GetisAlive()) {
+					(*enemy)->Update();
+				}
 			}
 		}
 
@@ -122,7 +128,7 @@ void GameScene::Update()
 				
 			
 				if (IsCollision((*enemy)->obb_, ball_->structSphere_)) {
-					sceneNum = TITLE_SCENE;
+					ball_->Init();
 					return;
 				}
 			}
@@ -130,12 +136,14 @@ void GameScene::Update()
 		if (IsCollision(goal_->obb_, ball_->structSphere_)) {
 			isGoal_ = true;
 			ball_->velocity_ = { 0.0f,0.0f,0.0f };
-			particle->AddParticle({goal_->transform_.scale_,goal_->transform_.rotation_, goal_->transform_.translation_ }, 25);
+			particle->AddParticle({goal_->transform_.scale_,{1.0f,1.0f,1.0f}, goal_->transform_.translation_}, 25);
+			viewProjection_.translation_ = { -36.1f,36.1f,17.7f };
+			viewProjection_.rotation_ = { 0.5f,1.6f,0.0f };
 		}
 		if (isGoal_) {
 			goalCount_++;
 		}
-		if (goalCount_ >= 30) {
+		if (goalCount_ >= 60) {
 			sceneNum = TITLE_SCENE;
 		}
 	}
@@ -156,7 +164,7 @@ void GameScene::Draw()
 
 void GameScene::Draw3D()
 {
-	skyDome_->Draw(viewProjection_);
+	//skyDome_->Draw(viewProjection_);
 	
 	groundmanager_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
@@ -181,7 +189,11 @@ void GameScene::ApplyGlobalVariables()
 
 void GameScene::Draw2D() {
 	blueMoon_->SetBlendMode(kBlendModeNormal);
-	
+	uiSprite_->Draw({
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f},
+		},{1.0f,1.0f,1.0f,1.0f});
 
 }
 void GameScene::Finalize()

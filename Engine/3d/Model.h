@@ -20,8 +20,9 @@ public:
 	ModelData modelData_;
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
 	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-	void SetColor(Vector4 col) { color = col; }
+	void SetColor(Vector4 col) {material_->color= color = col; }
 	void setLighting(bool flag) { material_->enableLighting = flag; }
+	void SetTex(uint32_t tex) { texture_ = tex; }
 private:
 	Texturemanager* textureManager_;
 	DirectXCommon* dxCommon_;

@@ -89,6 +89,8 @@ private:
 	int backCount_;
 	int hitCount_;
 	int retutnCount_;
+	Vector4 color_;
+	uint32_t tex ;
 private:
 	void MoveAI();
 	void Move(Vector3 Move)override;

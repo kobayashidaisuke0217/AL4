@@ -81,7 +81,7 @@ void Particle::Draw( const ViewProjection& viewProjection, const Vector4& materi
 		iterator != particles_.end(); ++iterator) {
 		
 		
-		instancingData[instanceCount].World = MakeBillBoardMatrix((*iterator).transform.scale, billboard, (*iterator).transform.translate); //MakeAffineMatrix(particles_[i].transform.scale, particles_[i].transform.rotate, particles_[i].transform.translate);
+		instancingData[instanceCount].World = MakeAffineMatrix({2.0f,2.0f,2.0f}, {0.0f,1.7f,0.0f}, (*iterator).transform.translate); //MakeAffineMatrix(particles_[i].transform.scale, particles_[i].transform.rotate, particles_[i].transform.translate);
 		instancingData[instanceCount].World = Multiply(instancingData[instanceCount].World, MakeAffineMatrix((*iterator).emitter.transform.scale, {0.0f,0.0f,0.0f}, (*iterator).emitter.transform.translate));
 		instanceCount++;
 	}
