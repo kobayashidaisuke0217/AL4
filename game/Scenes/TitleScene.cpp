@@ -23,7 +23,7 @@ void TitleScene::Update()
 	Vector4 rot = QuaternionToVEctor4(Rotation);
 	Vector4 inter[5];
 	ImGui::Begin("");
-	ImGui::InputFloat4("rotation", &rot.x);
+	//ImGui::InputFloat4("rotation", &rot.x);
 	for (int i = 0; i < 5; i++) {
 		inter[i] = QuaternionToVEctor4(interpolate[i]);
 		ImGui::InputFloat4("interpolate", &inter[i].x);
