@@ -23,6 +23,7 @@
 #include "../Manager/MoveMap.h"
 #include"../Manager/Ball.h"
 #include "../Objects/Goal.h"
+#include "../Manager/Fade.h"
 using namespace std;
 class GameScene :public Iscene
 {
@@ -76,5 +77,6 @@ private:
 	bool isGoal_;
 	int goalCount_;
 	Sprite* uiSprite_;
+	Fade* fade_;
 #pragma endregion
 };

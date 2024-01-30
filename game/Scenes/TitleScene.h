@@ -2,6 +2,7 @@
 #include "Iscene.h"
 #include "Input.h"
 #include "Sprite.h"
+#include "../../game/Manager/Fade.h"
 class TitleScene:public Iscene
 {
 private:
@@ -18,5 +19,6 @@ private:
 	std::unique_ptr<Sprite> sprite_;
 	BlueMoon* bluemoon_;
 	Input* input=nullptr;
+	Fade* fade_;
 };
 

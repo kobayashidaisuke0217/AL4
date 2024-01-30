@@ -152,6 +152,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClCompile>
     <ClCompile Include="game\camera\followCamera.cpp" />
     <ClCompile Include="game\Manager\Ball.cpp" />
+    <ClCompile Include="game\Manager\Fade.cpp" />
     <ClCompile Include="game\Manager\ICommand.cpp" />
     <ClCompile Include="game\Manager\InputHandler.cpp" />
     <ClCompile Include="game\Manager\MoveMap.cpp" />
@@ -204,6 +205,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="game\camera\followCamera.h" />
     <ClInclude Include="game\Manager\Ball.h" />
+    <ClInclude Include="game\Manager\Fade.h" />
     <ClInclude Include="game\Manager\ICommand.h" />
     <ClInclude Include="game\Manager\InputHandler.h" />
     <ClInclude Include="game\Manager\MoveMap.h" />

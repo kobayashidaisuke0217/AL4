@@ -136,6 +136,7 @@ void Player::Update()
 		else {
 			isBall_ = false;
 		}
+		UpdateFloatGimmick();
 		passCount_++;
 		ImGui::Begin("player");
 		ImGui::DragFloat3("tra", &world.x);
@@ -293,7 +294,7 @@ void Player::InitializeFloatGimmick()
 
 void Player::UpdateFloatGimmick()
 {
-	/*uint16_t T = 120;
+	uint16_t T = 120;
 
 	float step = 2.0f * (float)M_PI / T;
 	float floatingAmplitude = 0.3f;
@@ -306,7 +307,7 @@ void Player::UpdateFloatGimmick()
 	worldTransformBody_.translation_.y = std::sin(floatingParametor_) * floatingAmplitude + 1.0f;
 
 	worldTransformLarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;
-	worldTransformRarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;*/
+	worldTransformRarm_.rotation_.x = std::sin(floatingParametor_) * 0.75f;
 }
 
 ICommand* Player::SelectAICommand()
@@ -383,7 +384,7 @@ void Player::setMovevectorAtack()
 		velocity_.y = 0.0f;
 		move_ = velocity_;
 		if (positionNo_ == GoalKeeper) {
-			move_ = { 1.0f,0.0f,0.0f };
+			//move_ = { 1.0f,0.0f,0.0f };
 			move_.z = Normalise(Vector3{ 25.0f,0.0f,25.0f }-worldTransformBody_.GetWorldPos() ).z;
 		}
 	
@@ -426,7 +427,7 @@ void Player::setMovevectorAtack()
 			behaviorRequest_ = Behavior::kAtack;
 		}
 		if (positionNo_ == GoalKeeper) {
-			move_ = { -1.0f,0.0f,0.0f };
+		//	move_ = { -1.0f,0.0f,0.0f };
 			move_.z = Normalise(Vector3{ 25.0f,0.0f,25.0f } - worldTransformBody_.GetWorldPos()).z;
 		}
 	}

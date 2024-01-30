@@ -9,7 +9,7 @@ GameScene::~GameScene()
 void GameScene::Initialize()
 {
 	blueMoon_ = BlueMoon::GetInstance();
-
+	fade_ = Fade::GetInstance();
 	directXCommon_ = DirectXCommon::GetInstance();
 	map_=MoveMap:: GetInstance();
 	map_->Init();
@@ -144,10 +144,15 @@ void GameScene::Update()
 			goalCount_++;
 		}
 		if (goalCount_ >= 60) {
-			sceneNum = TITLE_SCENE;
+			fade_->setmoveFlag();
 		}
 	}
+	fade_->Update();
+	if (fade_->getchangeFlag()) {
+		sceneNum = TITLE_SCENE;
+	}
 }
+
 
 
 
@@ -194,6 +199,7 @@ void GameScene::Draw2D() {
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f},
 		},{1.0f,1.0f,1.0f,1.0f});
+	fade_->Draw();
 
 }
 void GameScene::Finalize()
