@@ -5,8 +5,6 @@
 #include "../../game/Manager/Fade.h"
 class TitleScene:public Iscene
 {
-private:
-	int count;
 public:
 	~TitleScene()override;
 	 void Initialize() override;
@@ -20,5 +18,6 @@ private:
 	BlueMoon* bluemoon_;
 	Input* input=nullptr;
 	Fade* fade_;
+	float count;
 };
 

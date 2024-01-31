@@ -8,19 +8,25 @@ void TitleScene::Initialize()
 {	
 	bluemoon_ = BlueMoon::GetInstance();
 	input = Input::GetInstance();
-	count = 0;
 	sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize(Texturemanager::GetInstance()->Load("resource/title.png"));
 	fade_ = Fade::GetInstance();
 	fade_->Initialize();
-
+	sprite_->size_ = { 0.0f,0.0f };
+	sprite_->position = { 640.0f,360.0f };
+	count = 0.0f;
 }
 
 void TitleScene::Update()
 {
-	
-	sprite_->position = { 640.0f,360.0f };
-	sprite_->size_ = { 35.0f,26.0f };
+	if (count < 1.0f) {
+		count += 0.05f;
+	}
+	if (count > 1.0f) {
+		count = 1.0f;
+	}
+	sprite_->size_.x = Lerp(count,0.0, 35.0f);
+	sprite_->size_.y = Lerp(count, 0.0, 26.0f);
 	ImGui::Begin("SceneManager");
 	ImGui::InputInt("SceneNum", &sceneNum);
 	ImGui::Text("count %d",count);
@@ -42,9 +48,7 @@ void TitleScene::Update()
 	if (fade_->getchangeFlag()) {
 		sceneNum = GAME_SCENE;
 	}
-	/*if (count >= 60) {
-		sceneNum=GAME_SCENE;
-	}*/
+	
 }
 
 void TitleScene::Draw()
